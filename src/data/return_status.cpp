@@ -5,9 +5,16 @@
 
 namespace infer_engine {
 
-ReturnStatus::ReturnStatus()
-  : code_(kSuccess)),
-  : message_(kSuccessMessage) {}
+const int32_t ReturnStatus::kSuccess = 0;
+const int32_t ReturnStatus::kNoImplement = 1;
+const int32_t ReturnStatus::kInternalError = 1029;
+
+const char ReturnStatus::kSuccessMessage[] = "success";
+const char ReturnStatus::kNoImplementMessage[] = "no implement";
+
+ReturnStatus::ReturnStatus() :
+  code_(kSuccess),
+  message_(kSuccessMessage) {}
 
 ReturnStatus::ReturnStatus(int32_t code, const std::string& message) {
   set(code, message);
@@ -15,7 +22,7 @@ ReturnStatus::ReturnStatus(int32_t code, const std::string& message) {
 
 ReturnStatus::~ReturnStatus() {}
 
-ReturnStatus::set(int32_t code, const std::string& message) {
+void ReturnStatus::set(int32_t code, const std::string& message) {
   code_ = code;
   try {
     message_ = message;

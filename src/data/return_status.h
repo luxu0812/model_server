@@ -8,10 +8,10 @@
 
 namespace infer_engine {
 
-class RetrunStatus {
+class ReturnStatus {
  public:
-  static RetrunStatus success() {
-    return RetrunStatus();
+  static ReturnStatus success() {
+    return ReturnStatus();
   }
   static ReturnStatus no_implement() {
     return ReturnStatus(kNoImplement, kNoImplementMessage);
@@ -21,17 +21,17 @@ class RetrunStatus {
   }
 
  private:
-  static const int32_t kSuccess = 0;
-  static const int32_t kNoImplement = 1;
-  static const int32_t kInternalError = 1029;
+  static const int32_t kSuccess;
+  static const int32_t kNoImplement;
+  static const int32_t kInternalError;
 
-  static const char kSuccessMessage[] = "success";
-  static const char kNoImplementMessage[] = "no implement";
+  static const char kSuccessMessage[];
+  static const char kNoImplementMessage[];
 
  public:
-  RetrunStatus();
+  ReturnStatus();
   ReturnStatus(int32_t code, const std::string& message);
-  ~RetrunStatus();
+  ~ReturnStatus();
 
   void set(int32_t code, const std::string& message);
 
@@ -43,6 +43,8 @@ class RetrunStatus {
   int32_t code_;
   std::string message_;
 };
+
+
 
 }  // namespace infer_engine
 

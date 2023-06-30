@@ -60,3 +60,10 @@ else
              --repository=..       \
              ${srcs}
 fi
+
+#----------------------------------- build -----------------------------------#
+bazel build //src:data    \
+  --jobs=10               \
+  --cxxopt='-std=c++17'   \
+  --compilation_mode opt
+

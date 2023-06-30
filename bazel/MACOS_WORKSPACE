@@ -1,0 +1,81 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+workspace(name = "ego_kit")
+
+# ------------------------------  gflags  ------------------------------#
+new_local_repository(
+  name = "com_github_gflags_gflags",
+  path = "/opt/homebrew/Cellar/gflags/2.2.2",
+  build_file = "bazel/macos_gflags.BUILD",
+)
+
+# ----------------------------  googletest  ----------------------------#
+new_local_repository(
+  name = "com_google_googletest",
+  path = "/opt/homebrew/Cellar/googletest/1.12.13",
+  build_file = "bazel/googletest.BUILD",
+)
+
+# ------------------------------  abseil  ------------------------------#
+new_local_repository(
+  name = "com_google_absl",
+  path = "/opt/homebrew/Cellar/abseil/20220623.1",
+  build_file = "bazel/macos_absl.BUILD" 
+)
+
+# ------------------------------  zlib  --------------------------------#
+new_local_repository(
+  name = "com_github_madler_zlib",
+  path = "/opt/homebrew/Cellar/zlib/1.2.13",
+  build_file = "bazel/zlib.BUILD"
+)
+
+# -----------------------------  protobuf  -----------------------------#
+new_local_repository(
+  name = "com_google_protobuf",
+  path = "/opt/homebrew/Cellar/protobuf/21.12",
+  build_file = "bazel/protobuf.BUILD"
+)
+
+# ------------------------------ jemalloc ------------------------------#
+new_local_repository(
+  name = "jemalloc",
+  path = "/opt/homebrew/Cellar/jemalloc/5.3.0",
+  build_file = "bazel/jemalloc.BUILD",
+)
+
+# ------------------------------ openssl -------------------------------#
+new_local_repository(
+  name = "openssl",
+  path = "/opt/homebrew/Cellar/openssl@3/3.1.0",
+  build_file = "bazel/openssl.BUILD",
+)
+
+# ------------------------------ leveldb -------------------------------#
+new_local_repository(
+  name = "leveldb",
+  path = "/opt/homebrew/Cellar/leveldb/1.23",
+  build_file = "bazel/leveldb.BUILD",
+)
+
+# -------------------------------- brpc --------------------------------#
+new_local_repository(
+  name = "com_github_brpc_brpc",
+  path = "/opt/homebrew/Cellar/brpc/1.2.0",
+  build_file = "bazel/brpc.BUILD",
+)
