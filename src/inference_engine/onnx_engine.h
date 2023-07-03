@@ -5,7 +5,6 @@
 
 #include <onnxruntime/core/session/onnxruntime_cxx_api.h>
 
-#include "infer_engine/src/data/error_message.h"
 #include "infer_engine/src/inference_engine/inference_engine.h"
 
 namespace infer_engine {
@@ -15,10 +14,10 @@ class ONNXEngine : public InferenceEngine {
   ONNXEngine();
   ~ONNXEngine();
 
-  ReturnStatus init() override;
-  ReturnStatus destroy() override;
+  bool init() override;
+  bool destroy() override;
 
-  ReturnStatus infer() override;
+  bool infer() override;
 
  private:
   Ort::Session* session_;

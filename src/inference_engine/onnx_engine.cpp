@@ -12,7 +12,7 @@ ONNXEngine::~ONNXEngine() {
   destroy();
 }
 
-ReturnStatus ONNXEngine::init() {
+bool ONNXEngine::init() {
   // Initialize ONNX runtime specific resources
   // e.g., Load ONNX runtime libraries, initialize ONNX context
 
@@ -22,10 +22,10 @@ ReturnStatus ONNXEngine::init() {
     Ort::Env(ORT_LOGGING_LEVEL_WARNING, "ONNXEngine"), "/path/to/model.onnx", session_options
   );  // NOLINT
 
-  return ReturnStatus::Success();
+  return true;
 }
 
-ReturnStatus ONNXEngine::destroy() {
+bool ONNXEngine::destroy() {
   // Release any resources associated with ONNX runtime
 
   if (session_ != nullptr) {
@@ -33,10 +33,10 @@ ReturnStatus ONNXEngine::destroy() {
     session_ = nullptr;
   }
 
-  return ReturnStatus::Success();
+  return true;
 }
 
-ReturnStatus ONNXEngine::infer() {
+bool ONNXEngine::infer() {
   // Perform inference using the ONNX runtime
 
   // Prepare input tensors
@@ -58,13 +58,13 @@ ReturnStatus ONNXEngine::infer() {
     output_names.data(), output_tensors.data(), output_names.size()
   );  // NOLINT
   if (status != Ort::Status::OK()) {
-    return ReturnStatus(status.ReturnStatus());
+    return true;
   }
 
   // Process the output tensors
   // ...
 
-  return ReturnStatus::Success();
+  return true;
 }
 
 }  // namespace infer_engine

@@ -72,3 +72,11 @@ new_local_repository(
   path = "/${HOME}/.conan/data/leveldb/1.20/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934",
   build_file = "bazel/leveldb.BUILD",
 )
+
+# ------------------------------ leveldb -------------------------------#
+new_local_repository(
+  name = "tensorflow",
+  path = "/root/.conan/data/tensorflow/1.15.5_pred/user/stable/package/7074939bced47b372f39e9ea6beadb82c7e0bc1c",
+  build_file = "bazel/tensorflow.BUILD",
+)
+

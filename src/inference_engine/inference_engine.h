@@ -12,11 +12,11 @@ class InferenceEngine {
   InferenceEngine();
   ~InferenceEngine();
 
-  virtual ReturnStatus init();
-  virtual ReturnStatus destroy();
+  virtual bool init() = 0;
+  virtual bool destroy() = 0;
 
-  virtual ReturnStatus infer();
-}
+  virtual bool infer() = 0;
+};
 
 }  // namespace infer_engine
 

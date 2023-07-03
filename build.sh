@@ -62,8 +62,7 @@ else
 fi
 
 #----------------------------------- build -----------------------------------#
-bazel build //src:data    \
-  --jobs=10               \
-  --cxxopt='-std=c++17'   \
+bazel build //src:inference_engine \
+  --jobs=10                        \
+  --cxxopt='-std=c++17'            \
   --compilation_mode opt
-

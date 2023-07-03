@@ -32,3 +32,24 @@ cc_library(
   copts = copts,
   visibility = ["//visibility:public"],
 )
+
+cc_library(
+  name = "inference_engine",
+  hdrs = [
+    "inference_engine/inference_engine.h",
+    "inference_engine/xla_engine.h",
+    "inference_engine/onnx_engine.h",
+  ],
+  srcs = [
+    "inference_engine/xla_engine.cpp",
+    "inference_engine/onnx_engine.cpp",
+  ],
+  deps = [
+    ":data",
+    "@tensorflow//:tensorflow",
+  ],
+  strip_include_prefix = "inference_engine",
+  include_prefix = "infer_engine/src/inference_engine",
+  copts = copts,
+  visibility = ["//visibility:public"],
+)
