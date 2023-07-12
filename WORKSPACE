@@ -34,7 +34,7 @@ new_local_repository(
 # ----------------------------  googletest  ----------------------------#
 new_local_repository(
   name = "com_google_googletest",
-  path = "/${HOME}/.conan/data/googletest/1.8.0/user/stable/package/bfba58110feb727aea0b1c3a5cdcfd7d7f00530e",
+  path = "/home/linuxbrew/.linuxbrew/Cellar/googletest",
   build_file = "bazel/googletest.BUILD",
 )
 

@@ -60,9 +60,7 @@ else
 fi
 
 #----------------------------------- build -----------------------------------#
-bazelisk --version
-# bazelisk --strict --version
-# bazelisk --strict build //src:inference_engine \
-#   --jobs=10                                    \
-#   --cxxopt='-std=c++17'                        \
-#   --compilation_mode opt
+bazelisk build //src:inference_engine \
+  --jobs=10                           \
+  --cxxopt='-std=c++17'               \
+  --compilation_mode opt
