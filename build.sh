@@ -51,8 +51,6 @@ pushd ${SCRIPT_DIR}
 if [[ "${LINT}" = true ]]; then
   log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
 else
-  # bazel build //src:cpplint_validation --jobs=10
-
   srcs=`glob ./src ".*\.(c|cc|cpp|cxx|c\+\+|C|h|hh|hpp|hxx|inc)$"`
   cpplint.py --verbose=0           \
              --linelength=100      \
@@ -62,7 +60,9 @@ else
 fi
 
 #----------------------------------- build -----------------------------------#
-bazel build //src:inference_engine \
-  --jobs=10                        \
-  --cxxopt='-std=c++17'            \
-  --compilation_mode opt
+bazelisk --version
+# bazelisk --strict --version
+# bazelisk --strict build //src:inference_engine \
+#   --jobs=10                                    \
+#   --cxxopt='-std=c++17'                        \
+#   --compilation_mode opt
