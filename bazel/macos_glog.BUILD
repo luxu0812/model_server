@@ -1,11 +1,14 @@
 cc_library(
-  name = "leveldb",
+  name = "glog",
   hdrs = glob([
     "include/**/*.h",
   ]),
   includes = [
     "include",
   ],
-  srcs = ["lib/libleveldb.a"],
+  srcs = ["lib/libglog.dylib"],
+  deps = [
+    "@com_github_gflags_gflags//:gflags",
+  ],
   visibility = ["//visibility:public"],
 )

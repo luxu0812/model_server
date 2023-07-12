@@ -27,6 +27,9 @@ cc_library(
   srcs = [
     "data/return_status.cpp"
   ],
+  deps = [
+    "@com_github_google_glog//:glog"
+  ],
   strip_include_prefix = "data",
   include_prefix = "infer_engine/src/data",
   copts = copts,
@@ -47,6 +50,7 @@ cc_library(
   deps = [
     ":data",
     "@tensorflow//:tensorflow",
+    "@onnxruntime//:onnxruntime",
   ],
   strip_include_prefix = "inference_engine",
   include_prefix = "infer_engine/src/inference_engine",

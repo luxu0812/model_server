@@ -15,67 +15,46 @@
 # specific language governing permissions and limitations
 # under the License.
 
-workspace(name = "ego_kit")
+workspace(name = "InferEngine")
 
 # ------------------------------  gflags  ------------------------------#
 new_local_repository(
   name = "com_github_gflags_gflags",
-  path = "/${HOME_PATH}/.conan/data/gflags/2.2.1/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934",
+  path = "/home/linuxbrew/.linuxbrew/Cellar/gflags/2.2.2",
   build_file = "bazel/gflags.BUILD",
 )
 
-# ----------------------------  googletest  ----------------------------#
+#-------------------------------- glog --------------------------------#
+new_local_repository(
+  name = "com_github_google_glog",
+  path = "/home/linuxbrew/.linuxbrew/Cellar/glog/0.6.0",
+  build_file = "bazel/glog.BUILD",
+)
+
+#----------------------------- googletest -----------------------------#
 new_local_repository(
   name = "com_google_googletest",
-  path = "/${HOME_PATH}/.conan/data/googletest/1.8.0/user/stable/package/bfba58110feb727aea0b1c3a5cdcfd7d7f00530e",
+  path = "/home/linuxbrew/.linuxbrew/Cellar/googletest/1.13.0",
   build_file = "bazel/googletest.BUILD",
 )
 
-# ------------------------------  abseil  ------------------------------#
+#------------------------------- abseil -------------------------------#
 new_local_repository(
   name = "com_google_absl",
-  path = "/${HOME_PATH}/.conan/data/abseil/20211102.0-conan/user/stable/package/3c16e11e139fc44ce87907092473006570fef7c5",
-  build_file = "bazel/absl.BUILD" 
+  path = "/home/linuxbrew/.linuxbrew/Cellar/abseil/20230125.3",
+  build_file = "bazel/absl.BUILD"
 )
 
-# ------------------------------  zlib  --------------------------------#
+#---------------------------  libtensorflow ---------------------------#
 new_local_repository(
-  name = "com_github_madler_zlib",
-  path = "/${HOME_PATH}/.conan/data/zlib/1.2.11/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934",
-  build_file = "bazel/zlib.BUILD"
+  name = "tensorflow",
+  path = "/home/linuxbrew/.linuxbrew/Cellar/libtensorflow/2.12.0",
+  build_file = "bazel/libtensorflow.BUILD",
 )
 
-# -----------------------------  protobuf  -----------------------------#
+#----------------------------- onnxruntime ----------------------------#
 new_local_repository(
-  name = "com_google_protobuf",
-  path = "/${HOME_PATH}/.conan/data/protobuf/3.6.1/user/stable/package/8a0d45a6500f8b1a5c8dac95788a152d902fd44e",
-  build_file = "bazel/protobuf.BUILD"
-)
-
-# ------------------------------ jemalloc ------------------------------#
-new_local_repository(
-  name = "jemalloc",
-  path = "/${HOME_PATH}/.conan/data/jemalloc/5.2.1-no-init-tls/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934",
-  build_file = "bazel/jemalloc.BUILD",
-)
-
-# ------------------------------ openssl -------------------------------#
-new_local_repository(
-  name = "openssl",
-  path = "/${HOME_PATH}/.conan/data/openssl/1.0.2o/user/stable/package/8a0d45a6500f8b1a5c8dac95788a152d902fd44e",
-  build_file = "bazel/openssl.BUILD",
-)
-
-# ------------------------------ leveldb -------------------------------#
-new_local_repository(
-  name = "leveldb",
-  path = "/${HOME_PATH}/.conan/data/leveldb/1.20/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934",
-  build_file = "bazel/leveldb.BUILD",
-)
-
-# -------------------------------- brpc --------------------------------#
-new_local_repository(
-  name = "com_github_brpc_brpc",
-  path = "/${HOME_PATH}/.conan/data/brpc/0.9.7-shopee-patch-v1.2/user/stable/package/e4188d9015a765905e2cb1a63b973fbff3bce310",
-  build_file = "bazel/brpc.BUILD",
+  name = "onnxruntime",
+  path = "/opt/homebrew/Cellar/onnxruntime/1.15.1",
+  build_file = "bazel/macos_onnxruntime.BUILD",
 )

@@ -59,6 +59,19 @@ else
              ${srcs}
 fi
 
+#-----------------------------------------------------------------------------#
+uname=`uname`
+if [[ "${uname}" == "Darwin" ]]; then
+  cp bazel/MACOS_WORKSPACE ./WORKSPACE
+elif [[ "${uname}" == "Linux" ]]; then
+  cp bazel/LINUX_WORKSPACE ./WORKSPACE
+  HOME_PATH=$(echo ~)
+  sed -i "s|\${HOME_PATH}|${HOME_PATH}|g" WORKSPACE
+else
+  log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
+  exit 1
+fi
+
 #----------------------------------- build -----------------------------------#
 bazelisk build //src:inference_engine \
   --jobs=10                           \

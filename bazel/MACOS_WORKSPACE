@@ -15,67 +15,46 @@
 # specific language governing permissions and limitations
 # under the License.
 
-workspace(name = "ego_kit")
+workspace(name = "InferEngine")
 
-# ------------------------------  gflags  ------------------------------#
+#------------------------------- gflags -------------------------------#
 new_local_repository(
   name = "com_github_gflags_gflags",
   path = "/opt/homebrew/Cellar/gflags/2.2.2",
   build_file = "bazel/macos_gflags.BUILD",
 )
 
-# ----------------------------  googletest  ----------------------------#
+#-------------------------------- glog --------------------------------#
+new_local_repository(
+  name = "com_github_google_glog",
+  path = "/opt/homebrew/Cellar/glog/0.6.0",
+  build_file = "bazel/macos_glog.BUILD",
+)
+
+#----------------------------- googletest -----------------------------#
 new_local_repository(
   name = "com_google_googletest",
-  path = "/opt/homebrew/Cellar/googletest/1.12.13",
+  path = "/opt/homebrew/Cellar/googletest/1.13.0",
   build_file = "bazel/googletest.BUILD",
 )
 
-# ------------------------------  abseil  ------------------------------#
+#------------------------------- abseil -------------------------------#
 new_local_repository(
   name = "com_google_absl",
-  path = "/opt/homebrew/Cellar/abseil/20220623.1",
+  path = "/opt/homebrew/Cellar/abseil/20230125.3",
   build_file = "bazel/macos_absl.BUILD" 
 )
 
-# ------------------------------  zlib  --------------------------------#
+#---------------------------- libtensorflow ---------------------------#
 new_local_repository(
-  name = "com_github_madler_zlib",
-  path = "/opt/homebrew/Cellar/zlib/1.2.13",
-  build_file = "bazel/zlib.BUILD"
+  name = "tensorflow",
+  path = "/opt/homebrew/Cellar/libtensorflow/2.12.0",
+  build_file = "bazel/libtensorflow.BUILD",
 )
 
-# -----------------------------  protobuf  -----------------------------#
+#----------------------------- onnxruntime ----------------------------#
 new_local_repository(
-  name = "com_google_protobuf",
-  path = "/opt/homebrew/Cellar/protobuf/21.12",
-  build_file = "bazel/protobuf.BUILD"
-)
-
-# ------------------------------ jemalloc ------------------------------#
-new_local_repository(
-  name = "jemalloc",
-  path = "/opt/homebrew/Cellar/jemalloc/5.3.0",
-  build_file = "bazel/jemalloc.BUILD",
-)
-
-# ------------------------------ openssl -------------------------------#
-new_local_repository(
-  name = "openssl",
-  path = "/opt/homebrew/Cellar/openssl@3/3.1.0",
-  build_file = "bazel/openssl.BUILD",
-)
-
-# ------------------------------ leveldb -------------------------------#
-new_local_repository(
-  name = "leveldb",
-  path = "/opt/homebrew/Cellar/leveldb/1.23",
-  build_file = "bazel/leveldb.BUILD",
-)
-
-# -------------------------------- brpc --------------------------------#
-new_local_repository(
-  name = "com_github_brpc_brpc",
-  path = "/opt/homebrew/Cellar/brpc/1.2.0",
-  build_file = "bazel/brpc.BUILD",
+  name = "onnxruntime",
+  path = "/opt/homebrew/Cellar/onnxruntime/1.15.1",
+  build_file = "bazel/macos_onnxruntime.BUILD",
 )

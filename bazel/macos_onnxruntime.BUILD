@@ -1,15 +1,11 @@
 cc_library(
-  name = "tensorflow",
+  name = "onnxruntime",
   hdrs = glob([
     "include/**/*.h",
   ]),
   includes = [
     "include",
   ],
-  srcs = [
-    "lib/libiomp5.so",
-    "lib/libmklml_intel.so",
-    "lib/libtensorflow.so",
-  ],
+  srcs = ["lib/libonnxruntime.dylib"],
   visibility = ["//visibility:public"],
 )
