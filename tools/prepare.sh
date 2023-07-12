@@ -45,10 +45,9 @@ sudo apt-get install -y            \
         libbz2-dev
 
 mkdir -p ${HOME}/.local/bin
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 curl https://pyenv.run | bash
 echo '
-export PATH="${HOME}/.local/bin:${HOME}/.pyenv/bin:/home/linuxbrew/.linuxbrew/bin:${PATH}"
+export PATH="${HOME}/.local/bin:${HOME}/.pyenv/bin:${PATH}"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"' >> ${HOME}/.bashrc
 source ${HOME}/.bashrc
@@ -56,18 +55,17 @@ pyenv install 3.11.0
 pyenv global 3.11.0
 
 # Install by brew
-brew install gflags && cp -r /home/linuxbrew/.linuxbrew/Cellar/gflags ~/.local/lib
-brew install glog && cp -r /home/linuxbrew/.linuxbrew/Cellar/glog ~/.local/lib
-brew install libtensorflow && cp -r /home/linuxbrew/.linuxbrew/Cellar/libtensorflow/ ~/.local/lib
+# curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+# brew install gflags && cp -r /home/linuxbrew/.linuxbrew/Cellar/gflags ~/.local/lib
+# brew install glog && cp -r /home/linuxbrew/.linuxbrew/Cellar/glog ~/.local/lib
+# brew install libtensorflow && cp -r /home/linuxbrew/.linuxbrew/Cellar/libtensorflow/ ~/.local/lib
 
-# Install from source
-# Tensorflow
-# git clone https://github.com/tensorflow/tensorflow.git
-# cd tensorflow
-# git checkout tags/v2.13.0 -b v2.13.0
-# ./configure
-# # location of python3: ~/.pyenv/versions/3.11.0/bin/python3
-# bazelisk build --compilation_mode opt --config=mkl tensorflow/core:tensorflow
-# bazelisk build --compilation_mode opt --config=mkl tensorflow/tools/lib_package:libtensorflow
-# mkdir -p ~/.local/lib/libtensorflow
-# tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
+# Install Tensorflow
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+git checkout tags/v2.13.0 -b v2.13.0
+./configure
+bazelisk build --compilation_mode opt --config=mkl tensorflow/core:tensorflow
+bazelisk build --compilation_mode opt --config=mkl tensorflow/tools/lib_package:libtensorflow
+mkdir -p ~/.local/lib/libtensorflow
+tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
