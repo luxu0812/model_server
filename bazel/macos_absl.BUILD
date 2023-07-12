@@ -88,3 +88,15 @@ cc_library(
   ],
   visibility = ["//visibility:public"],
 )
+
+cc_library(
+  name = "absl",
+  hdrs = glob([
+    "include/absl/**",
+  ]),
+  srcs = glob([
+    "lib/*.2301.0.0.dylib",
+  ]),
+  includes = ["include"],
+  visibility = ["//visibility:public"],
+)

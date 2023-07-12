@@ -45,6 +45,27 @@ new_local_repository(
   build_file = "bazel/macos_absl.BUILD" 
 )
 
+# ------------------------------  zlib  --------------------------------#
+new_local_repository(
+  name = "com_github_madler_zlib",
+  path = "/opt/homebrew/Cellar/zlib/1.2.13",
+  build_file = "bazel/zlib.BUILD"
+)
+
+#------------------------------ protobuf ------------------------------#
+new_local_repository(
+  name = "com_google_protobuf",
+  path = "/opt/homebrew/Cellar/protobuf/21.12",
+  build_file = "bazel/protobuf.BUILD",
+)
+
+#-------------------------------- eigen -------------------------------#
+new_local_repository(
+  name = "eigen",
+  path = "/opt/homebrew/Cellar/eigen/3.4.0_1",
+  build_file = "bazel/eigen.BUILD",
+)
+
 #---------------------------- libtensorflow ---------------------------#
 new_local_repository(
   name = "tensorflow",
@@ -58,3 +79,5 @@ new_local_repository(
   path = "/opt/homebrew/Cellar/onnxruntime/1.15.1",
   build_file = "bazel/macos_onnxruntime.BUILD",
 )
+
+
