@@ -20,9 +20,25 @@ config_setting(
 )
 
 cc_library(
+  name = "util",
+  hdrs = [
+    "util/functional/scope_exit_task.h",
+  ],
+  srcs = [
+  ],
+  deps = [
+  ],
+  strip_include_prefix = "util",
+  include_prefix = "infer_engine/src/util",
+  copts = copts,
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
   name = "data",
   hdrs = [
     "data/return_status.h",
+    "data/model_spec.h",
   ],
   srcs = [
     "data/return_status.cpp"
@@ -37,23 +53,25 @@ cc_library(
 )
 
 cc_library(
-  name = "inference_engine",
+  name = "engine",
   hdrs = [
-    "inference_engine/inference_engine.h",
-    "inference_engine/xla_engine.h",
-    "inference_engine/onnx_engine.h",
+    "engine/engine.h",
+    "engine/tf_engine.h",
+    "engine/onnx_engine.h",
   ],
   srcs = [
-    "inference_engine/xla_engine.cpp",
-    "inference_engine/onnx_engine.cpp",
+    "engine/tf_engine.cpp",
+    "engine/onnx_engine.cpp",
   ],
   deps = [
+    ":util",
     ":data",
+    "@com_github_google_glog//:glog",
     "@tensorflow//:tensorflow",
     "@onnxruntime//:onnxruntime",
   ],
-  strip_include_prefix = "inference_engine",
-  include_prefix = "infer_engine/src/inference_engine",
+  strip_include_prefix = "engine",
+  include_prefix = "infer_engine/src/engine",
   copts = copts,
   visibility = ["//visibility:public"],
 )

@@ -122,6 +122,12 @@ git checkout tags/v1.15.0 -b v1.15.0
   --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds" \
   --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds"
 pushd build/Linux/Release && make install && popd
+# MacOS
+# ./build.sh --config Release --build_shared_lib --parallel                                                       \
+#   --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime                                      \
+#   --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations" \
+#   --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations"
+# pushd build/MacOS/Release && make install && popd
 ./build.sh --config Release --build_shared_lib --parallel --use_dnnl                             \
   --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_dnnl                  \
   --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds" \

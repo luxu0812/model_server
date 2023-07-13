@@ -20,64 +20,62 @@ workspace(name = "InferEngine")
 #------------------------------- gflags -------------------------------#
 new_local_repository(
   name = "com_github_gflags_gflags",
-  path = "/opt/homebrew/Cellar/gflags/2.2.2",
-  build_file = "bazel/macos_gflags.BUILD",
+  path = "${HOME}/.local/lib/gflags",
+  build_file = "bazel/gflags.BUILD",
 )
 
 #-------------------------------- glog --------------------------------#
 new_local_repository(
   name = "com_github_google_glog",
-  path = "/opt/homebrew/Cellar/glog/0.6.0",
-  build_file = "bazel/macos_glog.BUILD",
+  path = "${HOME}/.local/lib/glog",
+  build_file = "bazel/glog.BUILD",
 )
 
 #----------------------------- googletest -----------------------------#
-new_local_repository(
-  name = "com_google_googletest",
-  path = "/opt/homebrew/Cellar/googletest/1.13.0",
-  build_file = "bazel/googletest.BUILD",
-)
+# new_local_repository(
+#   name = "com_google_googletest",
+#   path = "/opt/homebrew/Cellar/googletest/1.13.0",
+#   build_file = "bazel/googletest.BUILD",
+# )
 
 #------------------------------- abseil -------------------------------#
-new_local_repository(
-  name = "com_google_absl",
-  path = "/opt/homebrew/Cellar/abseil/20230125.3",
-  build_file = "bazel/macos_absl.BUILD" 
-)
+# new_local_repository(
+#   name = "com_google_absl",
+#   path = "/opt/homebrew/Cellar/abseil/20230125.3",
+#   build_file = "bazel/macos_absl.BUILD" 
+# )
 
 # ------------------------------  zlib  --------------------------------#
-new_local_repository(
-  name = "com_github_madler_zlib",
-  path = "/opt/homebrew/Cellar/zlib/1.2.13",
-  build_file = "bazel/zlib.BUILD"
-)
+# new_local_repository(
+#   name = "com_github_madler_zlib",
+#   path = "/opt/homebrew/Cellar/zlib/1.2.13",
+#   build_file = "bazel/zlib.BUILD"
+# )
 
 #------------------------------ protobuf ------------------------------#
-new_local_repository(
-  name = "com_google_protobuf",
-  path = "/opt/homebrew/Cellar/protobuf/21.12",
-  build_file = "bazel/protobuf.BUILD",
-)
+# new_local_repository(
+#   name = "com_google_protobuf",
+#   path = "/opt/homebrew/Cellar/protobuf/21.12",
+#   build_file = "bazel/protobuf.BUILD",
+# )
 
 #-------------------------------- eigen -------------------------------#
-new_local_repository(
-  name = "eigen",
-  path = "/opt/homebrew/Cellar/eigen/3.4.0_1",
-  build_file = "bazel/eigen.BUILD",
-)
+# new_local_repository(
+#   name = "eigen",
+#   path = "/opt/homebrew/Cellar/eigen/3.4.0_1",
+#   build_file = "bazel/eigen.BUILD",
+# )
 
 #---------------------------- libtensorflow ---------------------------#
 new_local_repository(
   name = "tensorflow",
-  path = "/opt/homebrew/Cellar/libtensorflow/2.12.0",
-  build_file = "bazel/libtensorflow.BUILD",
+  path = "${HOME}/.local/lib/libtensorflow",
+  build_file = "bazel/libtensorflow_macos.BUILD",
 )
 
 #----------------------------- onnxruntime ----------------------------#
 new_local_repository(
   name = "onnxruntime",
-  path = "/opt/homebrew/Cellar/onnxruntime/1.15.1",
-  build_file = "bazel/macos_onnxruntime.BUILD",
+  path = "${HOME}/.local/lib/onnxruntime",
+  build_file = "bazel/onnxruntime_macos.BUILD",
 )
-
-

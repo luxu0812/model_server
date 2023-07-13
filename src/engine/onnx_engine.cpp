@@ -2,17 +2,18 @@
 
 #include <vector>
 
-#include "infer_engine/src/inference_engine/onnx_engine.h"
+#include "infer_engine/src/engine/onnx_engine.h"
 
 namespace infer_engine {
 
-ONNXEngine::ONNXEngine() : session_(nullptr) {}
-
-ONNXEngine::~ONNXEngine() {
-  destroy();
+ONNXEngine::ONNXEngine(const ModelSpec& model_spec) : Engine(model_spec), session_(nullptr) {
+  init();
 }
 
-bool ONNXEngine::init() {
+ONNXEngine::~ONNXEngine() {
+}
+
+// void ONNXEngine::init() {
   // Initialize ONNX runtime specific resources
   // e.g., Load ONNX runtime libraries, initialize ONNX context
 
@@ -21,22 +22,18 @@ bool ONNXEngine::init() {
   // session_ = new Ort::Session(
   //   Ort::Env(ORT_LOGGING_LEVEL_WARNING, "ONNXEngine"), "/path/to/model.onnx", session_options
   // );  // NOLINT
+// }
 
-  return true;
-}
-
-bool ONNXEngine::destroy() {
+// void ONNXEngine::destroy() {
   // Release any resources associated with ONNX runtime
 
   // if (session_ != nullptr) {
   //   delete session_;
   //   session_ = nullptr;
   // }
+// }
 
-  return true;
-}
-
-bool ONNXEngine::infer() {
+void ONNXEngine::infer() {
   // Perform inference using the ONNX runtime
 
   // // Prepare input tensors
@@ -63,8 +60,6 @@ bool ONNXEngine::infer() {
 
   // // Process the output tensors
   // // ...
-
-  return true;
 }
 
 }  // namespace infer_engine

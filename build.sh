@@ -66,15 +66,16 @@ if [[ "${uname}" == "Darwin" ]]; then
 elif [[ "${uname}" == "Linux" ]]; then
   cp bazel/bazelrc_linux ./.bazelrc
   cp bazel/WORKSPACE_LINUX ./WORKSPACE
-  HOME_PATH=$(echo ~)
-  sed -i "s|\${HOME}|${HOME}|g" WORKSPACE
 else
   log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
   exit 1
 fi
 
+HOME_PATH=$(echo ~)
+sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
+
 #----------------------------------- build -----------------------------------#
-bazelisk build //src:inference_engine \
-  --jobs=10                           \
-  --cxxopt='-std=c++17'               \
+bazelisk build //src:engine \
+  --jobs=10                 \
+  --cxxopt='-std=c++17'     \
   --compilation_mode opt

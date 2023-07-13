@@ -1,0 +1,106 @@
+// Copyright 2023 zh.luxu1986@gmail.com
+
+#include "infer_engine/src/engine/tf_engine.h"
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+#include "glog/logging.h"
+#include "tensorflow/c/c_api.h"
+
+#include "infer_engine/src/util/functional/scope_exit_task.h"
+
+namespace infer_engine {
+
+TFEngine::TFEngine(const ModelSpec& model_spec) :
+  Engine(model_spec),
+  session_(),
+  graph_(),
+  graph_buffer_() {
+  init();
+}
+
+TFEngine::~TFEngine() {
+  destroy();
+}
+
+// void TFEngine::init(const std::string &graph_file) {
+//   read_graph(graph_file);
+//
+//   TF_ImportGraphDefOptions *tf_import_graph_def_opts = TF_NewImportGraphDefOptions();
+//   TF_Status *tf_status = TF_NewStatus();
+//   graph_ = TF_NewGraph();
+//   TF_GraphImportGraphDef(graph_, graph_buffer_, tf_import_graph_def_opts, tf_status);
+//   if (TF_GetCode(tf_status) != TF_OK) {
+//     LOG(ERROR) << "Failed to import graph def: " << TF_Message(tf_status);
+//     TF_DeleteGraph(tf_graph);
+//     graph_ = nullptr;
+//   }
+//
+//   TF_DeleteStatus(tf_status);
+//   // TF_DeleteImportGraphDefOptions(opts);
+//   // TF_DeleteBuffer(buf);
+//   *tf_graph = graph;
+// }
+
+// void TFEngine::destroy() {
+  // Release any resources associated with TF runtime
+
+  // if (session_ != nullptr) {
+  //   tensorflow::Status status = session_->Close();
+  //   if (!status.ok()) {
+  //     return bool(status.error_message());
+  //   }
+  //   delete session_;
+  //   session_ = nullptr;
+  // }
+// }
+
+void TFEngine::infer() {
+  // Perform inference using the TF runtime
+
+  // Load the TensorFlow graph from the .pb file
+  // tensorflow::GraphDef graph_def;
+  // tensorflow::Status status = tensorflow::ReadBinaryProto(
+  //   tensorflow::Env::Default(), "/path/to/graph.pb", &graph_def
+  // );  // NOLINT
+  // if (!status.ok()) {
+  //   return bool(status.error_message());
+  // }
+
+  // Add the graph to the TensorFlow session
+  // status = session_->Create(graph_def);
+  // if (!status.ok()) {
+  //   return bool(status.error_message());
+  // }
+}
+
+void TFEngine::read_graph(const std::string &graph_file) {
+  std::ifstream file(graph_file, std::ios::binary | std::ios::ate);
+
+  if (!file.is_open()) {
+    LOG(ERROR) << "Failed to open graph file: " << graph_file;
+    throw std::runtime_error("Failed to open graph file: " + graph_file);
+  }
+  ScopeExitTask close_file([&file]() { file.close(); });
+
+  std::streamsize size = file.tellg();
+  file.seekg(0, std::ios::beg);
+
+  char *buffer_data = new char[size];
+  if (!file.read(buffer_data, size)) {
+    delete[] buffer_data;
+    LOG(ERROR) << "Failed to read graph file: " << graph_file;
+    throw std::runtime_error("Failed to open graph file: " + graph_file);
+  }
+
+  graph_buffer_ = new TF_Buffer();
+  graph_buffer_->data = buffer_data;
+  graph_buffer_->length = size;
+  graph_buffer_->data_deallocator = [](void *data, size_t length) {
+    delete[] static_cast<char*>(data);
+  };
+}
+
+}  // namespace infer_engine
