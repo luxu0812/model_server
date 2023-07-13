@@ -8,6 +8,7 @@
 
 #include "glog/logging.h"
 #include "tensorflow/c/c_api.h"
+#include "tensorflow/core/protobuf/config.pb.h"
 
 #include "infer_engine/src/util/functional/scope_exit_task.h"
 
@@ -25,24 +26,6 @@ TFEngine::~TFEngine() {
   destroy();
 }
 
-// void TFEngine::init(const std::string &graph_file) {
-//   read_graph(graph_file);
-//
-//   TF_ImportGraphDefOptions *tf_import_graph_def_opts = TF_NewImportGraphDefOptions();
-//   TF_Status *tf_status = TF_NewStatus();
-//   graph_ = TF_NewGraph();
-//   TF_GraphImportGraphDef(graph_, graph_buffer_, tf_import_graph_def_opts, tf_status);
-//   if (TF_GetCode(tf_status) != TF_OK) {
-//     LOG(ERROR) << "Failed to import graph def: " << TF_Message(tf_status);
-//     TF_DeleteGraph(tf_graph);
-//     graph_ = nullptr;
-//   }
-//
-//   TF_DeleteStatus(tf_status);
-//   // TF_DeleteImportGraphDefOptions(opts);
-//   // TF_DeleteBuffer(buf);
-//   *tf_graph = graph;
-// }
 
 // void TFEngine::destroy() {
   // Release any resources associated with TF runtime
@@ -101,6 +84,49 @@ void TFEngine::read_graph(const std::string &graph_file) {
   graph_buffer_->data_deallocator = [](void *data, size_t length) {
     delete[] static_cast<char*>(data);
   };
+}
+
+void TFEngine::build() {
+  TF_Status *tf_status = TF_NewStatus();
+  TF_ImportGraphDefOptions *tf_import_graph_def_opts = TF_NewImportGraphDefOptions();
+  ScopeExitTask delete_tf_status([&tf_status, &tf_import_graph_def_opts]() {
+     TF_DeleteStatus(tf_status);
+     TF_DeleteImportGraphDefOptions(tf_import_graph_def_opts);
+  });
+
+  graph_ = TF_NewGraph();
+  TF_GraphImportGraphDef(graph_, graph_buffer_, tf_import_graph_def_opts, tf_status);
+  if (TF_GetCode(tf_status) != TF_OK) {
+    LOG(ERROR) << "Failed to import graph def: " << TF_Message(tf_status);
+    throw std::runtime_error("Failed to import graph def: " + std::string(TF_Message(tf_status)));
+  }
+}
+
+void TFEngine::create_session() {
+  TF_Status *tf_status = TF_NewStatus();
+  TF_SessionOptions *tf_session_opts = TF_NewSessionOptions();
+  ScopeExitTask delete_tf_status([&tf_status, &tf_session_opts]() {
+     TF_DeleteStatus(tf_status);
+     TF_DeleteSessionOptions(tf_session_opts);
+  });
+
+  tensorflow OptimizerOptions tf_optimizer_opts;
+  tf_optimizer_opts.set_do_constant_folding(true);
+  tf_optimizer_opts.set_do_function_inlining(true);
+  tf_optimizer_opts.set_opt_level(tf_graph::OptimizerOptions_Level_L1);
+  tf_optimizer_opts.set_global_jit_level(tf_graph::OptimizerOptions_GlobalJitLevel_ON_2);
+
+  tensorflow::ConfigProto tf_session_config;
+  tf_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
+  tf_conf.set_intra_op_parallelism_threads(1);
+  tf_conf.set_inter_op_parallelism_threads(1);
+
+  std::string tf_session_config_str;
+  tf_conf.SerializeToString(&tf_session_conf_str);
+  TF_SetConfig(tf_session_opts, tf_session_conf_str.data(), tf_session_conf_str.size(), tf_status);
+  if (TF_GetCode(tf_status) != TF_OK) {
+    LOG(ERROR) << "Failed to set session config: " << TF_Message(tf_status);
+  }
 }
 
 }  // namespace infer_engine

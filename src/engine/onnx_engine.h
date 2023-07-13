@@ -25,6 +25,12 @@ class ONNXEngine : public Engine {
   // read graph from file
   void read_graph(const std::string &graph_file) override;
 
+  // build engine
+  void build() override;
+
+  // create session
+  void create_session() override;
+
  private:
   Ort::Session* session_;
 };

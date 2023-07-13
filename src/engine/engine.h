@@ -24,6 +24,7 @@ class Engine {
   // initialize the engine
   void init() {
     read_graph(model_spec_.graph_file);
+    build();
   }
 
   // destroy the engine
@@ -32,6 +33,12 @@ class Engine {
 
   // read graph from file
   virtual void read_graph(const std::string &graph_file) = 0;
+
+  // build engine
+  virtual void build() = 0;
+
+  // create session
+  virtual void create_session();
 
   ModelSpec model_spec_;
 };

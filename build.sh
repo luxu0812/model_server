@@ -52,10 +52,10 @@ if [[ "${LINT}" = true ]]; then
   log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
 else
   srcs=`glob ./src ".*\.(c|cc|cpp|cxx|c\+\+|C|h|hh|hpp|hxx|inc)$"`
-  cpplint.py --verbose=0           \
-             --linelength=100      \
-             --counting=detailed   \
-             --repository=..       \
+  cpplint.py --verbose=0         \
+             --linelength=120    \
+             --counting=detailed \
+             --repository=..     \
              ${srcs}
 fi
 

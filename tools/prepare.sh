@@ -103,6 +103,8 @@ git checkout tags/v1.8.2 -b v1.8.2
 
 # Install abseil
 
+# Install protobuf
+
 # Install Tensorflow
 git clone https://github.com/tensorflow/tensorflow.git
 pushd tensorflow
@@ -111,6 +113,7 @@ git checkout tags/v2.13.0 -b v2.13.0
 bazelisk build --jobs=10 --compilation_mode=opt --config=mkl tensorflow/tools/lib_package:libtensorflow
 mkdir -p ~/.local/lib/libtensorflow
 tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
+cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
 popd
 
 # Install onnxruntime
