@@ -4,8 +4,7 @@
 
 namespace infer_engine {
 
-// XLAEngine::XLAEngine() : session_(nullptr) {}
-XLAEngine::XLAEngine() {}
+XLAEngine::XLAEngine() : session_(nullptr) {}
 
 XLAEngine::~XLAEngine() {
   destroy();

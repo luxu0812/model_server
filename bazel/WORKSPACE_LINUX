@@ -20,14 +20,14 @@ workspace(name = "InferEngine")
 #------------------------------- gflags -------------------------------#
 new_local_repository(
   name = "com_github_gflags_gflags",
-  path = "/root/.local/lib/gflags",
+  path = "/${HOME}/.local/lib/gflags",
   build_file = "bazel/gflags.BUILD",
 )
 
 #-------------------------------- glog --------------------------------#
 new_local_repository(
   name = "com_github_google_glog",
-  path = "/root/.local/lib/glog",
+  path = "/${HOME}/.local/lib/glog",
   build_file = "bazel/glog.BUILD",
 )
 
@@ -69,18 +69,18 @@ new_local_repository(
 #---------------------------- libtensorflow ---------------------------#
 new_local_repository(
   name = "tensorflow",
-  path = "/root/.local/lib/libtensorflow",
+  path = "/${HOME}/.local/lib/libtensorflow",
   build_file = "bazel/libtensorflow.BUILD",
 )
 
 #----------------------------- onnxruntime ----------------------------#
 new_local_repository(
   name = "onnxruntime",
-  path = "/root/.local/lib/onnxruntime",
+  path = "/${HOME}/.local/lib/onnxruntime",
   build_file = "bazel/onnxruntime.BUILD",
 )
 new_local_repository(
   name = "onnxruntime_dnnl",
-  path = "/root/.local/lib/onnxruntime_dnnl",
+  path = "/${HOME}/.local/lib/onnxruntime_dnnl",
   build_file = "bazel/onnxruntime_dnnl.BUILD",
 )
