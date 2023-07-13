@@ -64,6 +64,7 @@ uname=`uname`
 if [[ "${uname}" == "Darwin" ]]; then
   cp bazel/WORKSPACE_MACOS ./WORKSPACE
 elif [[ "${uname}" == "Linux" ]]; then
+  cp bazel/bazelrc_linux ./.bazelrc
   cp bazel/WORKSPACE_LINUX ./WORKSPACE
   HOME_PATH=$(echo ~)
   sed -i "s|\${HOME}|${HOME}|g" WORKSPACE
