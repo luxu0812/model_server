@@ -105,6 +105,7 @@ git checkout tags/v1.8.2 -b v1.8.2
 
 # Install protobuf
 
+
 # Install Tensorflow
 git clone https://github.com/tensorflow/tensorflow.git
 pushd tensorflow
