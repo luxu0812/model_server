@@ -39,3 +39,7 @@ bazel-*
 
 # MacOS
 .DS_Store
+
+# Temporary files for building
+WORKSPACE
+.bazelrc
