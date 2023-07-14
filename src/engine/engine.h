@@ -8,6 +8,9 @@
 
 namespace infer_engine {
 
+const char kBrandTF[]   = "TensorFlow";
+const char kBrandONNX[] = "ONNX";
+
 class Engine {
  public:
   explicit Engine(const ModelSpec& model_spec) : model_spec_(model_spec) {}
@@ -16,6 +19,9 @@ class Engine {
   Engine() = delete;
   Engine& operator=(const Engine&) = delete;
   Engine(const Engine&) = delete;
+
+  // Get brand of engine
+  virtual std::string brand() = 0;
 
   // Perform inference
   virtual void infer() = 0;
@@ -26,17 +32,13 @@ class Engine {
  protected:
   // Initialize engine
   void init() {
-    load_graph();
+    load();
     build();
     create_session();
   }
 
-  // Destroy engine
-  void destroy() {
-  }
-
   // Load the TensorFlow graph from the .pb file
-  virtual void load_graph() = 0;
+  virtual void load() = 0;
 
   // Build engine
   virtual void build() = 0;

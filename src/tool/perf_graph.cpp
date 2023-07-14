@@ -19,13 +19,19 @@ int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
 
   try {
-    infer_engine::ModelSpec model_spec {
+    infer_engine::ModelSpec tf_model_spec {
       .name = "test",
       .version = "1.0.0",
       .graph_file = "/Users/xu.lu/Downloads/graph_final.pb"
     };
+    infer_engine::TFEngine tf_engine(tf_model_spec);
 
-    infer_engine::TFEngine tf_engine(model_spec);
+    infer_engine::ModelSpec onnx_model_spec {
+      .name = "test",
+      .version = "1.0.0",
+      .graph_file = "/Users/xu.lu/Downloads/model.onnx"
+    };
+    infer_engine::ONNXEngine onnx_engine(onnx_model_spec);
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
   } catch (...) {

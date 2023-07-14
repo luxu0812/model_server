@@ -18,6 +18,9 @@ class ONNXEngine : public Engine {
   ONNXEngine& operator=(const ONNXEngine&) = delete;
   ONNXEngine(const ONNXEngine&) = delete;
 
+  // Get brand of engine
+  std::string brand() override;
+
   // Perform inference using the ONNX runtime
   void infer() override;
 
@@ -26,7 +29,7 @@ class ONNXEngine : public Engine {
 
  protected:
   // Load the TensorFlow graph from the .pb file
-  void load_graph() override;
+  void load() override;
 
   // build engine
   void build() override;
@@ -35,7 +38,8 @@ class ONNXEngine : public Engine {
   void create_session() override;
 
  private:
-  Ort::Session* session_;
+  Ort::Env     *env_;
+  Ort::Session *session_;
 };
 
 }  // namespace infer_engine

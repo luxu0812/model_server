@@ -42,16 +42,19 @@ TFEngine::~TFEngine() {
           + model_spec_.brief() + "] " + "Failed to delete session: " + std::string(TF_Message(tf_status));
         throw std::runtime_error(err_msg);
       }
+      session_ = nullptr;
       LOG(INFO) << "[" << model_spec_.brief() << "] Session deleted";
     }
 
     if (nullptr != graph_) {
       TF_DeleteGraph(graph_);
+      graph_ = nullptr;
       LOG(INFO) << "[" << model_spec_.brief() << "] Graph deleted";
     }
 
     if (nullptr != graph_buffer_) {
       TF_DeleteBuffer(graph_buffer_);
+      graph_buffer_ = nullptr;
       LOG(INFO) << "[" << model_spec_.brief() << "] Graph buffer deleted";
     }
   } catch (const std::exception& e) {
@@ -59,6 +62,10 @@ TFEngine::~TFEngine() {
   } catch (...) {
     LOG(ERROR) << "Unknown exception";
   }
+}
+
+std::string TFEngine::brand() {
+  return kBrandTF;
 }
 
 void TFEngine::infer() {
@@ -112,7 +119,7 @@ void TFEngine::run_session(TF_Buffer *tf_run_opts, TF_Buffer *tf_metadata) {
   }
 }
 
-void TFEngine::load_graph() {
+void TFEngine::load() {
   const std::string& graph_file = model_spec_.graph_file;
   std::ifstream file(graph_file, std::ios::binary | std::ios::ate);
 

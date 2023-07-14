@@ -18,6 +18,9 @@ class TFEngine : public Engine {
   TFEngine& operator=(const TFEngine&) = delete;
   TFEngine(const TFEngine&) = delete;
 
+  // Get brand of engine
+  std::string brand() override;
+
   // Perform inference using the TF runtime
   void infer() override;
 
@@ -26,7 +29,7 @@ class TFEngine : public Engine {
 
  protected:
   // Load the TensorFlow graph from the .pb file
-  void load_graph() override;
+  void load() override;
 
   // Build engine
   void build() override;

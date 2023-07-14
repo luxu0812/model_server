@@ -1,37 +1,41 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
 #include <vector>
-
+#include "glog/logging.h"
 #include "infer_engine/src/engine/onnx_engine.h"
 
 namespace infer_engine {
 
-ONNXEngine::ONNXEngine(const ModelSpec& model_spec) : Engine(model_spec), session_(nullptr) {
+ONNXEngine::ONNXEngine(const ModelSpec& model_spec) :
+  Engine(model_spec),
+  env_(nullptr),
+  session_(nullptr) {
   init();
 }
 
 ONNXEngine::~ONNXEngine() {
+  try {
+    if (nullptr != session_) {
+      delete session_;
+      session_ = nullptr;
+      LOG(INFO) << "[" << model_spec_.brief() << "] Session deleted";
+    }
+
+    if (nullptr != env_) {
+      delete env_;
+      env_ = nullptr;
+      LOG(INFO) << "[" << model_spec_.brief() << "] Env deleted";
+    }
+  } catch (const std::exception& e) {
+    LOG(ERROR) << e.what();
+  } catch (...) {
+    LOG(ERROR) << "Unknown exception";
+  }
 }
 
-// void ONNXEngine::init() {
-  // Initialize ONNX runtime specific resources
-  // e.g., Load ONNX runtime libraries, initialize ONNX context
-
-  // Create an ONNX session
-  // Ort::SessionOptions session_options;
-  // session_ = new Ort::Session(
-  //   Ort::Env(ORT_LOGGING_LEVEL_WARNING, "ONNXEngine"), "/path/to/model.onnx", session_options
-  // );  // NOLINT
-// }
-
-// void ONNXEngine::destroy() {
-  // Release any resources associated with ONNX runtime
-
-  // if (session_ != nullptr) {
-  //   delete session_;
-  //   session_ = nullptr;
-  // }
-// }
+std::string ONNXEngine::brand() {
+  return kBrandONNX;
+}
 
 void ONNXEngine::infer() {
   // Perform inference using the ONNX runtime
@@ -60,6 +64,30 @@ void ONNXEngine::infer() {
 
   // // Process the output tensors
   // // ...
+}
+
+void ONNXEngine::trace() {
+}
+
+void ONNXEngine::load() {
+  // Load the TensorFlow graph from the .pb file
+}
+
+void ONNXEngine::build() {
+  // build engine
+}
+
+void ONNXEngine::create_session() {
+  // create session
+  env_ = new Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "orttest");
+  Ort::SessionOptions onnx_session_opts;
+  onnx_session_opts.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+  // onnx_session_opts.DisablePerSessionThreads();
+  onnx_session_opts.SetIntraOpNumThreads(1);
+  onnx_session_opts.SetInterOpNumThreads(1);
+
+  session_ = new Ort::Session(*env_, model_spec_.graph_file.c_str(), onnx_session_opts);
+  LOG(INFO) << "[" << model_spec_.brief() << "] Session created";
 }
 
 }  // namespace infer_engine
