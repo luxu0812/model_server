@@ -15,14 +15,7 @@ std::string ONNXDNNLEngine::brand() {
 }
 
 void ONNXDNNLEngine::set_session_options() {
-  // set session options
-  env_ = new Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "orttest");
-
-  session_opts_ = new Ort::SessionOptions();
-  session_opts_->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
-  session_opts_->SetIntraOpNumThreads(1);
-  session_opts_->SetInterOpNumThreads(1);
-  // session_opts_->DisablePerSessionThreads();
+  ONNXEngine::set_session_options();
 
   bool enable_cpu_mem_arena = true;
   Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Dnnl(session_opts_, enable_cpu_mem_arena));
