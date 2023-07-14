@@ -9,6 +9,7 @@
 namespace infer_engine {
 
 const char kBrandTF[]       = "TensorFlow";
+const char kBrandTFGPU[]    = "TensorFlow-GPU";
 const char kBrandONNX[]     = "ONNX";
 const char kBrandONNXDNNL[] = "ONNX-DNNL";
 
