@@ -9,6 +9,7 @@ namespace infer_engine {
 ONNXEngine::ONNXEngine(const ModelSpec& model_spec) :
   Engine(model_spec),
   env_(nullptr),
+  session_opts_(nullptr),
   session_(nullptr) {
   init();
 }
@@ -77,16 +78,22 @@ void ONNXEngine::build() {
   // build engine
 }
 
+void ONNXEngine::set_session_options() {
+  // set session options
+  env_ = new Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "orttest");
+
+  session_opts_ = new Ort::SessionOptions();
+  session_opts_->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+  session_opts_->SetIntraOpNumThreads(1);
+  session_opts_->SetInterOpNumThreads(1);
+  // session_opts_->DisablePerSessionThreads();
+
+  LOG(INFO) << "[" << model_spec_.brief() << "] Session options set";
+}
+
 void ONNXEngine::create_session() {
   // create session
-  env_ = new Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "orttest");
-  Ort::SessionOptions onnx_session_opts;
-  onnx_session_opts.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
-  // onnx_session_opts.DisablePerSessionThreads();
-  onnx_session_opts.SetIntraOpNumThreads(1);
-  onnx_session_opts.SetInterOpNumThreads(1);
-
-  session_ = new Ort::Session(*env_, model_spec_.graph_file.c_str(), onnx_session_opts);
+  session_ = new Ort::Session(*env_, model_spec_.graph_file.c_str(), *session_opts_);
   LOG(INFO) << "[" << model_spec_.brief() << "] Session created";
 }
 

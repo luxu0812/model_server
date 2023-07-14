@@ -8,8 +8,9 @@
 
 namespace infer_engine {
 
-const char kBrandTF[]   = "TensorFlow";
-const char kBrandONNX[] = "ONNX";
+const char kBrandTF[]       = "TensorFlow";
+const char kBrandONNX[]     = "ONNX";
+const char kBrandONNXDNNL[] = "ONNX-DNNL";
 
 class Engine {
  public:
@@ -34,6 +35,7 @@ class Engine {
   void init() {
     load();
     build();
+    set_session_options();
     create_session();
   }
 
@@ -42,6 +44,9 @@ class Engine {
 
   // Build engine
   virtual void build() = 0;
+
+  // Set session options
+  virtual void set_session_options() = 0;
 
   // Create session
   virtual void create_session() = 0;

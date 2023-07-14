@@ -15,10 +15,10 @@ namespace infer_engine {
 
 TFEngine::TFEngine(const ModelSpec& model_spec) :
   Engine(model_spec),
-  session_(nullptr),
+  graph_buffer_(nullptr),
   graph_(nullptr),
-  graph_buffer_(nullptr) {
-  LOG(INFO) << "TFEngine::TFEngine()";
+  session_opts_(nullptr),
+  session_(nullptr) {
   init();
 }
 
@@ -44,6 +44,12 @@ TFEngine::~TFEngine() {
       }
       session_ = nullptr;
       LOG(INFO) << "[" << model_spec_.brief() << "] Session deleted";
+    }
+
+    if (nullptr != session_opts_) {
+      TF_DeleteSessionOptions(session_opts_);
+      session_opts_ = nullptr;
+      LOG(INFO) << "[" << model_spec_.brief() << "] Session options deleted";
     }
 
     if (nullptr != graph_) {
@@ -171,12 +177,10 @@ void TFEngine::build() {
   LOG(INFO) << "[" << model_spec_.brief() << "] Graph imported";
 }
 
-void TFEngine::create_session() {
+void TFEngine::set_session_options() {
   TF_Status *tf_status = TF_NewStatus();
-  TF_SessionOptions *tf_session_opts = TF_NewSessionOptions();
-  ScopeExitTask delete_tf_status([&tf_status, &tf_session_opts]() {
+  ScopeExitTask delete_tf_status([&tf_status] {
      TF_DeleteStatus(tf_status);
-     TF_DeleteSessionOptions(tf_session_opts);
   });
 
   tensorflow::OptimizerOptions tf_optimizer_opts;
@@ -192,14 +196,25 @@ void TFEngine::create_session() {
 
   std::string tf_session_conf_str;
   tf_session_conf.SerializeToString(&tf_session_conf_str);
-  TF_SetConfig(tf_session_opts, tf_session_conf_str.data(), tf_session_conf_str.size(), tf_status);
+
+  session_opts_ = TF_NewSessionOptions();
+  TF_SetConfig(session_opts_, tf_session_conf_str.data(), tf_session_conf_str.size(), tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + model_spec_.brief() + "] " + "Failed to set session config: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 
-  session_ = TF_NewSession(graph_, tf_session_opts, tf_status);
+  LOG(INFO) << "[" << model_spec_.brief() << "] Session options set";
+}
+
+void TFEngine::create_session() {
+  TF_Status *tf_status = TF_NewStatus();
+  ScopeExitTask delete_tf_status([&tf_status] {
+     TF_DeleteStatus(tf_status);
+  });
+
+  session_ = TF_NewSession(graph_, session_opts_, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + model_spec_.brief() + "] " + "Failed to create session: " + std::string(TF_Message(tf_status));

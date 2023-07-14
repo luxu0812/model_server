@@ -34,6 +34,9 @@ class TFEngine : public Engine {
   // Build engine
   void build() override;
 
+  // Set session options
+  void set_session_options() override;
+
   // Create session
   void create_session() override;
 
@@ -41,9 +44,10 @@ class TFEngine : public Engine {
   void run_session(TF_Buffer *tf_run_opts = nullptr, TF_Buffer *tf_metadata = nullptr);
 
  private:
-  TF_Session *session_;
-  TF_Graph   *graph_;
-  TF_Buffer  *graph_buffer_;
+  TF_Buffer         *graph_buffer_;
+  TF_Graph          *graph_;
+  TF_SessionOptions *session_opts_;
+  TF_Session        *session_;
 };
 
 }  // namespace infer_engine
