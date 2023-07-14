@@ -22,8 +22,8 @@ class TFEngine : public Engine {
   void infer() override;
 
  protected:
-  // read graph from file
-  void read_graph(const std::string &graph_file) override;
+  // Load the TensorFlow graph from the .pb file
+  void load_graph() override;
 
   // build engine
   void build() override;

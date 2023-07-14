@@ -26,20 +26,6 @@ TFEngine::~TFEngine() {
   destroy();
 }
 
-
-// void TFEngine::destroy() {
-  // Release any resources associated with TF runtime
-
-  // if (session_ != nullptr) {
-  //   tensorflow::Status status = session_->Close();
-  //   if (!status.ok()) {
-  //     return bool(status.error_message());
-  //   }
-  //   delete session_;
-  //   session_ = nullptr;
-  // }
-// }
-
 void TFEngine::infer() {
   // Perform inference using the TF runtime
 
@@ -59,12 +45,14 @@ void TFEngine::infer() {
   // }
 }
 
-void TFEngine::read_graph(const std::string &graph_file) {
+void TFEngine::load_graph() {
+  const std::string& graph_file = model_spec_.graph_file;
   std::ifstream file(graph_file, std::ios::binary | std::ios::ate);
 
   if (!file.is_open()) {
-    LOG(ERROR) << "Failed to open graph file: " << graph_file;
-    throw std::runtime_error("Failed to open graph file: " + graph_file);
+    const std::string& err_msg = "Failed to open graph file: " + graph_file;
+    LOG(ERROR) << err_msg;
+    throw std::runtime_error(err_msg);
   }
   ScopeExitTask close_file([&file]() { file.close(); });
 
@@ -74,8 +62,10 @@ void TFEngine::read_graph(const std::string &graph_file) {
   char *buffer_data = new char[size];
   if (!file.read(buffer_data, size)) {
     delete[] buffer_data;
-    LOG(ERROR) << "Failed to read graph file: " << graph_file;
-    throw std::runtime_error("Failed to open graph file: " + graph_file);
+
+    const std::string& err_msg = "Failed to read graph file: " + graph_file;
+    LOG(ERROR) << err_msg;
+    throw std::runtime_error(err_msg);
   }
 
   graph_buffer_ = new TF_Buffer();
@@ -97,8 +87,9 @@ void TFEngine::build() {
   graph_ = TF_NewGraph();
   TF_GraphImportGraphDef(graph_, graph_buffer_, tf_import_graph_def_opts, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
-    LOG(ERROR) << "Failed to import graph def: " << TF_Message(tf_status);
-    throw std::runtime_error("Failed to import graph def: " + std::string(TF_Message(tf_status)));
+    const std::string& err_msg = "Failed to import graph: " + std::string(TF_Message(tf_status));
+    LOG(ERROR) << err_msg;
+    throw std::runtime_error(err_msg);
   }
 }
 
@@ -125,7 +116,16 @@ void TFEngine::create_session() {
   tf_session_conf.SerializeToString(&tf_session_conf_str);
   TF_SetConfig(tf_session_opts, tf_session_conf_str.data(), tf_session_conf_str.size(), tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
-    LOG(ERROR) << "Failed to set session config: " << TF_Message(tf_status);
+    const std::string& err_msg = "Failed to set session config: " + std::string(TF_Message(tf_status));
+    LOG(ERROR) << err_msg;
+    throw std::runtime_error(err_msg);
+  }
+
+  session_ = TF_NewSession(graph_, tf_session_opts, tf_status);
+  if (TF_GetCode(tf_status) != TF_OK) {
+    const std::string& err_msg = "Failed to create sessoin: " + std::string(TF_Message(tf_status));
+    LOG(ERROR) << err_msg;
+    throw std::runtime_error(err_msg);
   }
 }
 

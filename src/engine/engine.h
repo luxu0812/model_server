@@ -23,22 +23,23 @@ class Engine {
  protected:
   // initialize the engine
   void init() {
-    read_graph(model_spec_.graph_file);
+    load_graph();
     build();
+    create_session();
   }
 
   // destroy the engine
   void destroy() {
   }
 
-  // read graph from file
-  virtual void read_graph(const std::string &graph_file) = 0;
+  // Load the TensorFlow graph from the .pb file
+  virtual void load_graph() = 0;
 
   // build engine
   virtual void build() = 0;
 
   // create session
-  virtual void create_session();
+  virtual void create_session() = 0;
 
   ModelSpec model_spec_;
 };
