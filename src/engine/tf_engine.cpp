@@ -2,7 +2,7 @@
 
 #include "infer_engine/src/engine/tf_engine.h"
 
-#include <iostream>
+// #include <iostream>
 #include <fstream>
 #include <string>
 
@@ -19,6 +19,7 @@ TFEngine::TFEngine(const ModelSpec& model_spec) :
   session_(nullptr),
   graph_(nullptr),
   graph_buffer_(nullptr) {
+  LOG(INFO) << "TFEngine::TFEngine()";
   init();
 }
 
@@ -137,6 +138,8 @@ void TFEngine::load_graph() {
   graph_buffer_->data_deallocator = [](void *data, size_t length) {
     delete[] static_cast<char*>(data);
   };
+
+  LOG(INFO) << "[" << model_spec_.brief() << "] " << "Graph file loaded: " << graph_file;
 }
 
 void TFEngine::build() {
@@ -154,6 +157,8 @@ void TFEngine::build() {
       + model_spec_.brief() + "] " + "Failed to import graph: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
+
+  LOG(INFO) << "[" << model_spec_.brief() << "] " << "Graph imported";
 }
 
 void TFEngine::create_session() {
@@ -190,6 +195,8 @@ void TFEngine::create_session() {
       + model_spec_.brief() + "] " + "Failed to create session: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
+
+  LOG(INFO) << "[" << model_spec_.brief() << "] " << "Session created";
 }
 
 }  // namespace infer_engine
