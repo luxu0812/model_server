@@ -31,10 +31,10 @@ class ONNXEngine : public Engine {
   // Load the TensorFlow graph from the .pb file
   void load() override;
 
-  // build engine
+  // Build engine
   void build() override;
 
-  // create session
+  // Create session
   void create_session() override;
 
  private:
