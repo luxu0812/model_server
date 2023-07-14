@@ -2,7 +2,6 @@
 
 #include "infer_engine/src/engine/tf_engine.h"
 
-// #include <iostream>
 #include <fstream>
 #include <string>
 
@@ -35,6 +34,7 @@ TFEngine::~TFEngine() {
           + model_spec_.brief() + "] " + "Failed to close session: " + std::string(TF_Message(tf_status));
         throw std::runtime_error(err_msg);
       }
+      LOG(INFO) << "[" << model_spec_.brief() << "] Session closed";
 
       TF_DeleteSession(session_, tf_status);
       if (TF_GetCode(tf_status) != TF_OK) {
@@ -42,14 +42,17 @@ TFEngine::~TFEngine() {
           + model_spec_.brief() + "] " + "Failed to delete session: " + std::string(TF_Message(tf_status));
         throw std::runtime_error(err_msg);
       }
+      LOG(INFO) << "[" << model_spec_.brief() << "] Session deleted";
     }
 
     if (nullptr != graph_) {
       TF_DeleteGraph(graph_);
+      LOG(INFO) << "[" << model_spec_.brief() << "] Graph deleted";
     }
 
     if (nullptr != graph_buffer_) {
       TF_DeleteBuffer(graph_buffer_);
+      LOG(INFO) << "[" << model_spec_.brief() << "] Graph buffer deleted";
     }
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
@@ -139,7 +142,7 @@ void TFEngine::load_graph() {
     delete[] static_cast<char*>(data);
   };
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] " << "Graph file loaded: " << graph_file;
+  LOG(INFO) << "[" << model_spec_.brief() << "] Graph file loaded: " << graph_file;
 }
 
 void TFEngine::build() {
@@ -158,7 +161,7 @@ void TFEngine::build() {
     throw std::runtime_error(err_msg);
   }
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] " << "Graph imported";
+  LOG(INFO) << "[" << model_spec_.brief() << "] Graph imported";
 }
 
 void TFEngine::create_session() {
@@ -196,7 +199,7 @@ void TFEngine::create_session() {
     throw std::runtime_error(err_msg);
   }
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] " << "Session created";
+  LOG(INFO) << "[" << model_spec_.brief() << "] Session created";
 }
 
 }  // namespace infer_engine
