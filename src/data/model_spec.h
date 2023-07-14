@@ -1,4 +1,4 @@
-// Copyright 2023 zh.luxu1986@outlook.com
+// Copyright 2023 zh.luxu1986@gmail.com
 
 #ifndef INFER_ENGINE_SRC_DATA_MODEL_SPEC_H_
 #define INFER_ENGINE_SRC_DATA_MODEL_SPEC_H_
@@ -14,8 +14,11 @@ struct ModelSpec {
   std::string meta_file;
 
   std::string to_string() {
-    return "name: " + name + ", version: " + version + ", graph_file: " + graph_file +
-           ", meta_file: " + meta_file;
+    return "name: " + name + ", version: " + version + ", graph_file: " + graph_file + ", meta_file: " + meta_file;
+  }
+
+  std::string brief() {
+    return name + ":" + version;
   }
 };
 

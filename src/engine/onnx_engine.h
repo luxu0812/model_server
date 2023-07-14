@@ -18,8 +18,11 @@ class ONNXEngine : public Engine {
   ONNXEngine& operator=(const ONNXEngine&) = delete;
   ONNXEngine(const ONNXEngine&) = delete;
 
-  // perform inference
+  // Perform inference using the ONNX runtime
   void infer() override;
+
+  // Perform inference with trace using the ONNX runtime
+  void trace() override;
 
  protected:
   // Load the TensorFlow graph from the .pb file

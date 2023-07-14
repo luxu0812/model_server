@@ -7,7 +7,7 @@ cc_library(
     "include",
   ],
   srcs = [
-    "lib/libonnxruntime.dylib",
+    "lib/libonnxruntime.1.15.0.dylib",
   ],
   visibility = ["//visibility:public"],
 )

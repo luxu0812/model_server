@@ -18,18 +18,24 @@ class TFEngine : public Engine {
   TFEngine& operator=(const TFEngine&) = delete;
   TFEngine(const TFEngine&) = delete;
 
-  // perform inference
+  // Perform inference using the TF runtime
   void infer() override;
+
+  // Perform inference with trace using the TF runtime
+  void trace() override;
 
  protected:
   // Load the TensorFlow graph from the .pb file
   void load_graph() override;
 
-  // build engine
+  // Build engine
   void build() override;
 
-  // create session
+  // Create session
   void create_session() override;
+
+  // Run session
+  void run_session(TF_Buffer *tf_run_opts = nullptr, TF_Buffer *tf_metadata = nullptr);
 
  private:
   TF_Session *session_;

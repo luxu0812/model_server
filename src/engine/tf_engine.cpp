@@ -16,33 +16,96 @@ namespace infer_engine {
 
 TFEngine::TFEngine(const ModelSpec& model_spec) :
   Engine(model_spec),
-  session_(),
-  graph_(),
-  graph_buffer_() {
+  session_(nullptr),
+  graph_(nullptr),
+  graph_buffer_(nullptr) {
   init();
 }
 
 TFEngine::~TFEngine() {
-  destroy();
+  try {
+    if (nullptr != session_) {
+      TF_Status *tf_status = TF_NewStatus();
+      ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
+
+      TF_CloseSession(session_, tf_status);
+      if (TF_GetCode(tf_status) != TF_OK) {
+        const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+          + model_spec_.brief() + "] " + "Failed to close session: " + std::string(TF_Message(tf_status));
+        throw std::runtime_error(err_msg);
+      }
+
+      TF_DeleteSession(session_, tf_status);
+      if (TF_GetCode(tf_status) != TF_OK) {
+        const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+          + model_spec_.brief() + "] " + "Failed to delete session: " + std::string(TF_Message(tf_status));
+        throw std::runtime_error(err_msg);
+      }
+    }
+
+    if (nullptr != graph_) {
+      TF_DeleteGraph(graph_);
+    }
+
+    if (nullptr != graph_buffer_) {
+      TF_DeleteBuffer(graph_buffer_);
+    }
+  } catch (const std::exception& e) {
+    LOG(ERROR) << e.what();
+  } catch (...) {
+    LOG(ERROR) << "Unknown exception";
+  }
 }
 
 void TFEngine::infer() {
-  // Perform inference using the TF runtime
+  run_session();
+}
 
-  // Load the TensorFlow graph from the .pb file
-  // tensorflow::GraphDef graph_def;
-  // tensorflow::Status status = tensorflow::ReadBinaryProto(
-  //   tensorflow::Env::Default(), "/path/to/graph.pb", &graph_def
-  // );  // NOLINT
-  // if (!status.ok()) {
-  //   return bool(status.error_message());
-  // }
+void TFEngine::trace() {
+  tensorflow::RunOptions tf_run_opts;
+  tf_run_opts.set_trace_level(tensorflow::RunOptions_TraceLevel_FULL_TRACE);
+  std::string tf_run_opts_str;
+  tf_run_opts.SerializeToString(&tf_run_opts_str);
+  TF_Buffer *tf_run_opts_data = TF_NewBufferFromString(
+    reinterpret_cast<void*>(tf_run_opts_str.data()), tf_run_opts_str.size()
+  );  // NOLINT
+  ScopeExitTask delete_tf_run_opts_data([&tf_run_opts_data]() { TF_DeleteBuffer(tf_run_opts_data); });
 
-  // Add the graph to the TensorFlow session
-  // status = session_->Create(graph_def);
-  // if (!status.ok()) {
-  //   return bool(status.error_message());
-  // }
+  TF_Buffer *tf_metadata = TF_NewBuffer();
+  ScopeExitTask delete_tf_metadata([&tf_metadata]() { TF_DeleteBuffer(tf_metadata); });
+
+  run_session(tf_run_opts_data, tf_metadata);
+
+  static std::mutex trace_data_mtx;
+  static std::atomic<int> trace_data_index = 0;
+  std::lock_guard<std::mutex> lock(trace_data_mtx);
+  trace_data_index.fetch_add(1);
+  std::string trace_data_str(reinterpret_cast<const char*>(tf_metadata->data), tf_metadata->length);
+  std::ofstream ofs("trace_data_" + std::to_string(trace_data_index.load()) + ".pb");
+  ofs << trace_data_str;
+  ofs.close();
+}
+
+void TFEngine::run_session(TF_Buffer *tf_run_opts, TF_Buffer *tf_metadata) {
+  TF_Output *inputs = nullptr, *outputs = nullptr;
+  TF_Tensor **input_tensors = nullptr, **output_tensors = nullptr;
+  int n_inputs = 0, n_outputs = 0;
+
+  TF_Status *tf_status = TF_NewStatus();
+  ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
+
+  TF_SessionRun(
+    session_, tf_run_opts,
+    inputs, input_tensors, n_inputs,
+    outputs, output_tensors, n_outputs,
+    nullptr, 0, tf_metadata, tf_status
+  );  // NOLINT
+
+  if (TF_GetCode(tf_status) != TF_OK) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to run session: " + std::string(TF_Message(tf_status));
+    throw std::runtime_error(err_msg);
+  }
 }
 
 void TFEngine::load_graph() {
@@ -50,8 +113,8 @@ void TFEngine::load_graph() {
   std::ifstream file(graph_file, std::ios::binary | std::ios::ate);
 
   if (!file.is_open()) {
-    const std::string& err_msg = "Failed to open graph file: " + graph_file;
-    LOG(ERROR) << err_msg;
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to open graph file: " + graph_file;
     throw std::runtime_error(err_msg);
   }
   ScopeExitTask close_file([&file]() { file.close(); });
@@ -63,8 +126,8 @@ void TFEngine::load_graph() {
   if (!file.read(buffer_data, size)) {
     delete[] buffer_data;
 
-    const std::string& err_msg = "Failed to read graph file: " + graph_file;
-    LOG(ERROR) << err_msg;
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to read graph file: " + graph_file;
     throw std::runtime_error(err_msg);
   }
 
@@ -87,8 +150,8 @@ void TFEngine::build() {
   graph_ = TF_NewGraph();
   TF_GraphImportGraphDef(graph_, graph_buffer_, tf_import_graph_def_opts, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
-    const std::string& err_msg = "Failed to import graph: " + std::string(TF_Message(tf_status));
-    LOG(ERROR) << err_msg;
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to import graph: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 }
@@ -116,15 +179,15 @@ void TFEngine::create_session() {
   tf_session_conf.SerializeToString(&tf_session_conf_str);
   TF_SetConfig(tf_session_opts, tf_session_conf_str.data(), tf_session_conf_str.size(), tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
-    const std::string& err_msg = "Failed to set session config: " + std::string(TF_Message(tf_status));
-    LOG(ERROR) << err_msg;
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to set session config: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 
   session_ = TF_NewSession(graph_, tf_session_opts, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
-    const std::string& err_msg = "Failed to create sessoin: " + std::string(TF_Message(tf_status));
-    LOG(ERROR) << err_msg;
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to create session: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 }

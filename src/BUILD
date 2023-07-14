@@ -67,6 +67,7 @@ cc_library(
     ":util",
     ":data",
     "@com_github_google_glog//:glog",
+    "@com_google_protobuf//:protobuf",
     "@tensorflow//:tensorflow",
     "@onnxruntime//:onnxruntime",
   ],
@@ -74,4 +75,18 @@ cc_library(
   include_prefix = "infer_engine/src/engine",
   copts = copts,
   visibility = ["//visibility:public"],
+)
+
+cc_binary(
+  name = "perf_graph",
+  srcs = [
+    "tool/perf_graph.cpp",
+  ],
+  deps = [
+    ":engine",
+    "@com_github_google_glog//:glog",
+    "@com_github_gflags_gflags//:gflags",
+  ],
+  copts = copts,
+  # linkopts = ["-Wl,-rpath,$ORIGIN/../lib"],
 )

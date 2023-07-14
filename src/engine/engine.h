@@ -11,34 +11,37 @@ namespace infer_engine {
 class Engine {
  public:
   explicit Engine(const ModelSpec& model_spec) : model_spec_(model_spec) {}
-  ~Engine();
+  ~Engine() {}
 
   Engine() = delete;
   Engine& operator=(const Engine&) = delete;
   Engine(const Engine&) = delete;
 
-  // perform inference
+  // Perform inference
   virtual void infer() = 0;
 
+  // Perform inference with trace
+  virtual void trace() = 0;
+
  protected:
-  // initialize the engine
+  // Initialize engine
   void init() {
     load_graph();
     build();
     create_session();
   }
 
-  // destroy the engine
+  // Destroy engine
   void destroy() {
   }
 
   // Load the TensorFlow graph from the .pb file
   virtual void load_graph() = 0;
 
-  // build engine
+  // Build engine
   virtual void build() = 0;
 
-  // create session
+  // Create session
   virtual void create_session() = 0;
 
   ModelSpec model_spec_;

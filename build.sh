@@ -75,7 +75,7 @@ HOME_PATH=$(echo ~)
 sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
 #----------------------------------- build -----------------------------------#
-bazelisk build //src:engine \
-  --jobs=10                 \
-  --cxxopt='-std=c++17'     \
-  --compilation_mode opt
+bazelisk run //src:perf_graph \
+  --jobs=10                   \
+  --cxxopt='-std=c++17'       \
+  --compilation_mode dbg

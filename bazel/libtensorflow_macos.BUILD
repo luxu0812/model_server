@@ -6,7 +6,10 @@ cc_library(
   includes = [
     "include",
   ],
-  srcs = ["lib/libtensorflow.dylib", "lib/libtensorflow_framework.dylib"],
+  srcs = [
+    "lib/libtensorflow.2.dylib",
+    "lib/libtensorflow_framework.2.dylib"
+  ],
   deps = [
     "@com_google_protobuf//:protobuf",
   ],

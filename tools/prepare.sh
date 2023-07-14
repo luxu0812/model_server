@@ -86,7 +86,7 @@ git clone https://github.com/google/glog.git
 pushd glog
 git checkout tags/v0.6.0 -b v0.6.0
 mkdir build
-cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -S . -B build
 cmake --build build -j10
 cmake --build build --target install
 popd
@@ -117,10 +117,22 @@ tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local
 cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
 cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow/include/tensorflow/core
 cp -r bazel-bin/tensorflow/tsl ~/.local/lib/libtensorflow/include/tensorflow
-mkdir -p  ~/.local/lib/protobuf
-cp -r bazel-tensorflow/external/com_google_protobuf/src ~/.local/lib/protobuf/include
-cp -r bazel-bin/external/com_google_absl ~/.local/lib/absl
-cp -r bazel-bin/external/com_github_grpc_grpc ~/.local/lib/grpc
+popd
+
+# Install zlib
+cp -r tensorflow/bazel-tensorflow/external/zlib ./zlib
+pushd zlib
+./configure --prefix=~/.local/lib/zlib
+make -j10 && make install
+popd
+
+# Install protobuf
+cp -r tensorflow/bazel-tensorflow/external/com_google_protobuf ./protobuf
+pushd protobuf
+mkdir build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/protobuf -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake --build build -j10
+cmake --build build --target install
 popd
 
 # Install onnxruntime
