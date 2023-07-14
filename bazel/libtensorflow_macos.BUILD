@@ -6,10 +6,9 @@ cc_library(
   includes = [
     "include",
   ],
-  # srcs = glob([
-  #   "include/**/*.cc",
-  #   "include/**/*.cpp",
-  # ]) + ["lib/libtensorflow.dylib", "lib/libtensorflow_framework.dylib"],
   srcs = ["lib/libtensorflow.dylib", "lib/libtensorflow_framework.dylib"],
+  deps = [
+    "@com_google_protobuf//:protobuf",
+  ],
   visibility = ["//visibility:public"],
 )

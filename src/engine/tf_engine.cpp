@@ -110,19 +110,19 @@ void TFEngine::create_session() {
      TF_DeleteSessionOptions(tf_session_opts);
   });
 
-  tensorflow OptimizerOptions tf_optimizer_opts;
+  tensorflow::OptimizerOptions tf_optimizer_opts;
   tf_optimizer_opts.set_do_constant_folding(true);
   tf_optimizer_opts.set_do_function_inlining(true);
-  tf_optimizer_opts.set_opt_level(tf_graph::OptimizerOptions_Level_L1);
-  tf_optimizer_opts.set_global_jit_level(tf_graph::OptimizerOptions_GlobalJitLevel_ON_2);
+  tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L1);
+  tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_2);
 
-  tensorflow::ConfigProto tf_session_config;
-  tf_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
-  tf_conf.set_intra_op_parallelism_threads(1);
-  tf_conf.set_inter_op_parallelism_threads(1);
+  tensorflow::ConfigProto tf_session_conf;
+  tf_session_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
+  tf_session_conf.set_intra_op_parallelism_threads(1);
+  tf_session_conf.set_inter_op_parallelism_threads(1);
 
-  std::string tf_session_config_str;
-  tf_conf.SerializeToString(&tf_session_conf_str);
+  std::string tf_session_conf_str;
+  tf_session_conf.SerializeToString(&tf_session_conf_str);
   TF_SetConfig(tf_session_opts, tf_session_conf_str.data(), tf_session_conf_str.size(), tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     LOG(ERROR) << "Failed to set session config: " << TF_Message(tf_status);

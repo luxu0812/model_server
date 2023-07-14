@@ -53,11 +53,11 @@ new_local_repository(
 # )
 
 #------------------------------ protobuf ------------------------------#
-# new_local_repository(
-#   name = "com_google_protobuf",
-#   path = "/opt/homebrew/Cellar/protobuf/21.12",
-#   build_file = "bazel/protobuf.BUILD",
-# )
+new_local_repository(
+  name = "com_google_protobuf",
+  path = "${HOME}/.local/lib/protobuf",
+  build_file = "bazel/protobuf.BUILD",
+)
 
 #-------------------------------- eigen -------------------------------#
 # new_local_repository(

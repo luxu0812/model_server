@@ -115,6 +115,12 @@ bazelisk build --jobs=10 --compilation_mode=opt --config=mkl tensorflow/tools/li
 mkdir -p ~/.local/lib/libtensorflow
 tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
 cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
+cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow/include/tensorflow/core
+cp -r bazel-bin/tensorflow/tsl ~/.local/lib/libtensorflow/include/tensorflow
+mkdir -p  ~/.local/lib/protobuf
+cp -r bazel-tensorflow/external/com_google_protobuf/src ~/.local/lib/protobuf/include
+cp -r bazel-bin/external/com_google_absl ~/.local/lib/absl
+cp -r bazel-bin/external/com_github_grpc_grpc ~/.local/lib/grpc
 popd
 
 # Install onnxruntime
