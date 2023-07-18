@@ -3,6 +3,7 @@ cc_test(
   srcs = ["engine/test_tf_engine.cpp"],
   deps = [
     "@//src:engine",
+    "@com_github_gflags_gflags//:gflags",
     "@com_github_google_glog//:glog",
     "@com_google_googletest//:gtest",
   ],
@@ -11,6 +12,7 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
+  timeout = "short",
 )
 
 cc_test(
@@ -28,4 +30,5 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
+  timeout = "short",
 )
