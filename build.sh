@@ -75,7 +75,8 @@ HOME_PATH=$(echo ~)
 sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
 #----------------------------------- build -----------------------------------#
-bazelisk run //src:perf_graph \
-  --jobs=10                   \
-  --cxxopt='-std=c++17'       \
+bazelisk build //src:perf_graph \
+  --jobs=10                     \
+  --cxxopt='-std=c++17'         \
   --compilation_mode dbg
+./bazel-bin/src/perf_graph
