@@ -139,6 +139,17 @@ cmake --build build -j10
 cmake --build build --target install
 popd
 
+# Install googletest
+git clone https://github.com/google/googletest.git
+pushd googletest
+git checkout tags/v1.13.0 -b v1.13.0
+mkdir build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake --build build -j10
+cmake --build build --target install
+popd
+
+
 # Install onnxruntime
 git clone https://github.com/microsoft/onnxruntime.git # or (https://github.com/intel/onnxruntime.git)
 pushd onnxruntime

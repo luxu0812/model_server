@@ -22,16 +22,16 @@ int main(int argc, char **argv) {
     infer_engine::ModelSpec tf_model_spec {
       .name = "test",
       .version = "1.0.0",
-      .graph_file = "data/model1/graph.pb",
-      .meta_file = "data/model1/graph_meta.json"
+      .graph_file = "test/data/model1/graph.pb",
+      .meta_file = "test/data/model1/graph_meta.json"
     };
     infer_engine::TFEngine tf_engine(tf_model_spec);
 
     infer_engine::ModelSpec onnx_model_spec {
       .name = "test",
       .version = "1.0.0",
-      .graph_file = "data/model1/graph.onnx",
-      .meta_file = "data/model1/graph_meta.json"
+      .graph_file = "test/data/model1/graph.onnx",
+      .meta_file = "test/data/model1/graph_meta.json"
     };
     infer_engine::ONNXEngine onnx_engine(onnx_model_spec);
   } catch (const std::exception& e) {

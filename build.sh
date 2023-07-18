@@ -74,9 +74,19 @@ fi
 HOME_PATH=$(echo ~)
 sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
+#----------------------------------- test ------------------------------------#
+# bazelisk test //test:test_tf_engine \
+#    --compilation_mode dbg           \
+#    --jobs=10                        \
+#    --cxxopt='-std=c++17'            \
+#    --test_output=all                \
+#    --verbose_failures               \
+#    --sandbox_debug                  \
+#    --test_verbose_timeout_warnings
+
 #----------------------------------- build -----------------------------------#
 bazelisk build //src:perf_graph \
   --jobs=10                     \
   --cxxopt='-std=c++17'         \
-  --compilation_mode dbg
+  --compilation_mode opt
 ./bazel-bin/src/perf_graph
