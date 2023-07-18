@@ -75,23 +75,23 @@ HOME_PATH=$(echo ~)
 sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
 #----------------------------------- test ------------------------------------#
-# bazelisk test //test:test_tf_engine   \
-#    --compilation_mode dbg             \
-#    --jobs=10                          \
-#    --cxxopt='-std=c++17'              \
-#    --test_output=all                  \
-#    --verbose_failures                 \
-#    --sandbox_debug                    \
-#    --test_verbose_timeout_warnings
+bazelisk test //test:test_tf_engine   \
+   --compilation_mode dbg             \
+   --jobs=10                          \
+   --cxxopt='-std=c++17'              \
+   --test_output=all                  \
+   --verbose_failures                 \
+   --sandbox_debug                    \
+   --test_verbose_timeout_warnings
 
-# bazelisk test //test:test_onnx_engine \
-#    --compilation_mode dbg             \
-#    --jobs=10                          \
-#    --cxxopt='-std=c++17'              \
-#    --test_output=all                  \
-#    --verbose_failures                 \
-#    --sandbox_debug                    \
-#    --test_verbose_timeout_warnings
+bazelisk test //test:test_onnx_engine \
+   --compilation_mode dbg             \
+   --jobs=10                          \
+   --cxxopt='-std=c++17'              \
+   --test_output=all                  \
+   --verbose_failures                 \
+   --sandbox_debug                    \
+   --test_verbose_timeout_warnings
 
 #----------------------------------- build -----------------------------------#
 # bazelisk build //src:perf_graph \

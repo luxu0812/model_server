@@ -3,9 +3,9 @@ cc_test(
   srcs = ["engine/test_tf_engine.cpp"],
   deps = [
     "@//src:engine",
-    "@com_github_gflags_gflags//:gflags",
-    "@com_github_google_glog//:glog",
     "@com_google_googletest//:gtest",
+    "@com_github_google_glog//:glog",
+    "@com_github_gflags_gflags//:gflags",
   ],
   data = [
     "data/model1/graph.pb",
@@ -20,13 +20,12 @@ cc_test(
   srcs = ["engine/test_onnx_engine.cpp"],
   deps = [
     "@//src:engine",
-    "@com_github_gflags_gflags//:gflags",
-    "@com_github_google_glog//:glog",
     "@com_google_googletest//:gtest",
+    "@com_github_google_glog//:glog",
+    "@com_github_gflags_gflags//:gflags",
   ],
   data = [
     "data/model1/graph.onnx",
-    "@com_github_gflags_gflags//:gflags",
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
