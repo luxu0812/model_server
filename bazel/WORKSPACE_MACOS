@@ -45,7 +45,7 @@ new_local_repository(
   build_file = "bazel/absl.BUILD" 
 )
 
-# ------------------------------  zlib  --------------------------------#
+#-------------------------------- zlib --------------------------------#
 new_local_repository(
   name = "com_github_madler_zlib",
   path = "${HOME}/.local/lib/zlib",
@@ -59,12 +59,12 @@ new_local_repository(
   build_file = "bazel/protobuf.BUILD",
 )
 
-#-------------------------------- eigen -------------------------------#
-# new_local_repository(
-#   name = "eigen",
-#   path = "/opt/homebrew/Cellar/eigen/3.4.0_1",
-#   build_file = "bazel/eigen.BUILD",
-# )
+#---------------------------- nlohmann_json ---------------------------#
+new_local_repository(
+  name = "nlohmann_json",
+  path = "${HOME}/.local/lib/nlohmann_json",
+  build_file = "bazel/nlohmann_json.BUILD",
+)
 
 #---------------------------- libtensorflow ---------------------------#
 new_local_repository(

@@ -165,3 +165,12 @@ pushd build/Linux/Release && make install && popd
   --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds"
 pushd build/Linux/Release && make install && popd
 popd
+
+# Install nlohmann json
+git clone https://github.com/nlohmann/json.git
+pushd json
+git checkout tags/v3.11.2 -b v3.11.2
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/nlohmann_json -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake --build build -j10
+cmake --build build --target install
+popd

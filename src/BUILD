@@ -44,8 +44,10 @@ cc_library(
     "data/return_status.cpp"
   ],
   deps = [
+    ":util",
     "@com_github_google_glog//:glog",
-    "@com_google_absl//:absl"
+    "@com_google_absl//:absl",
+    "@nlohmann_json//:nlohmann_json",
   ],
   strip_include_prefix = "data",
   include_prefix = "infer_engine/src/data",
