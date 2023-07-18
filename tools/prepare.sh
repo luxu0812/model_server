@@ -101,11 +101,6 @@ git clone https://github.com/google/benchmark.git
 pushd benchmark
 git checkout tags/v1.8.2 -b v1.8.2
 
-# Install abseil
-
-# Install protobuf
-
-
 # Install Tensorflow
 git clone https://github.com/tensorflow/tensorflow.git
 pushd tensorflow
@@ -131,6 +126,15 @@ cp -r tensorflow/bazel-tensorflow/external/com_google_protobuf ./protobuf
 pushd protobuf
 mkdir build
 cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/protobuf -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake --build build -j10
+cmake --build build --target install
+popd
+
+# Install abseil
+cp -r tensorflow/bazel-tensorflow/external/com_google_absl ./protobuf
+pushd com_google_absl
+mkdir build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -S . -B build
 cmake --build build -j10
 cmake --build build --target install
 popd

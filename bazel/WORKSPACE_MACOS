@@ -39,11 +39,11 @@ new_local_repository(
 # )
 
 #------------------------------- abseil -------------------------------#
-# new_local_repository(
-#   name = "com_google_absl",
-#   path = "/opt/homebrew/Cellar/abseil/20230125.3",
-#   build_file = "bazel/macos_absl.BUILD" 
-# )
+new_local_repository(
+  name = "com_google_absl",
+  path = "${HOME}/.local/lib/absl",
+  build_file = "bazel/absl.BUILD" 
+)
 
 # ------------------------------  zlib  --------------------------------#
 new_local_repository(

@@ -35,10 +35,16 @@ class Engine {
  protected:
   // Initialize engine
   void init() {
+    load_model_meta();
     load();
     build();
     set_session_options();
     create_session();
+  }
+
+  // Load model meta data
+  void load_model_meta() {
+    model_meta_.load(model_spec_.meta_file);
   }
 
   // Load the TensorFlow graph from the .pb file
@@ -54,6 +60,7 @@ class Engine {
   virtual void create_session() = 0;
 
   ModelSpec model_spec_;
+  ModelMeta model_meta_;
 };
 
 }  // namespace infer_engine
