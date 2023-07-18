@@ -38,7 +38,7 @@ std::string ONNXEngine::brand() {
   return kBrandONNX;
 }
 
-void ONNXEngine::infer() {
+void ONNXEngine::infer(const int32_t batch_size, const void *input, void *output) {
   // Perform inference using the ONNX runtime
 
   // // Prepare input tensors

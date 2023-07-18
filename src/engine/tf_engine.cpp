@@ -74,7 +74,7 @@ std::string TFEngine::brand() {
   return kBrandTF;
 }
 
-void TFEngine::infer() {
+void TFEngine::infer(const int32_t batch_size, const void *input, void *output) {
   run_session();
 }
 

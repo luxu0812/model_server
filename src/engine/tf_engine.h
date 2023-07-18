@@ -3,6 +3,7 @@
 #ifndef INFER_ENGINE_SRC_ENGINE_TF_ENGINE_H_
 #define INFER_ENGINE_SRC_ENGINE_TF_ENGINE_H_
 
+#include <stdint.h>
 #include <string>
 #include "tensorflow/c/c_api.h"
 #include "infer_engine/src/engine/engine.h"
@@ -22,7 +23,7 @@ class TFEngine : public Engine {
   std::string brand() override;
 
   // Perform inference using the TF runtime
-  void infer() override;
+  void infer(const int32_t batch_size, const void *input, void *output) override;
 
   // Perform inference with trace using the TF runtime
   void trace() override;

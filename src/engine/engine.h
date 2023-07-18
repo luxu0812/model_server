@@ -3,6 +3,7 @@
 #ifndef INFER_ENGINE_SRC_ENGINE_ENGINE_H_
 #define INFER_ENGINE_SRC_ENGINE_ENGINE_H_
 
+#include <stdint.h>
 #include <string>
 #include "infer_engine/src/data/model_spec.h"
 
@@ -26,7 +27,7 @@ class Engine {
   virtual std::string brand() = 0;
 
   // Perform inference
-  virtual void infer() = 0;
+  virtual void infer(const int32_t batch_size, const void *input, void *output) = 0;
 
   // Perform inference with trace
   virtual void trace() = 0;
