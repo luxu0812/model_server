@@ -54,12 +54,6 @@ source ${HOME}/.bashrc
 pyenv install 3.11.0
 pyenv global 3.11.0
 
-# Install by brew
-# curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
-# brew install gflags && cp -r /home/linuxbrew/.linuxbrew/Cellar/gflags ~/.local/lib
-# brew install glog && cp -r /home/linuxbrew/.linuxbrew/Cellar/glog ~/.local/lib
-# brew install libtensorflow && cp -r /home/linuxbrew/.linuxbrew/Cellar/libtensorflow/ ~/.local/lib
-
 # Install cmake
 wget https://github.com/Kitware/CMake/releases/download/v3.27.0-rc4/cmake-3.27.0-rc4.tar.gz
 tar zxvf cmake-3.27.0-rc4.tar.gz
@@ -82,14 +76,14 @@ cmake --build build --target install
 popd
 
 # Install glog
-# git clone https://github.com/google/glog.git
-# pushd glog
-# git checkout tags/v0.6.0 -b v0.6.0
-# mkdir build
-# cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -S . -B build
-# cmake --build build -j10
-# cmake --build build --target install
-# popd
+git clone https://github.com/google/glog.git
+pushd glog
+git checkout tags/v0.6.0 -b v0.6.0
+mkdir build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -S . -B build
+cmake --build build -j10
+cmake --build build --target install
+popd
 
 # Install googletest
 git clone https://github.com/google/googletest.git
