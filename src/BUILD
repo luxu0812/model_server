@@ -23,10 +23,14 @@ cc_library(
   name = "util",
   hdrs = [
     "util/functional/scope_exit_task.h",
+    "util/process/process_initiator.h"
   ],
   srcs = [
   ],
   deps = [
+    "@com_github_google_glog//:glog",
+    "@com_github_gflags_gflags//:gflags",
+    "@com_google_absl//:absl",
   ],
   strip_include_prefix = "util",
   include_prefix = "infer_engine/src/util",
@@ -86,6 +90,7 @@ cc_binary(
     "tool/perf_graph.cpp",
   ],
   deps = [
+    ":util",
     ":engine",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",

@@ -82,14 +82,14 @@ cmake --build build --target install
 popd
 
 # Install glog
-git clone https://github.com/google/glog.git
-pushd glog
-git checkout tags/v0.6.0 -b v0.6.0
-mkdir build
-cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -S . -B build
-cmake --build build -j10
-cmake --build build --target install
-popd
+# git clone https://github.com/google/glog.git
+# pushd glog
+# git checkout tags/v0.6.0 -b v0.6.0
+# mkdir build
+# cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -S . -B build
+# cmake --build build -j10
+# cmake --build build --target install
+# popd
 
 # Install googletest
 git clone https://github.com/google/googletest.git

@@ -1,0 +1,52 @@
+// Copyright 2023 zh.luxu1986@gmail.com
+
+#ifndef INFER_ENGINE_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_
+#define INFER_ENGINE_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_
+
+#include <signal.h>
+#include <stdlib.h>
+#include <execinfo.h>
+#include <functional>
+#include <vector>
+
+#include "gflags/gflags.h"
+#include "glog/logging.h"
+#include "absl/debugging/symbolize.h"
+#include "absl/debugging/failure_signal_handler.h"
+
+namespace infer_engine {
+
+const std::vector<int32_t> kExitSignals = {
+  SIGTERM, SIGSEGV, SIGINT, SIGILL, SIGABRT, SIGFPE
+};  // NOLINT
+
+void default_handler(int32_t signal) {
+  LOG(ERROR) << "process terminated by signal: " << signal;
+  exit(EXIT_FAILURE);
+}
+
+void init(
+  int32_t argc, char **argv, void (*signal_handler)(int32_t) = &default_handler
+) {
+  google::AllowCommandLineReparsing();
+  google::ParseCommandLineFlags(&argc, &argv, true);
+
+  FLAGS_logbufsecs = 0;
+  FLAGS_max_log_size = 1024;
+  FLAGS_minloglevel = google::INFO;
+  FLAGS_logtostdout = true;
+  google::InitGoogleLogging(argv[0]);
+
+  for (auto& sig : kExitSignals) {
+    signal(sig, signal_handler);
+  }
+
+  absl::InitializeSymbolizer(argv[0]);
+  absl::FailureSignalHandlerOptions signal_handler_options;
+  signal_handler_options.call_previous_handler = true;
+  absl::InstallFailureSignalHandler(signal_handler_options);
+}
+
+}  // namespace infer_engine
+
+#endif  // INFER_ENGINE_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_

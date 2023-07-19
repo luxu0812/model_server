@@ -2,6 +2,7 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
+#include "infer_engine/src/util/process/process_initiator.h"
 #include "infer_engine/src/engine/onnx_engine.h"
 
 TEST(ONNXEngine, LoadSuccess) {
@@ -35,15 +36,8 @@ TEST(ONNXEngine, LoadFailNonExistentMeta) {
 }
 
 int main (int argc, char **argv) {
-  google::AllowCommandLineReparsing();
-  google::ParseCommandLineFlags(&argc, &argv, true);
-
-  FLAGS_logbufsecs = 0;
-  FLAGS_max_log_size = 1024;
-  FLAGS_minloglevel = google::INFO;
-  FLAGS_logtostdout = true;
-  google::InitGoogleLogging(argv[0]);
-
+  infer_engine::init(argc, argv);
   testing::InitGoogleTest(&argc, argv);
+
   return RUN_ALL_TESTS();
 }
