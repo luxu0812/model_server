@@ -43,6 +43,7 @@ cc_library(
   hdrs = [
     "data/return_status.h",
     "data/model_spec.h",
+    "data/type.h"
   ],
   srcs = [
     "data/return_status.cpp"
