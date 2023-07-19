@@ -4,20 +4,34 @@
 #include "gtest/gtest.h"
 #include "infer_engine/src/engine/tf_engine.h"
 
-TEST(TFEngine, Load) {
-  try {
-    infer_engine::ModelSpec tf_model_spec {
-      .name = "test",
-      .version = "1.0.0",
-      .graph_file = "test/data/model1/graph.pb",
-      .meta_file = "test/data/model1/graph_meta.json"
-    };
-    infer_engine::TFEngine tf_engine(tf_model_spec);
-  } catch (const std::exception& e) {
-    LOG(ERROR) << e.what();
-  } catch (...) {
-    LOG(ERROR) << "Unknown exception";
-  }
+TEST(TFEngine, LoadSuccess) {
+  infer_engine::ModelSpec tf_model_spec {
+    .name = "model1",
+    .version = "1.0.0",
+    .graph_file = "test/data/model1/graph.pb",
+    .meta_file = "test/data/model1/graph_meta.json"
+  };
+  ASSERT_NO_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); });
+}
+
+TEST(TFEngine, LoadFailNonExistentGraph) {
+  infer_engine::ModelSpec tf_model_spec {
+    .name = "model1",
+    .version = "1.0.0",
+    .graph_file = "test/data/model1/non-existent.pb",
+    .meta_file = "test/data/model1/graph_meta.json"
+  };
+  ASSERT_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
+}
+
+TEST(TFEngine, LoadFailNonExistentMeta) {
+  infer_engine::ModelSpec tf_model_spec {
+    .name = "model1",
+    .version = "1.0.0",
+    .graph_file = "test/data/model1/graph.pb",
+    .meta_file = "test/data/model1/non-existent.json"
+  };
+  ASSERT_ANY_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); });
 }
 
 int main (int argc, char **argv) {

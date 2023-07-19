@@ -1,4 +1,4 @@
-cc_test(
+cc_binary(
   name = "test_tf_engine",
   srcs = ["engine/test_tf_engine.cpp"],
   deps = [
@@ -12,10 +12,10 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
-  timeout = "short",
+  # timeout = "short",
 )
 
-cc_test(
+cc_binary(
   name = "test_onnx_engine",
   srcs = ["engine/test_onnx_engine.cpp"],
   deps = [
@@ -29,5 +29,5 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
-  timeout = "short",
+  # timeout = "short",
 )

@@ -128,7 +128,6 @@ void TFEngine::run_session(TF_Buffer *tf_run_opts, TF_Buffer *tf_metadata) {
 void TFEngine::load() {
   const std::string& graph_file = model_spec_.graph_file;
   std::ifstream file(graph_file, std::ios::binary | std::ios::ate);
-
   if (!file.is_open()) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + model_spec_.brief() + "] " + "Failed to open graph file: " + graph_file;
