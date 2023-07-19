@@ -31,7 +31,7 @@ TEST(TFEngine, LoadFailNonExistentMeta) {
     .graph_file = "test/data/model1/graph.pb",
     .meta_file = "test/data/model1/non-existent.json"
   };
-  ASSERT_ANY_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); });
+  ASSERT_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
 }
 
 int main (int argc, char **argv) {
