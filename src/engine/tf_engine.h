@@ -92,7 +92,9 @@ class TFEngine : public Engine {
   // void print_graph_info();
 
  private:
-  std::shared_mutex mutex_;
+  std::shared_mutex engine_mtx_;
+  bool inited_;
+
   TFModelMeta tf_model_meta_;
 
   TF_Buffer         *graph_buffer_;

@@ -16,16 +16,20 @@ namespace infer_engine {
 
 TFEngine::TFEngine(const ModelSpec& model_spec) :
   Engine(model_spec),
+  engine_mtx_(),
+  inited_(false),
   graph_buffer_(nullptr),
   graph_(nullptr),
   session_opts_(nullptr),
   session_(nullptr) {
   init();
+  inited_ = true;
 }
 
 TFEngine::~TFEngine() {
+  std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  inited_ = false;
   try {
-    std::unique_lock<std::shared_mutex> lock(mutex_);
     if (nullptr != session_) {
       TF_Status *tf_status = TF_NewStatus();
       ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
@@ -77,17 +81,33 @@ std::string TFEngine::brand() {
 }
 
 void TFEngine::infer(const int32_t batch_size, const void *input, void *output) {
-  std::shared_lock<std::shared_mutex> lock(mutex_);
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
+
   run_session();
 }
 
 void TFEngine::infer(const BatchInstance& batch_instance, BatchScore *batch_score) {
-  std::shared_lock<std::shared_mutex> lock(mutex_);
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
   // Convert BatchInstance to TF_Output and TF_Tensor
 }
 
 void TFEngine::trace() {
-  std::shared_lock<std::shared_mutex> lock(mutex_);
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
 
   tensorflow::RunOptions tf_run_opts;
   tf_run_opts.set_trace_level(tensorflow::RunOptions_TraceLevel_FULL_TRACE);
@@ -105,7 +125,7 @@ void TFEngine::trace() {
 
   static std::mutex trace_data_mtx;
   static std::atomic<int> trace_data_index = 0;
-  std::lock_guard<std::mutex> trace_lock(trace_data_mtx);
+  std::lock_guard<std::mutex> lock(trace_data_mtx);
   trace_data_index.fetch_add(1);
   std::string trace_data_str(reinterpret_cast<const char*>(tf_metadata->data), tf_metadata->length);
   std::ofstream ofs("trace_data_" + std::to_string(trace_data_index.load()) + ".pb");
