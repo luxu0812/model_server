@@ -6,14 +6,22 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <functional>
 #include "tensorflow/c/c_api.h"
 #include "infer_engine/src/engine/engine.h"
 
 namespace infer_engine {
 
+struct TFTensorMeta {
+  TF_Output           *output = nullptr;
+  TF_DataType          data_type;
+  int32_t              num_dims;
+  std::vector<int64_t> shape;
+};
+
 struct TFModelMeta {
-  std::vector<TF_Operation *> input_ops;
-  std::vector<TF_Operation *> output_ops;
+  std::vector<TFTensorMeta> input_tensors;
+  std::vector<TFTensorMeta> output_tensors;
 };
 
 class TFEngine : public Engine {
@@ -53,6 +61,19 @@ class TFEngine : public Engine {
 
   // Run session
   void run_session(TF_Buffer *tf_run_opts = nullptr, TF_Buffer *tf_metadata = nullptr);
+
+  // Iterate through the operations in the graph
+  void iterate_through_operations(std::function<void(TF_Operation*)> do_something_with_operation);
+
+  // Get TFTensorMeta by TF_Operation name
+  void get_tf_tensor_meta_by_tf_operation_name(
+    const std::string& tf_operation_name, std::vector<TFTensorMeta> *tf_tensor_meta
+  );  // NOLINT
+
+  // Convert TF_Output to TFTensorMeta
+  void convert_tf_output_to_tf_tensor_meta(
+    const TF_Output& tf_output, TFTensorMeta *tf_tensor_meta
+  );  // NOLINT
 
   // Get input and output ops
   // void get_input_output_ops();

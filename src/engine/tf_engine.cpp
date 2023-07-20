@@ -232,6 +232,78 @@ void TFEngine::sub_init() {
   ScopeExitTask delete_tf_status([&tf_status] {
      TF_DeleteStatus(tf_status);
   });
+
+  for (const auto& tensor_info : model_meta_.input_shapes) {
+    const std::string& tensor_name = tensor_info.first;
+    const std::vector<int32_t>& tensor_shape = tensor_info.second;
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_tensors);
+  }
+
+  for (const auto& tensor_info : model_meta_.output_shapes) {
+    const std::string& tensor_name = tensor_info.first;
+    const std::vector<int32_t>& tensor_shape = tensor_info.second;
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_tensors);
+  }
+}
+
+// Iterate through the operations of a graph
+void TFEngine::iterate_through_operations(std::function<void(TF_Operation*)> do_something_with_operation) {
+  size_t pos = 0;
+  TF_Operation *oper;
+  while ((oper = TF_GraphNextOperation(graph_, &pos)) != nullptr) {
+    do_something_with_operation(oper);
+  }
+}
+
+// Get TFTensorMeta by TF_Operation name
+void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
+  const std::string& tf_operation_name,
+  std::vector<TFTensorMeta> *tf_tensor_meta
+) {
+  TF_Status *tf_status = TF_NewStatus();
+  ScopeExitTask delete_tf_status([&tf_status] {
+     TF_DeleteStatus(tf_status);
+  });
+
+  TF_Operation *tf_operation = TF_GraphOperationByName(graph_, tf_operation_name.c_str());
+  if (nullptr == tf_operation) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to get operation: " + tf_operation_name;
+    throw std::runtime_error(err_msg);
+  }
+
+  int32_t op_num_outputs = TF_OperationNumOutputs(tf_operation);
+  LOG(INFO) << "[" << model_spec_.brief() << "] Operation: " << tf_operation_name
+            << " (" << op_num_outputs << " outputs)";
+  for (int32_t i = 0; i < op_num_outputs; ++i) {
+    tf_tensor_meta->emplace_back();
+    convert_tf_output_to_tf_tensor_meta(TF_Output {tf_operation, i}, &tf_tensor_meta->back());
+  }
+}
+
+// Convert TF_Output to TFTensorMeta
+void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, TFTensorMeta *tf_tensor_meta) {
+  TF_Status *tf_status = TF_NewStatus();
+  ScopeExitTask delete_tf_status([&tf_status] {
+     TF_DeleteStatus(tf_status);
+  });
+
+  tf_tensor_meta->output = new TF_Output(tf_output);
+  tf_tensor_meta->data_type = TF_OperationOutputType(tf_output);
+  tf_tensor_meta->num_dims = TF_GraphGetTensorNumDims(graph_, tf_output, tf_status);
+  if (TF_GetCode(tf_status) != TF_OK) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to get tensor num dims: " + std::string(TF_Message(tf_status));
+    throw std::runtime_error(err_msg);
+  }
+
+  tf_tensor_meta->shape.resize(tf_tensor_meta->num_dims);
+  TF_GraphGetTensorShape(graph_, tf_output, tf_tensor_meta->shape.data(), tf_tensor_meta->num_dims, tf_status);
+  if (TF_GetCode(tf_status) != TF_OK) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + "Failed to get tensor shape: " + std::string(TF_Message(tf_status));
+    throw std::runtime_error(err_msg);
+  }
 }
 
 // void TFEngine::print_graph_info() {
