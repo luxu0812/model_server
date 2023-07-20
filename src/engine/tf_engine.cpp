@@ -101,23 +101,27 @@ void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
   }
 
   // Convert BatchInstance to TF_Output and TF_Tensor
-  int32_t batch_size = batch_instance->instances.size();
+  size_t batch_size = batch_instance->instances.size();
   std::vector<TF_Tensor*> input_tensors, output_tensors;
   for (auto& instance : batch_instance->instances) {
     for (auto& feature : instance.features) {
       const std::string& feature_name = feature.name;
-      const float *feature_value = feature.data.data();
+      void *feature_value = static_cast<void *>(feature.data.data());
 
       const auto it = tf_model_meta_.input_tensors.find(feature_name);
-      if (tf_model_meta_.input_tensors.contains(feature_name)) {
-        const int32_t& tensor_num_dims    = tf_model_meta_.input_tensors[feature_name].num_dims;
-        const int32_t& tensor_data_type   = tf_model_meta_.input_tensors[feature_name].data_type;
-        std::vector<int64_t> tensor_shape = tf_model_meta_.input_tensors[feature_name].shape;
-        tensor_shape[0] = batch_size;
+      if (tf_model_meta_.input_tensors.end() != it) {
+        const auto& tensor_num_dims  = it->second.num_dims;
+        const auto& tensor_data_type = it->second.data_type;
 
-        // TF_Tensor *tf_tensor = TF_NewTensor(
-        //   tensor_data_type, tensor_shape.data(), tensor_num_dims, , tensor_data_size);
-        // input_tensors.push_back(tf_tensor);
+        size_t tensor_data_size = it->second.instance_size * batch_size;
+        std::vector<int64_t> tensor_shape = it->second.shape;
+        tensor_shape[0] = static_cast<int64_t>(batch_size);
+
+        TF_Tensor *tf_tensor = TF_NewTensor(
+          tensor_data_type, tensor_shape.data(), tensor_num_dims, feature_value, tensor_data_size,
+          [](void*, size_t, void*) {}, nullptr
+        );  // NOLINT
+        input_tensors.push_back(tf_tensor);
       }
     }
   }
