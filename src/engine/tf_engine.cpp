@@ -387,7 +387,6 @@ std::string TFTensorMeta::to_string() {
     }
     absl::StrAppendFormat(&message, "%d", shape[i]);
   }
-  absl::StrAppendFormat(&message, "\n");
 
   return message;
 }
