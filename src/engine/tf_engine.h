@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <shared_mutex>
 #include "tensorflow/c/c_api.h"
 #include "infer_engine/src/engine/engine.h"
 
@@ -14,14 +15,23 @@ namespace infer_engine {
 
 struct TFTensorMeta {
   TF_Output           *output = nullptr;
+  std::string          operation_name;
+  std::string          operation_type;
+  int32_t              operation_num_inputs;
+  int32_t              operation_num_outputs;
   TF_DataType          data_type;
+  int32_t              data_size;
   int32_t              num_dims;
   std::vector<int64_t> shape;
+
+  std::string to_string();
 };
 
 struct TFModelMeta {
   std::vector<TFTensorMeta> input_tensors;
   std::vector<TFTensorMeta> output_tensors;
+
+  std::string to_string();
 };
 
 class TFEngine : public Engine {
@@ -82,6 +92,7 @@ class TFEngine : public Engine {
   // void print_graph_info();
 
  private:
+  std::shared_mutex mutex_;
   TFModelMeta tf_model_meta_;
 
   TF_Buffer         *graph_buffer_;

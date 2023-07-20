@@ -6,6 +6,7 @@
 #include <string>
 
 #include "glog/logging.h"
+#include "absl/strings/str_format.h"
 #include "tensorflow/c/c_api.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
@@ -24,6 +25,7 @@ TFEngine::TFEngine(const ModelSpec& model_spec) :
 
 TFEngine::~TFEngine() {
   try {
+    std::unique_lock<std::shared_mutex> lock(mutex_);
     if (nullptr != session_) {
       TF_Status *tf_status = TF_NewStatus();
       ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
@@ -75,14 +77,18 @@ std::string TFEngine::brand() {
 }
 
 void TFEngine::infer(const int32_t batch_size, const void *input, void *output) {
+  std::shared_lock<std::shared_mutex> lock(mutex_);
   run_session();
 }
 
 void TFEngine::infer(const BatchInstance& batch_instance, BatchScore *batch_score) {
+  std::shared_lock<std::shared_mutex> lock(mutex_);
   // Convert BatchInstance to TF_Output and TF_Tensor
 }
 
 void TFEngine::trace() {
+  std::shared_lock<std::shared_mutex> lock(mutex_);
+
   tensorflow::RunOptions tf_run_opts;
   tf_run_opts.set_trace_level(tensorflow::RunOptions_TraceLevel_FULL_TRACE);
   std::string tf_run_opts_str;
@@ -99,7 +105,7 @@ void TFEngine::trace() {
 
   static std::mutex trace_data_mtx;
   static std::atomic<int> trace_data_index = 0;
-  std::lock_guard<std::mutex> lock(trace_data_mtx);
+  std::lock_guard<std::mutex> trace_lock(trace_data_mtx);
   trace_data_index.fetch_add(1);
   std::string trace_data_str(reinterpret_cast<const char*>(tf_metadata->data), tf_metadata->length);
   std::ofstream ofs("trace_data_" + std::to_string(trace_data_index.load()) + ".pb");
@@ -235,15 +241,15 @@ void TFEngine::sub_init() {
 
   for (const auto& tensor_info : model_meta_.input_shapes) {
     const std::string& tensor_name = tensor_info.first;
-    const std::vector<int32_t>& tensor_shape = tensor_info.second;
     get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_tensors);
   }
 
   for (const auto& tensor_info : model_meta_.output_shapes) {
     const std::string& tensor_name = tensor_info.first;
-    const std::vector<int32_t>& tensor_shape = tensor_info.second;
     get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_tensors);
   }
+
+  LOG(INFO) << tf_model_meta_.to_string();
 }
 
 // Iterate through the operations of a graph
@@ -273,8 +279,6 @@ void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
   }
 
   int32_t op_num_outputs = TF_OperationNumOutputs(tf_operation);
-  LOG(INFO) << "[" << model_spec_.brief() << "] Operation: " << tf_operation_name
-            << " (" << op_num_outputs << " outputs)";
   for (int32_t i = 0; i < op_num_outputs; ++i) {
     tf_tensor_meta->emplace_back();
     convert_tf_output_to_tf_tensor_meta(TF_Output {tf_operation, i}, &tf_tensor_meta->back());
@@ -289,7 +293,12 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
   });
 
   tf_tensor_meta->output = new TF_Output(tf_output);
+  tf_tensor_meta->operation_name = TF_OperationName(tf_output.oper);
+  tf_tensor_meta->operation_type = TF_OperationOpType(tf_output.oper);
+  tf_tensor_meta->operation_num_inputs = TF_OperationNumInputs(tf_output.oper);
+  tf_tensor_meta->operation_num_outputs = TF_OperationNumOutputs(tf_output.oper);
   tf_tensor_meta->data_type = TF_OperationOutputType(tf_output);
+  tf_tensor_meta->data_size = TF_DataTypeSize(tf_tensor_meta->data_type);
   tf_tensor_meta->num_dims = TF_GraphGetTensorNumDims(graph_, tf_output, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
@@ -306,62 +315,38 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
   }
 }
 
-// void TFEngine::print_graph_info() {
-//   int n_ops = TF_GraphNumOperations(graph_);
-//   for (int i = 0; i < n_ops; ++i) {
-//     TF_Operation *op = TF_GraphGetOperationByIndex(graph_, i);
-//     const char *op_name = TF_OperationName(op);
-//     const char *op_type = TF_OperationOpType(op);
-//     int n_inputs = TF_OperationNumInputs(op);
-//     int n_outputs = TF_OperationNumOutputs(op);
-//     LOG(INFO) << "[" << model_spec_.brief() << "] Operation: " << op_name << " (" << op_type << ")";
-//     LOG(INFO) << "[" << model_spec_.brief() << "]   Inputs: " << n_inputs;
-//     LOG(INFO) << "[" << model_spec_.brief() << "]   Outputs: " << n_outputs;
-//   }
-//
-//   int n_inputs = TF_GraphNumInputs(graph_);
-//   int n_outputs = TF_GraphNumOutputs(graph_);
-//   LOG(INFO) << "[" << model_spec_.brief() << "] Inputs: " << n_inputs;
-//   LOG(INFO) << "[" << model_spec_.brief() << "] Outputs: " << n_outputs;
-// }
-//
-// void TFEngine::get_input_output_ops() {
-//   TF_Status *tf_status = TF_NewStatus();
-//   ScopeExitTask delete_tf_status([&tf_status] {
-//      TF_DeleteStatus(tf_status);
-//   });
-//
-//   int n_inputs = TF_GraphNumInputs(graph_);
-//   int n_outputs = TF_GraphNumOutputs(graph_);
-//
-//   TF_Output *inputs = new TF_Output[n_inputs];
-//   ScopeExitTask delete_inputs([&inputs] { delete[] inputs; });
-//
-//   TF_Output *outputs = new TF_Output[n_outputs];
-//   ScopeExitTask delete_outputs([&outputs] { delete[] outputs; });
-//
-//   for (int i = 0; i < n_inputs; ++i) {
-//     inputs[i] = TF_GraphGetInput(graph_, i);
-//   }
-//   for (int i = 0; i < n_outputs; ++i) {
-//     outputs[i] = TF_GraphGetOutput(graph_, i);
-//   }
-//
-//   TF_Operation **input_ops = new TF_Operation*[n_inputs];
-//   ScopeExitTask delete_input_ops([&input_ops] { delete[] input_ops; });
-//
-//   TF_Operation **output_ops = new TF_Operation*[n_outputs];
-//   ScopeExitTask delete_output_ops([&output_ops] { delete[] output_ops; });
-//
-//   for (int i = 0; i < n_inputs; ++i) {
-//     input_ops[i] = TF_OutputOperation(inputs[i]);
-//   }
-//   for (int i = 0; i < n_outputs; ++i) {
-//     output_ops[i] = TF_OutputOperation(outputs[i]);
-//   }
-//
-//   model_meta_.input_ops.assign(input_ops, input_ops + n_inputs);
-//   model_meta_.output_ops.assign(output_ops, output_ops + n_outputs);
-// }
+std::string TFTensorMeta::to_string() {
+  std::string message;
+  absl::StrAppendFormat(&message,
+    "  operation_name: %s\n  operation_type: %s\n  operation_num_inputs: %d\n  operation_num_outputs: %d\n"
+    "  data_type: %d\n  data_size: %d\n  num_dims: %d\n  shape: ",
+    operation_name.c_str(), operation_type.c_str(), operation_num_inputs, operation_num_outputs,
+    data_type, data_size, num_dims
+  );  // NOLINT
+  for (int32_t i = 0; i < num_dims; ++i) {
+    if (i > 0) {
+      absl::StrAppendFormat(&message, ", ");
+    }
+    absl::StrAppendFormat(&message, "%d", shape[i]);
+  }
+  absl::StrAppendFormat(&message, "\n");
+
+  return message;
+}
+
+std::string TFModelMeta::to_string() {
+  std::string message;
+  absl::StrAppendFormat(&message, "\ninput_tensors: ");
+  for (auto& input_tensor : input_tensors) {
+    absl::StrAppendFormat(&message, "\n%s", input_tensor.to_string().c_str());
+  }
+
+  absl::StrAppendFormat(&message, "\n output_tensors:");
+  for (auto& output_tensor : output_tensors) {
+    absl::StrAppendFormat(&message, "\n%s", output_tensor.to_string().c_str());
+  }
+
+  return message;
+}
 
 }  // namespace infer_engine
