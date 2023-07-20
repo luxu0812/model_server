@@ -27,9 +27,10 @@ TFEngine::TFEngine(const ModelSpec& model_spec) :
 }
 
 TFEngine::~TFEngine() {
-  std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  inited_ = false;
   try {
+    std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
+    inited_ = false;
+
     if (nullptr != session_) {
       TF_Status *tf_status = TF_NewStatus();
       ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
@@ -91,14 +92,35 @@ void TFEngine::infer(const int32_t batch_size, const void *input, void *output) 
   run_session();
 }
 
-void TFEngine::infer(const BatchInstance& batch_instance, BatchScore *batch_score) {
+void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + model_spec_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
+
   // Convert BatchInstance to TF_Output and TF_Tensor
+  int32_t batch_size = batch_instance->instances.size();
+  std::vector<TF_Tensor*> input_tensors, output_tensors;
+  for (auto& instance : batch_instance->instances) {
+    for (auto& feature : instance.features) {
+      const std::string& feature_name = feature.name;
+      const float *feature_value = feature.data.data();
+
+      const auto it = tf_model_meta_.input_tensors.find(feature_name);
+      if (tf_model_meta_.input_tensors.contains(feature_name)) {
+        const int32_t& tensor_num_dims    = tf_model_meta_.input_tensors[feature_name].num_dims;
+        const int32_t& tensor_data_type   = tf_model_meta_.input_tensors[feature_name].data_type;
+        std::vector<int64_t> tensor_shape = tf_model_meta_.input_tensors[feature_name].shape;
+        tensor_shape[0] = batch_size;
+
+        // TF_Tensor *tf_tensor = TF_NewTensor(
+        //   tensor_data_type, tensor_shape.data(), tensor_num_dims, , tensor_data_size);
+        // input_tensors.push_back(tf_tensor);
+      }
+    }
+  }
 }
 
 void TFEngine::trace() {
@@ -284,7 +306,7 @@ void TFEngine::iterate_through_operations(std::function<void(TF_Operation*)> do_
 // Get TFTensorMeta by TF_Operation name
 void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
   const std::string& tf_operation_name,
-  std::vector<TFTensorMeta> *tf_tensor_meta
+  absl::flat_hash_map<std::string, TFTensorMeta> *tf_tensor_meta
 ) {
   TF_Status *tf_status = TF_NewStatus();
   ScopeExitTask delete_tf_status([&tf_status] {
@@ -299,9 +321,15 @@ void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
   }
 
   int32_t op_num_outputs = TF_OperationNumOutputs(tf_operation);
-  for (int32_t i = 0; i < op_num_outputs; ++i) {
-    tf_tensor_meta->emplace_back();
-    convert_tf_output_to_tf_tensor_meta(TF_Output {tf_operation, i}, &tf_tensor_meta->back());
+  if (op_num_outputs > 1) {
+    for (int32_t i = 0; i < op_num_outputs; ++i) {
+      std::string name = tf_operation_name + ":" + std::to_string(i);
+      (*tf_tensor_meta)[name] = TFTensorMeta();
+      convert_tf_output_to_tf_tensor_meta(TF_Output {tf_operation, i}, &(*tf_tensor_meta)[name]);
+    }
+  } else {
+      (*tf_tensor_meta)[tf_operation_name] = TFTensorMeta();
+      convert_tf_output_to_tf_tensor_meta(TF_Output {tf_operation, 0}, &(*tf_tensor_meta)[tf_operation_name]);
   }
 }
 
@@ -325,6 +353,11 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
       + model_spec_.brief() + "] " + "Failed to get tensor num dims: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
+  if (!(tf_tensor_meta->num_dims > 0)) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + model_spec_.brief() + "] " + tf_tensor_meta->operation_name + " has no dimensions";
+    throw std::runtime_error(err_msg);
+  }
 
   tf_tensor_meta->shape.resize(tf_tensor_meta->num_dims);
   TF_GraphGetTensorShape(graph_, tf_output, tf_tensor_meta->shape.data(), tf_tensor_meta->num_dims, tf_status);
@@ -333,15 +366,20 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
       + model_spec_.brief() + "] " + "Failed to get tensor shape: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
+
+  tf_tensor_meta->instance_size = tf_tensor_meta->data_size;
+  for (int32_t i = 1; i < tf_tensor_meta->num_dims; ++i) {
+    tf_tensor_meta->instance_size *= tf_tensor_meta->shape[i];
+  }
 }
 
 std::string TFTensorMeta::to_string() {
   std::string message;
   absl::StrAppendFormat(&message,
     "  operation_name: %s\n  operation_type: %s\n  operation_num_inputs: %d\n  operation_num_outputs: %d\n"
-    "  data_type: %d\n  data_size: %d\n  num_dims: %d\n  shape: ",
+    "  data_type: %d\n  data_size: %d\n  num_dims: %d\n  instance_size: %llu\n  shape: ",
     operation_name.c_str(), operation_type.c_str(), operation_num_inputs, operation_num_outputs,
-    data_type, data_size, num_dims
+    data_type, data_size, num_dims, instance_size
   );  // NOLINT
   for (int32_t i = 0; i < num_dims; ++i) {
     if (i > 0) {
@@ -357,13 +395,15 @@ std::string TFTensorMeta::to_string() {
 std::string TFModelMeta::to_string() {
   std::string message;
   absl::StrAppendFormat(&message, "\ninput_tensors: ");
-  for (auto& input_tensor : input_tensors) {
-    absl::StrAppendFormat(&message, "\n%s", input_tensor.to_string().c_str());
+  for (auto& entry : input_tensors) {
+    absl::StrAppendFormat(&message, "\n %s:", entry.first.c_str());
+    absl::StrAppendFormat(&message, "\n%s", entry.second.to_string().c_str());
   }
 
-  absl::StrAppendFormat(&message, "\n output_tensors:");
-  for (auto& output_tensor : output_tensors) {
-    absl::StrAppendFormat(&message, "\n%s", output_tensor.to_string().c_str());
+  absl::StrAppendFormat(&message, "\noutput_tensors:");
+  for (auto& entry : output_tensors) {
+    absl::StrAppendFormat(&message, "\n %s:", entry.first.c_str());
+    absl::StrAppendFormat(&message, "\n%s", entry.second.to_string().c_str());
   }
 
   return message;

@@ -67,7 +67,7 @@ void ONNXEngine::infer(const int32_t batch_size, const void *input, void *output
   // // ...
 }
 
-void ONNXEngine::infer(const BatchInstance& batch_instance, BatchScore *batch_score) {
+void ONNXEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
 }
 
 void ONNXEngine::trace() {

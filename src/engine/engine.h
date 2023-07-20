@@ -29,7 +29,7 @@ class Engine {
 
   // Perform inference
   virtual void infer(const int32_t batch_size, const void *input, void *output) = 0;
-  virtual void infer(const BatchInstance& batch_instance, BatchScore *batch_score) = 0;
+  virtual void infer(BatchInstance *batch_instance, BatchScore *batch_score) = 0;
 
   // Perform inference with trace
   virtual void trace() = 0;

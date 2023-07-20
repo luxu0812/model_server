@@ -8,6 +8,7 @@
 #include <string>
 #include <functional>
 #include <shared_mutex>
+#include "absl/container/flat_hash_map.h"
 #include "tensorflow/c/c_api.h"
 #include "infer_engine/src/engine/engine.h"
 
@@ -23,13 +24,14 @@ struct TFTensorMeta {
   int32_t              data_size;
   int32_t              num_dims;
   std::vector<int64_t> shape;
+  size_t               instance_size;
 
   std::string to_string();
 };
 
 struct TFModelMeta {
-  std::vector<TFTensorMeta> input_tensors;
-  std::vector<TFTensorMeta> output_tensors;
+  absl::flat_hash_map<std::string, TFTensorMeta> input_tensors;
+  absl::flat_hash_map<std::string, TFTensorMeta> output_tensors;
 
   std::string to_string();
 };
@@ -48,7 +50,7 @@ class TFEngine : public Engine {
 
   // Perform inference using the TF runtime
   void infer(const int32_t batch_size, const void *input, void *output) override;
-  void infer(const BatchInstance& batch_instance, BatchScore *batch_score) override;
+  void infer(BatchInstance *batch_instance, BatchScore *batch_score) override;
 
   // Perform inference with trace using the TF runtime
   void trace() override;
@@ -77,7 +79,7 @@ class TFEngine : public Engine {
 
   // Get TFTensorMeta by TF_Operation name
   void get_tf_tensor_meta_by_tf_operation_name(
-    const std::string& tf_operation_name, std::vector<TFTensorMeta> *tf_tensor_meta
+    const std::string& tf_operation_name, absl::flat_hash_map<std::string, TFTensorMeta> *tf_tensor_meta
   );  // NOLINT
 
   // Convert TF_Output to TFTensorMeta

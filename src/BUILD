@@ -75,6 +75,7 @@ cc_library(
     ":util",
     ":data",
     "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
     "@com_google_protobuf//:protobuf",
     "@tensorflow//:tensorflow",
     "@onnxruntime//:onnxruntime",
