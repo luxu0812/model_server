@@ -78,6 +78,10 @@ void TFEngine::infer(const int32_t batch_size, const void *input, void *output) 
   run_session();
 }
 
+void TFEngine::infer(const BatchInstance& batch_instance, BatchScore *batch_score) {
+  // Convert BatchInstance to TF_Output and TF_Tensor
+}
+
 void TFEngine::trace() {
   tensorflow::RunOptions tf_run_opts;
   tf_run_opts.set_trace_level(tensorflow::RunOptions_TraceLevel_FULL_TRACE);
@@ -222,5 +226,70 @@ void TFEngine::create_session() {
 
   LOG(INFO) << "[" << model_spec_.brief() << "] Session created";
 }
+
+void TFEngine::sub_init() {
+  TF_Status *tf_status = TF_NewStatus();
+  ScopeExitTask delete_tf_status([&tf_status] {
+     TF_DeleteStatus(tf_status);
+  });
+}
+
+// void TFEngine::print_graph_info() {
+//   int n_ops = TF_GraphNumOperations(graph_);
+//   for (int i = 0; i < n_ops; ++i) {
+//     TF_Operation *op = TF_GraphGetOperationByIndex(graph_, i);
+//     const char *op_name = TF_OperationName(op);
+//     const char *op_type = TF_OperationOpType(op);
+//     int n_inputs = TF_OperationNumInputs(op);
+//     int n_outputs = TF_OperationNumOutputs(op);
+//     LOG(INFO) << "[" << model_spec_.brief() << "] Operation: " << op_name << " (" << op_type << ")";
+//     LOG(INFO) << "[" << model_spec_.brief() << "]   Inputs: " << n_inputs;
+//     LOG(INFO) << "[" << model_spec_.brief() << "]   Outputs: " << n_outputs;
+//   }
+//
+//   int n_inputs = TF_GraphNumInputs(graph_);
+//   int n_outputs = TF_GraphNumOutputs(graph_);
+//   LOG(INFO) << "[" << model_spec_.brief() << "] Inputs: " << n_inputs;
+//   LOG(INFO) << "[" << model_spec_.brief() << "] Outputs: " << n_outputs;
+// }
+//
+// void TFEngine::get_input_output_ops() {
+//   TF_Status *tf_status = TF_NewStatus();
+//   ScopeExitTask delete_tf_status([&tf_status] {
+//      TF_DeleteStatus(tf_status);
+//   });
+//
+//   int n_inputs = TF_GraphNumInputs(graph_);
+//   int n_outputs = TF_GraphNumOutputs(graph_);
+//
+//   TF_Output *inputs = new TF_Output[n_inputs];
+//   ScopeExitTask delete_inputs([&inputs] { delete[] inputs; });
+//
+//   TF_Output *outputs = new TF_Output[n_outputs];
+//   ScopeExitTask delete_outputs([&outputs] { delete[] outputs; });
+//
+//   for (int i = 0; i < n_inputs; ++i) {
+//     inputs[i] = TF_GraphGetInput(graph_, i);
+//   }
+//   for (int i = 0; i < n_outputs; ++i) {
+//     outputs[i] = TF_GraphGetOutput(graph_, i);
+//   }
+//
+//   TF_Operation **input_ops = new TF_Operation*[n_inputs];
+//   ScopeExitTask delete_input_ops([&input_ops] { delete[] input_ops; });
+//
+//   TF_Operation **output_ops = new TF_Operation*[n_outputs];
+//   ScopeExitTask delete_output_ops([&output_ops] { delete[] output_ops; });
+//
+//   for (int i = 0; i < n_inputs; ++i) {
+//     input_ops[i] = TF_OutputOperation(inputs[i]);
+//   }
+//   for (int i = 0; i < n_outputs; ++i) {
+//     output_ops[i] = TF_OutputOperation(outputs[i]);
+//   }
+//
+//   model_meta_.input_ops.assign(input_ops, input_ops + n_inputs);
+//   model_meta_.output_ops.assign(output_ops, output_ops + n_outputs);
+// }
 
 }  // namespace infer_engine

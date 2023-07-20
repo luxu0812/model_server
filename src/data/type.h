@@ -21,7 +21,7 @@ struct Instance {
 
 struct Score {
   std::vector<Tensor> scores;
-}
+};
 
 struct BatchInstance {
   std::vector<Instance> instances;

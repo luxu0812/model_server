@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 #include <string>
+#include "infer_engine/src/data/type.h"
 #include "infer_engine/src/data/model_spec.h"
 
 namespace infer_engine {
@@ -28,6 +29,7 @@ class Engine {
 
   // Perform inference
   virtual void infer(const int32_t batch_size, const void *input, void *output) = 0;
+  virtual void infer(const BatchInstance& batch_instance, BatchScore *batch_score) = 0;
 
   // Perform inference with trace
   virtual void trace() = 0;
@@ -40,6 +42,7 @@ class Engine {
     build();
     set_session_options();
     create_session();
+    sub_init();
   }
 
   // Load model meta data
@@ -58,6 +61,9 @@ class Engine {
 
   // Create session
   virtual void create_session() = 0;
+
+  // Personalized initialization for subclasses
+  virtual void sub_init() {}
 
   ModelSpec model_spec_;
   ModelMeta model_meta_;
