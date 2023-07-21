@@ -109,6 +109,10 @@ void TFEngine::infer(Instance *instance, Score *score) {
       const auto& tensor_data_type = it->second.data_type;
 
       size_t tensor_data_size = it->second.instance_size * static_cast<size_t>(batch_size);
+      DLOG(INFO) << "index: " << it->second.index << ", tensor_data_size: " << tensor_data_size
+                 << ", batch_size: " << batch_size
+                 << ", tensor_num_dims: " << tensor_num_dims
+                 << ", feature_data_size: " << feature.data.size() * sizeof(feature.data[0]);
       if (feature.data.size() * sizeof(feature.data[0]) != tensor_data_size) {
         const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
           + model_spec_.brief() + "] " + "Feature data size mismatch: " + feature_name;
@@ -123,6 +127,8 @@ void TFEngine::infer(Instance *instance, Score *score) {
         [](void*, size_t, void*) {}, nullptr
       );  // NOLINT
       input_tensors[it->second.index] = tf_tensor;
+    } else {
+      DLOG(INFO) << "Feature not found: " << feature_name;
     }
   }
 
@@ -267,6 +273,7 @@ void TFEngine::set_session_options() {
   tf_optimizer_opts.set_do_constant_folding(true);
   tf_optimizer_opts.set_do_function_inlining(true);
   tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L1);
+  tf_optimizer_opts.set_cpu_global_jit(true);
   tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_2);
 
   tensorflow::ConfigProto tf_session_conf;
@@ -322,11 +329,13 @@ void TFEngine::sub_init() {
     get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_metas, &output_index);
   }
 
+  tf_model_meta_.input_specs.resize(tf_model_meta_.input_metas.size());
   for (const auto& tensor_info : tf_model_meta_.input_metas) {
-    tf_model_meta_.input_specs.push_back(*(tensor_info.second.output));
+    tf_model_meta_.input_specs[tensor_info.second.index] = (*(tensor_info.second.output));
   }
+  tf_model_meta_.output_specs.resize(tf_model_meta_.output_metas.size());
   for (const auto& tensor_info : tf_model_meta_.output_metas) {
-    tf_model_meta_.output_specs.push_back(*(tensor_info.second.output));
+    tf_model_meta_.output_specs[tensor_info.second.index] = (*(tensor_info.second.output));
   }
 
   LOG(INFO) << tf_model_meta_.to_string();

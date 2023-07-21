@@ -86,11 +86,12 @@ std::vector<infer_engine::Sample> *create_samples() {
     int32_t i = 0;
     for (auto& input : model_meta.input_shapes) {
       auto& feature = sample.instance.features[i++];
-      int64_t data_bytes = FLAGS_batch_size * sizeof(feature.data[0]);
+      int64_t data_size = FLAGS_batch_size;
       for (auto& dim : input.second) {
-        data_bytes *= dim;
+        data_size *= dim;
       }
-      feature.data.resize(data_bytes);
+      feature.name = input.first;
+      feature.data.resize(data_size);
 
       // fill random data
       for (auto& data : feature.data) {
@@ -105,5 +106,11 @@ std::vector<infer_engine::Sample> *create_samples() {
 }
 
 void infer(infer_engine::Engine *engine, infer_engine::Sample *sample) {
-  engine->infer(&sample->instance, &sample->score);
+  try {
+    engine->infer(&sample->instance, &sample->score);
+  } catch (const std::exception& e) {
+    LOG(ERROR) << e.what();
+  } catch (...) {
+    LOG(ERROR) << "Unknown exception";
+  }
 }
