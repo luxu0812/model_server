@@ -81,17 +81,6 @@ std::string TFEngine::brand() {
   return kBrandTF;
 }
 
-void TFEngine::infer(const int32_t batch_size, const void *input, void *output) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  if (!inited_) {
-    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Engine not initialized";
-    throw std::runtime_error(err_msg);
-  }
-
-  // TODO(zh.luxu1986@gmail.com): Implement
-}
-
 void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {

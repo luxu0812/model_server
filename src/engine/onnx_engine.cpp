@@ -38,9 +38,8 @@ std::string ONNXEngine::brand() {
   return kBrandONNX;
 }
 
-void ONNXEngine::infer(const int32_t batch_size, const void *input, void *output) {
   // Perform inference using the ONNX runtime
-
+void ONNXEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
   // // Prepare input tensors
   // std::vector<const char*> input_names = session_->GetInputNames();
   // std::vector<Ort::Value> input_tensors(input_names.size());
@@ -65,9 +64,6 @@ void ONNXEngine::infer(const int32_t batch_size, const void *input, void *output
 
   // // Process the output tensors
   // // ...
-}
-
-void ONNXEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
 }
 
 void ONNXEngine::trace() {
