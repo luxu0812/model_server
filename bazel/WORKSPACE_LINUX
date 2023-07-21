@@ -77,12 +77,12 @@ new_local_repository(
 new_local_repository(
   name = "tensorflow",
   path = "${HOME}/.conan/data/tensorflow/1.15.5_pred/user/stable/package/7074939bced47b372f39e9ea6beadb82c7e0bc1c/",
-  build_file = "bazel/libtensorflow_macos.BUILD",
+  build_file = "bazel/libtensorflow.BUILD",
 )
 
 #----------------------------- onnxruntime ----------------------------#
 new_local_repository(
   name = "onnxruntime",
   path = "${HOME}/.local/lib/onnxruntime",
-  build_file = "bazel/onnxruntime_macos.BUILD",
+  build_file = "bazel/onnxruntime.BUILD",
 )
