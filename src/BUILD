@@ -94,6 +94,7 @@ cc_binary(
   ],
   deps = [
     ":util",
+    ":data",
     ":engine",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",

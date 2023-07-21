@@ -11,6 +11,7 @@
 
 #include "infer_engine/src/util/process/process_initiator.h"
 #include "infer_engine/src/data/model_spec.h"
+#include "infer_engine/src/data/type.h"
 #include "infer_engine/src/engine/engine.h"
 #include "infer_engine/src/engine/tf_engine.h"
 #include "infer_engine/src/engine/onnx_engine.h"
@@ -26,7 +27,6 @@ void infer(infer_engine::Engine *engine, infer_engine::Sample *sample);
 
 int main(int argc, char **argv) {
   infer_engine::init(argc, argv);
-
   try {
     std::unique_ptr<infer_engine::Engine> engine(get_engine());
     std::unique_ptr<std::vector<infer_engine::Sample>> samples(get_samples());
@@ -104,6 +104,6 @@ std::vector<infer_engine::Sample> *create_samples() {
   return samples;
 }
 
-void run(infer_engine::Engine *engine, infer_engine::Sample *sample) {
+void infer(infer_engine::Engine *engine, infer_engine::Sample *sample) {
   engine->infer(&sample->instance, &sample->score);
 }
