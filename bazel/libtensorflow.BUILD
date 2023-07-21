@@ -6,6 +6,6 @@ cc_library(
   includes = [
     "include",
   ],
-  srcs = ["lib/libtensorflow.so", "libiomp5.so", "libmklml_intel.so"],
+  srcs = ["lib/libtensorflow.so", "lib/libiomp5.so", "lib/libmklml_intel.so"],
   visibility = ["//visibility:public"],
 )
