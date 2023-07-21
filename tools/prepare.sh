@@ -179,3 +179,11 @@ cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/nlohmann_json -DCMAKE_BUILD_TYPE=Relea
 cmake --build build -j10
 cmake --build build --target install
 popd
+
+# Install bs-thread-pool
+git clone https://github.com/bshoshany/thread-pool.git
+pushd thread-pool
+git checkout tags/v3.5.0 -b v3.5.0
+mkdir -p ~/.local/lib/bs_thread_pool/include/BShoshany
+mv include/* ~/.local/lib/bs_thread_pool/include/BShoshany
+popd

@@ -3,11 +3,12 @@
 #include <stdint.h>
 #include <exception>
 #include <vector>
+#include <random>
 
 #include "gflags/gflags.h"
 #include "glog/logging.h"
+#include "BShoshany/BS_thread_pool.hpp"
 
-#include "infer_engine/src/util/functional/random.h"
 #include "infer_engine/src/util/process/process_initiator.h"
 #include "infer_engine/src/data/model_spec.h"
 #include "infer_engine/src/engine/engine.h"
@@ -21,6 +22,7 @@ DEFINE_string(engine_brand, "TensorFlow", "Engine brand");
 
 infer_engine::Engine *get_engine();
 std::vector<infer_engine::Sample> *get_samples();
+void infer(infer_engine::Engine *engine, infer_engine::Sample *sample);
 
 int main(int argc, char **argv) {
   infer_engine::init(argc, argv);
@@ -28,6 +30,12 @@ int main(int argc, char **argv) {
   try {
     std::unique_ptr<infer_engine::Engine> engine(get_engine());
     std::unique_ptr<std::vector<infer_engine::Sample>> samples(get_samples());
+
+    BS::thread_pool works(FLAGS_concurrency);
+    for (auto& sample : *samples) {
+      works.push_task(infer, engine.get(), &sample);
+    }
+    works.wait_for_tasks();
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
   } catch (...) {
@@ -94,4 +102,8 @@ std::vector<infer_engine::Sample> *create_samples() {
   }
 
   return samples;
+}
+
+void run(infer_engine::Engine *engine, infer_engine::Sample *sample) {
+  engine->infer(&sample->instance, &sample->score);
 }

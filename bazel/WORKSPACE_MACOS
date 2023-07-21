@@ -66,6 +66,13 @@ new_local_repository(
   build_file = "bazel/nlohmann_json.BUILD",
 )
 
+#---------------------------- bs_thread_pool --------------------------#
+new_local_repository(
+  name = "bs_thread_pool",
+  path = "${HOME}/.local/lib/bs_thread_pool",
+  build_file = "bazel/bs_thread_pool.BUILD",
+)
+
 #---------------------------- libtensorflow ---------------------------#
 new_local_repository(
   name = "tensorflow",

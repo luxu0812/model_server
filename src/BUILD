@@ -97,6 +97,7 @@ cc_binary(
     ":engine",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",
+    "@bs_thread_pool//:bs_thread_pool",
   ],
   # linkopts = ["-Wl,-rpath,$ORIGIN/../lib"],
 )
