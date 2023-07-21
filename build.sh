@@ -63,16 +63,17 @@ fi
 uname=`uname`
 if [[ "${uname}" == "Darwin" ]]; then
   cp bazel/WORKSPACE_MACOS ./WORKSPACE
+  HOME_PATH=$(echo ~)
+  sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 elif [[ "${uname}" == "Linux" ]]; then
   cp bazel/bazelrc_linux ./.bazelrc
   cp bazel/WORKSPACE_LINUX ./WORKSPACE
+  HOME_PATH=$(echo ~)
+  sed -i "s|\${HOME}|${HOME}|g" WORKSPACE
 else
   log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
   exit 1
 fi
-
-HOME_PATH=$(echo ~)
-sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
 #----------------------------------- test ------------------------------------#
 # bazelisk run //test:test_tf_engine   \

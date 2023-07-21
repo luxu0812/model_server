@@ -20,7 +20,7 @@ workspace(name = "InferEngine")
 #------------------------------- gflags -------------------------------#
 new_local_repository(
   name = "com_github_gflags_gflags",
-  path = "${HOME}/.local/lib/gflags",
+  path = "${HOME}/.conan/data/gflags/2.2.1/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934",
   build_file = "bazel/gflags.BUILD",
 )
 
@@ -32,55 +32,57 @@ new_local_repository(
 )
 
 #----------------------------- googletest -----------------------------#
-# new_local_repository(
-#   name = "com_google_googletest",
-#   path = "/opt/homebrew/Cellar/googletest/1.13.0",
-#   build_file = "bazel/googletest.BUILD",
-# )
+new_local_repository(
+  name = "com_google_googletest",
+  path = "${HOME}/.conan/data/googletest/1.8.0/user/stable/package/bfba58110feb727aea0b1c3a5cdcfd7d7f00530e/",
+  build_file = "bazel/googletest.BUILD",
+)
 
 #------------------------------- abseil -------------------------------#
-# new_local_repository(
-#   name = "com_google_absl",
-#   path = "/opt/homebrew/Cellar/abseil/20230125.3",
-#   build_file = "bazel/macos_absl.BUILD" 
-# )
+new_local_repository(
+  name = "com_google_absl",
+  path = "${HOME}/.conan/data/abseil/20211102.0-conan/user/stable/package/3c16e11e139fc44ce87907092473006570fef7c5/",
+  build_file = "bazel/absl.BUILD" 
+)
 
-# ------------------------------  zlib  --------------------------------#
+#-------------------------------- zlib --------------------------------#
 new_local_repository(
   name = "com_github_madler_zlib",
-  path = "${HOME}/.local/lib/zlib",
+  path = "${HOME}/.conan/data/zlib/1.2.11/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934/",
   build_file = "bazel/zlib.BUILD"
 )
 
 #------------------------------ protobuf ------------------------------#
 new_local_repository(
   name = "com_google_protobuf",
-  path = "${HOME}/.local/lib/protobuf",
+  path = "${HOME}/.conan/data/protobuf/3.6.1/user/stable/package/8a0d45a6500f8b1a5c8dac95788a152d902fd44e/",
   build_file = "bazel/protobuf.BUILD",
 )
 
-#-------------------------------- eigen -------------------------------#
-# new_local_repository(
-#   name = "eigen",
-#   path = "/opt/homebrew/Cellar/eigen/3.4.0_1",
-#   build_file = "bazel/eigen.BUILD",
-# )
+#---------------------------- nlohmann_json ---------------------------#
+new_local_repository(
+  name = "nlohmann_json",
+  path = "${HOME}/.local/lib/nlohmann_json",
+  build_file = "bazel/nlohmann_json.BUILD",
+)
+
+#---------------------------- bs_thread_pool --------------------------#
+new_local_repository(
+  name = "bs_thread_pool",
+  path = "${HOME}/.local/lib/bs_thread_pool",
+  build_file = "bazel/bs_thread_pool.BUILD",
+)
 
 #---------------------------- libtensorflow ---------------------------#
 new_local_repository(
   name = "tensorflow",
-  path = "${HOME}/.local/lib/libtensorflow",
-  build_file = "bazel/libtensorflow.BUILD",
+  path = "${HOME}/.conan/data/tensorflow/1.15.5_pred/user/stable/package/7074939bced47b372f39e9ea6beadb82c7e0bc1c/",
+  build_file = "bazel/libtensorflow_macos.BUILD",
 )
 
 #----------------------------- onnxruntime ----------------------------#
 new_local_repository(
   name = "onnxruntime",
   path = "${HOME}/.local/lib/onnxruntime",
-  build_file = "bazel/onnxruntime.BUILD",
-)
-new_local_repository(
-  name = "onnxruntime_dnnl",
-  path = "${HOME}/.local/lib/onnxruntime_dnnl",
-  build_file = "bazel/onnxruntime_dnnl.BUILD",
+  build_file = "bazel/onnxruntime_macos.BUILD",
 )

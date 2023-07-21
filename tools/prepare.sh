@@ -78,7 +78,7 @@ popd
 # Install glog
 git clone https://github.com/google/glog.git
 pushd glog
-git checkout tags/v0.6.0 -b v0.6.0
+git checkout tags/v-1.6.0 -b v0.6.0
 mkdir build
 cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -S . -B build
 cmake --build build -j10
@@ -89,11 +89,21 @@ popd
 git clone https://github.com/google/googletest.git
 pushd googletest
 git checkout tags/v1.13.0 -b v1.13.0
+mkdir build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/googletest -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake --build build -j10
+cmake --build build --target install
+popd
 
 # Install google-benchmark
 git clone https://github.com/google/benchmark.git
 pushd benchmark
 git checkout tags/v1.8.2 -b v1.8.2
+mkdir build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/googletest -DCMAKE_BUILD_TYPE=Release -DGOOGLETEST_PATH=../googletest -S . -B build
+cmake --build build -j10
+cmake --build build --target install
+popd
 
 # Install Tensorflow
 git clone https://github.com/tensorflow/tensorflow.git
