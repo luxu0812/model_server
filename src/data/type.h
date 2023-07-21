@@ -11,24 +11,16 @@ namespace infer_engine {
 
 struct Tensor {
   std::string name;
-  std::vector<int32_t> shape;
   std::vector<float> data;
 };
 
 struct Instance {
+  int64_t batch_size;
   std::vector<Tensor> features;
 };
 
 struct Score {
   std::vector<Tensor> targets;
-};
-
-struct BatchInstance {
-  std::vector<Instance> instances;
-};
-
-struct BatchScore {
-  std::vector<Score> scores;
 };
 
 }  // namespace infer_engine

@@ -39,7 +39,7 @@ std::string ONNXEngine::brand() {
 }
 
   // Perform inference using the ONNX runtime
-void ONNXEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
+void ONNXEngine::infer(Instance *instance, Score *score) {
   // // Prepare input tensors
   // std::vector<const char*> input_names = session_->GetInputNames();
   // std::vector<Ort::Value> input_tensors(input_names.size());

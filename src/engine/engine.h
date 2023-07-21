@@ -28,7 +28,7 @@ class Engine {
   virtual std::string brand() = 0;
 
   // Perform inference
-  virtual void infer(BatchInstance *batch_instance, BatchScore *batch_score) = 0;
+  virtual void infer(Instance *instance, Score *score) = 0;
 
   // Perform inference with trace
   virtual void trace() = 0;

@@ -31,8 +31,8 @@ struct TFTensorMeta {
 };
 
 struct TFModelMeta {
-  absl::flat_hash_map<std::string, TFTensorMeta> input_tensors;
-  absl::flat_hash_map<std::string, TFTensorMeta> output_tensors;
+  absl::flat_hash_map<std::string, TFTensorMeta> input_metas;
+  absl::flat_hash_map<std::string, TFTensorMeta> output_metas;
   std::vector<TF_Output> input_specs;
   std::vector<TF_Output> output_specs;
 
@@ -52,7 +52,7 @@ class TFEngine : public Engine {
   std::string brand() override;
 
   // Perform inference using the TF runtime
-  void infer(BatchInstance *batch_instance, BatchScore *batch_score) override;
+  void infer(Instance *instance, Score *score) override;
 
   // Perform inference with trace using the TF runtime
   void trace() override;

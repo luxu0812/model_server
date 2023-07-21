@@ -22,7 +22,7 @@ class ONNXEngine : public Engine {
   std::string brand() override;
 
   // Perform inference using the ONNX runtime
-  void infer(BatchInstance *batch_instance, BatchScore *batch_score) override;
+  void infer(Instance *instance, Score *score) override;
 
   // Perform inference with trace using the ONNX runtime
   void trace() override;

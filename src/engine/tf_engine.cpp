@@ -81,7 +81,7 @@ std::string TFEngine::brand() {
   return kBrandTF;
 }
 
-void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
+void TFEngine::infer(Instance *instance, Score *score) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
@@ -89,36 +89,66 @@ void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
     throw std::runtime_error(err_msg);
   }
 
+  const auto& batch_size = instance->batch_size;
+
   // Convert BatchInstance to TF_Output and TF_Tensor
-  size_t batch_size = batch_instance->instances.size();
   std::vector<TF_Tensor*> input_tensors;
-  input_tensors.resize(tf_model_meta_.input_specs.size());
-  for (auto& instance : batch_instance->instances) {
-    for (auto& feature : instance.features) {
-      const std::string& feature_name = feature.name;
-      const auto it = tf_model_meta_.input_tensors.find(feature_name);
-      if (tf_model_meta_.input_tensors.end() != it) {
-        const auto& tensor_num_dims  = it->second.num_dims;
-        const auto& tensor_data_type = it->second.data_type;
-
-        size_t tensor_data_size = it->second.instance_size * batch_size;
-        std::vector<int64_t> tensor_shape = it->second.shape;
-        tensor_shape[0] = static_cast<int64_t>(batch_size);
-        void *feature_value = static_cast<void *>(feature.data.data());
-
-        TF_Tensor *tf_tensor = TF_NewTensor(
-          tensor_data_type, tensor_shape.data(), tensor_num_dims, feature_value, tensor_data_size,
-          [](void*, size_t, void*) {}, nullptr
-        );  // NOLINT
-        input_tensors[it->second.index] = tf_tensor;
+  input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
+  ScopeExitTask delete_input_tensors([&input_tensors]() {
+    for (auto& input_tensor : input_tensors) {
+      if (nullptr != input_tensor) {
+        TF_DeleteTensor(input_tensor);
       }
+    }
+  });
+  for (auto& feature : instance->features) {
+    const std::string& feature_name = feature.name;
+    const auto it = tf_model_meta_.input_metas.find(feature_name);
+    if (tf_model_meta_.input_metas.end() != it) {
+      const auto& tensor_num_dims  = it->second.num_dims;
+      const auto& tensor_data_type = it->second.data_type;
+
+      size_t tensor_data_size = it->second.instance_size * static_cast<size_t>(batch_size);
+      if (feature.data.size() * sizeof(feature.data[0]) != tensor_data_size) {
+        const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+          + model_spec_.brief() + "] " + "Feature data size mismatch: " + feature_name;
+        throw std::runtime_error(err_msg);
+      }
+      std::vector<int64_t> tensor_shape = it->second.shape;
+      tensor_shape[0] = batch_size;
+      void *feature_value = static_cast<void *>(feature.data.data());
+
+      TF_Tensor *tf_tensor = TF_NewTensor(
+        tensor_data_type, tensor_shape.data(), tensor_num_dims, feature_value, tensor_data_size,
+        [](void*, size_t, void*) {}, nullptr
+      );  // NOLINT
+      input_tensors[it->second.index] = tf_tensor;
     }
   }
 
   std::vector<TF_Tensor*> output_tensors;
   output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
+  ScopeExitTask delete_output_tensors([&output_tensors]() {
+    for (auto& output_tensor : output_tensors) {
+      if (nullptr != output_tensor) {
+        TF_DeleteTensor(output_tensor);
+      }
+    }
+  });
 
   run_session(&input_tensors, &output_tensors);
+
+  // Convert TF_Output and TF_Tensor to BatchScore
+  score->targets.resize(tf_model_meta_.output_specs.size());
+  for (const auto& output_meta : tf_model_meta_.output_metas) {
+    auto& target = score->targets[output_meta.second.index];
+    const size_t data_size = output_meta.second.instance_size * batch_size;
+    char *data = static_cast<char*>(TF_TensorData(output_tensors[output_meta.second.index]));
+
+    target.name = output_meta.first;
+    target.data.resize(data_size);
+    memcpy(target.data.data(), data, data_size);
+  }
 }
 
 void TFEngine::trace() {
@@ -283,19 +313,19 @@ void TFEngine::sub_init() {
   int32_t input_index = 0;
   for (const auto& tensor_info : model_meta_.input_shapes) {
     const std::string& tensor_name = tensor_info.first;
-    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_tensors, &input_index);
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_metas, &input_index);
   }
 
   int32_t output_index = 0;
   for (const auto& tensor_info : model_meta_.output_shapes) {
     const std::string& tensor_name = tensor_info.first;
-    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_tensors, &output_index);
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_metas, &output_index);
   }
 
-  for (const auto& tensor_info : tf_model_meta_.input_tensors) {
+  for (const auto& tensor_info : tf_model_meta_.input_metas) {
     tf_model_meta_.input_specs.push_back(*(tensor_info.second.output));
   }
-  for (const auto& tensor_info : tf_model_meta_.output_tensors) {
+  for (const auto& tensor_info : tf_model_meta_.output_metas) {
     tf_model_meta_.output_specs.push_back(*(tensor_info.second.output));
   }
 
@@ -408,14 +438,14 @@ std::string TFTensorMeta::to_string() {
 
 std::string TFModelMeta::to_string() {
   std::string message;
-  absl::StrAppendFormat(&message, "\ninput_tensors: ");
-  for (auto& entry : input_tensors) {
+  absl::StrAppendFormat(&message, "\ninput_metas: ");
+  for (auto& entry : input_metas) {
     absl::StrAppendFormat(&message, "\n %s:", entry.first.c_str());
     absl::StrAppendFormat(&message, "\n%s", entry.second.to_string().c_str());
   }
 
-  absl::StrAppendFormat(&message, "\noutput_tensors:");
-  for (auto& entry : output_tensors) {
+  absl::StrAppendFormat(&message, "\noutput_metas:");
+  for (auto& entry : output_metas) {
     absl::StrAppendFormat(&message, "\n %s:", entry.first.c_str());
     absl::StrAppendFormat(&message, "\n%s", entry.second.to_string().c_str());
   }
