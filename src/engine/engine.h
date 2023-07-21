@@ -18,7 +18,7 @@ const char kBrandONNXDNNL[] = "ONNX-DNNL";
 class Engine {
  public:
   explicit Engine(const ModelSpec& model_spec) : model_spec_(model_spec) {}
-  ~Engine() {}
+  virtual ~Engine() {}
 
   Engine() = delete;
   Engine& operator=(const Engine&) = delete;

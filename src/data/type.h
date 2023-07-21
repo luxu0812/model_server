@@ -23,6 +23,11 @@ struct Score {
   std::vector<Tensor> targets;
 };
 
+struct Sample {
+  Instance instance;
+  Score score;
+};
+
 }  // namespace infer_engine
 
 #endif  // INFER_ENGINE_SRC_DATA_TYPE_H_
