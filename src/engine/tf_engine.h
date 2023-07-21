@@ -25,6 +25,7 @@ struct TFTensorMeta {
   int32_t              num_dims;
   std::vector<int64_t> shape;
   size_t               instance_size;
+  int32_t              index;
 
   std::string to_string();
 };
@@ -32,6 +33,8 @@ struct TFTensorMeta {
 struct TFModelMeta {
   absl::flat_hash_map<std::string, TFTensorMeta> input_tensors;
   absl::flat_hash_map<std::string, TFTensorMeta> output_tensors;
+  std::vector<TF_Output> input_specs;
+  std::vector<TF_Output> output_specs;
 
   std::string to_string();
 };
@@ -72,14 +75,19 @@ class TFEngine : public Engine {
   void sub_init() override;
 
   // Run session
-  void run_session(TF_Buffer *tf_run_opts = nullptr, TF_Buffer *tf_metadata = nullptr);
+  void run_session(
+    std::vector<TF_Tensor*> *input_tensors, std::vector<TF_Tensor*> *output_tensors,
+    TF_Buffer *tf_run_opts = nullptr, TF_Buffer *tf_metadata = nullptr
+  );  // NOLINT
 
   // Iterate through the operations in the graph
   void iterate_through_operations(std::function<void(TF_Operation*)> do_something_with_operation);
 
   // Get TFTensorMeta by TF_Operation name
   void get_tf_tensor_meta_by_tf_operation_name(
-    const std::string& tf_operation_name, absl::flat_hash_map<std::string, TFTensorMeta> *tf_tensor_meta
+    const std::string& tf_operation_name,
+    absl::flat_hash_map<std::string, TFTensorMeta> *tf_tensor_meta,
+    int32_t *index = nullptr
   );  // NOLINT
 
   // Convert TF_Output to TFTensorMeta

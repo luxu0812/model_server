@@ -20,7 +20,7 @@ struct Instance {
 };
 
 struct Score {
-  std::vector<Tensor> scores;
+  std::vector<Tensor> targets;
 };
 
 struct BatchInstance {

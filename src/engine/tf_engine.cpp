@@ -89,7 +89,7 @@ void TFEngine::infer(const int32_t batch_size, const void *input, void *output) 
     throw std::runtime_error(err_msg);
   }
 
-  run_session();
+  // TODO(zh.luxu1986@gmail.com): Implement
 }
 
 void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
@@ -102,12 +102,11 @@ void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
 
   // Convert BatchInstance to TF_Output and TF_Tensor
   size_t batch_size = batch_instance->instances.size();
-  std::vector<TF_Tensor*> input_tensors, output_tensors;
+  std::vector<TF_Tensor*> input_tensors;
+  input_tensors.resize(tf_model_meta_.input_specs.size());
   for (auto& instance : batch_instance->instances) {
     for (auto& feature : instance.features) {
       const std::string& feature_name = feature.name;
-      void *feature_value = static_cast<void *>(feature.data.data());
-
       const auto it = tf_model_meta_.input_tensors.find(feature_name);
       if (tf_model_meta_.input_tensors.end() != it) {
         const auto& tensor_num_dims  = it->second.num_dims;
@@ -116,15 +115,21 @@ void TFEngine::infer(BatchInstance *batch_instance, BatchScore *batch_score) {
         size_t tensor_data_size = it->second.instance_size * batch_size;
         std::vector<int64_t> tensor_shape = it->second.shape;
         tensor_shape[0] = static_cast<int64_t>(batch_size);
+        void *feature_value = static_cast<void *>(feature.data.data());
 
         TF_Tensor *tf_tensor = TF_NewTensor(
           tensor_data_type, tensor_shape.data(), tensor_num_dims, feature_value, tensor_data_size,
           [](void*, size_t, void*) {}, nullptr
         );  // NOLINT
-        input_tensors.push_back(tf_tensor);
+        input_tensors[it->second.index] = tf_tensor;
       }
     }
   }
+
+  std::vector<TF_Tensor*> output_tensors;
+  output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
+
+  run_session(&input_tensors, &output_tensors);
 }
 
 void TFEngine::trace() {
@@ -147,7 +152,7 @@ void TFEngine::trace() {
   TF_Buffer *tf_metadata = TF_NewBuffer();
   ScopeExitTask delete_tf_metadata([&tf_metadata]() { TF_DeleteBuffer(tf_metadata); });
 
-  run_session(tf_run_opts_data, tf_metadata);
+  // run_session(tf_run_opts_data, tf_metadata);
 
   static std::mutex trace_data_mtx;
   static std::atomic<int> trace_data_index = 0;
@@ -159,18 +164,19 @@ void TFEngine::trace() {
   ofs.close();
 }
 
-void TFEngine::run_session(TF_Buffer *tf_run_opts, TF_Buffer *tf_metadata) {
-  TF_Output *inputs = nullptr, *outputs = nullptr;
-  TF_Tensor **input_tensors = nullptr, **output_tensors = nullptr;
-  int n_inputs = 0, n_outputs = 0;
-
+void TFEngine::run_session(
+  std::vector<TF_Tensor*> *input_tensors,
+  std::vector<TF_Tensor*> *output_tensors,
+  TF_Buffer *tf_run_opts,
+  TF_Buffer *tf_metadata
+) {
   TF_Status *tf_status = TF_NewStatus();
   ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
 
   TF_SessionRun(
     session_, tf_run_opts,
-    inputs, input_tensors, n_inputs,
-    outputs, output_tensors, n_outputs,
+    tf_model_meta_.input_specs.data(), input_tensors->data(), input_tensors->size(),
+    tf_model_meta_.output_specs.data(), output_tensors->data(), output_tensors->size(),
     nullptr, 0, tf_metadata, tf_status
   );  // NOLINT
 
@@ -285,14 +291,23 @@ void TFEngine::sub_init() {
      TF_DeleteStatus(tf_status);
   });
 
+  int32_t input_index = 0;
   for (const auto& tensor_info : model_meta_.input_shapes) {
     const std::string& tensor_name = tensor_info.first;
-    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_tensors);
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_tensors, &input_index);
   }
 
+  int32_t output_index = 0;
   for (const auto& tensor_info : model_meta_.output_shapes) {
     const std::string& tensor_name = tensor_info.first;
-    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_tensors);
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_tensors, &output_index);
+  }
+
+  for (const auto& tensor_info : tf_model_meta_.input_tensors) {
+    tf_model_meta_.input_specs.push_back(*(tensor_info.second.output));
+  }
+  for (const auto& tensor_info : tf_model_meta_.output_tensors) {
+    tf_model_meta_.output_specs.push_back(*(tensor_info.second.output));
   }
 
   LOG(INFO) << tf_model_meta_.to_string();
@@ -310,7 +325,8 @@ void TFEngine::iterate_through_operations(std::function<void(TF_Operation*)> do_
 // Get TFTensorMeta by TF_Operation name
 void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
   const std::string& tf_operation_name,
-  absl::flat_hash_map<std::string, TFTensorMeta> *tf_tensor_meta
+  absl::flat_hash_map<std::string, TFTensorMeta> *tf_tensor_meta,
+  int32_t *index
 ) {
   TF_Status *tf_status = TF_NewStatus();
   ScopeExitTask delete_tf_status([&tf_status] {
@@ -330,10 +346,16 @@ void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
       std::string name = tf_operation_name + ":" + std::to_string(i);
       (*tf_tensor_meta)[name] = TFTensorMeta();
       convert_tf_output_to_tf_tensor_meta(TF_Output {tf_operation, i}, &(*tf_tensor_meta)[name]);
+      if (nullptr != index) {
+        (*tf_tensor_meta)[name].index = (*index)++;
+      }
     }
   } else {
       (*tf_tensor_meta)[tf_operation_name] = TFTensorMeta();
       convert_tf_output_to_tf_tensor_meta(TF_Output {tf_operation, 0}, &(*tf_tensor_meta)[tf_operation_name]);
+      if (nullptr != index) {
+        (*tf_tensor_meta)[tf_operation_name].index = (*index)++;
+      }
   }
 }
 
@@ -381,9 +403,9 @@ std::string TFTensorMeta::to_string() {
   std::string message;
   absl::StrAppendFormat(&message,
     "  operation_name: %s\n  operation_type: %s\n  operation_num_inputs: %d\n  operation_num_outputs: %d\n"
-    "  data_type: %d\n  data_size: %d\n  num_dims: %d\n  instance_size: %llu\n  shape: ",
+    "  data_type: %d\n  data_size: %d\n  num_dims: %d\n  instance_size: %llu\n  index: %d\n  shape: ",
     operation_name.c_str(), operation_type.c_str(), operation_num_inputs, operation_num_outputs,
-    data_type, data_size, num_dims, instance_size
+    data_type, data_size, num_dims, instance_size, index
   );  // NOLINT
   for (int32_t i = 0; i < num_dims; ++i) {
     if (i > 0) {
