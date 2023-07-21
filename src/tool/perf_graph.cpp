@@ -21,15 +21,15 @@ DEFINE_uint32(batch_size, 128, "Batch size");
 DEFINE_uint32(test_data_size, 10000, "Test data size");
 DEFINE_string(engine_brand, "TensorFlow", "Engine brand");
 
-infer_engine::Engine *get_engine();
-std::vector<infer_engine::Sample> *get_samples();
+infer_engine::Engine *create_engine();
+std::vector<infer_engine::Sample> *create_samples();
 void infer(infer_engine::Engine *engine, infer_engine::Sample *sample);
 
 int main(int argc, char **argv) {
   infer_engine::init(argc, argv);
   try {
-    std::unique_ptr<infer_engine::Engine> engine(get_engine());
-    std::unique_ptr<std::vector<infer_engine::Sample>> samples(get_samples());
+    std::unique_ptr<infer_engine::Engine> engine(create_engine());
+    std::unique_ptr<std::vector<infer_engine::Sample>> samples(create_samples());
 
     BS::thread_pool works(FLAGS_concurrency);
     for (auto& sample : *samples) {
