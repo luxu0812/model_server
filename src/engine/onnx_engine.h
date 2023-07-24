@@ -11,7 +11,7 @@ namespace infer_engine {
 
 class ONNXEngine : public Engine {
  public:
-  explicit ONNXEngine(const ModelSpec& model_spec);
+  ONNXEngine(const ModelSpec& model_spec, const SessionConf& session_conf);
   ~ONNXEngine();
 
   ONNXEngine() = delete;

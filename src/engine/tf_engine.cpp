@@ -14,8 +14,8 @@
 
 namespace infer_engine {
 
-TFEngine::TFEngine(const ModelSpec& model_spec) :
-  Engine(model_spec),
+TFEngine::TFEngine(const ModelSpec& model_spec, const SessionConf& session_conf) :
+  Engine(model_spec, session_conf),
   engine_mtx_(),
   inited_(false),
   graph_buffer_(nullptr),

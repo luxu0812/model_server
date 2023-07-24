@@ -45,6 +45,7 @@ cc_library(
   hdrs = [
     "data/return_status.h",
     "data/model_spec.h",
+    "data/session_conf.h",
     "data/type.h"
   ],
   srcs = [

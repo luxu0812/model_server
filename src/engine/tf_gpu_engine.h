@@ -11,7 +11,7 @@ namespace infer_engine {
 
 class TFGPUEngine : public TFEngine {
  public:
-  explicit TFGPUEngine(const ModelSpec& model_spec);
+  TFGPUEngine(const ModelSpec& model_spec, const SessionConf& session_conf);
   ~TFGPUEngine();
 
   TFGPUEngine() = delete;

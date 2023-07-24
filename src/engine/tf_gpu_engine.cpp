@@ -13,7 +13,8 @@
 
 namespace infer_engine {
 
-TFGPUEngine::TFGPUEngine(const ModelSpec& model_spec) : TFEngine(model_spec) {}
+TFGPUEngine::TFGPUEngine(const ModelSpec& model_spec, const SessionConf& session_conf) :
+  TFEngine(model_spec, session_conf) {}
 
 TFGPUEngine::~TFGPUEngine() {}
 
