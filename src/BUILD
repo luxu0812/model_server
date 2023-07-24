@@ -24,6 +24,7 @@ cc_library(
   hdrs = [
     "util/functional/scope_exit_task.h",
     "util/functional/random.h",
+    "util/functional/timer.h",
     "util/process/process_initiator.h"
   ],
   srcs = [

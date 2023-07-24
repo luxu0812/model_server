@@ -4,12 +4,14 @@
 #include <exception>
 #include <vector>
 #include <random>
+#include <algorithm>
 
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "BShoshany/BS_thread_pool.hpp"
 
 #include "infer_engine/src/util/process/process_initiator.h"
+#include "infer_engine/src/util/functional/timer.h"
 #include "infer_engine/src/data/model_spec.h"
 #include "infer_engine/src/data/type.h"
 #include "infer_engine/src/engine/engine.h"
@@ -23,19 +25,28 @@ DEFINE_string(engine_brand, "TensorFlow", "Engine brand");
 
 infer_engine::Engine *create_engine();
 std::vector<infer_engine::Sample> *create_samples();
-void infer(infer_engine::Engine *engine, infer_engine::Sample *sample);
+void infer(infer_engine::Engine *engine, infer_engine::Sample *sample, double *cost_ms);
 
 int main(int argc, char **argv) {
   infer_engine::init(argc, argv);
   try {
     std::unique_ptr<infer_engine::Engine> engine(create_engine());
     std::unique_ptr<std::vector<infer_engine::Sample>> samples(create_samples());
+    std::vector<double> cost_ms(samples->size());
 
     BS::thread_pool works(FLAGS_concurrency);
-    for (auto& sample : *samples) {
-      works.push_task(infer, engine.get(), &sample);
+    infer_engine::Timer timer;
+    for (int32_t i = 0; i < samples->size(); ++i) {
+      works.push_task(infer, engine.get(), &(samples->at(i)), &(cost_ms[i]));
     }
     works.wait_for_tasks();
+    double total_cost_sec = timer.f64_elapsed_sec();
+
+    std::sort(cost_ms.begin(), cost_ms.end());
+    double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
+    double cost_p99 = cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)];
+    LOG(INFO) << "Total cost: " << total_cost_sec << " sec, avg cost: "
+              << cost_avg << " ms, p99 cost: " << cost_p99 << " ms";
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
   } catch (...) {
@@ -105,7 +116,12 @@ std::vector<infer_engine::Sample> *create_samples() {
   return samples;
 }
 
-void infer(infer_engine::Engine *engine, infer_engine::Sample *sample) {
+void infer(infer_engine::Engine *engine, infer_engine::Sample *sample, double *cost_ms) {
+  infer_engine::Timer timer;
+  infer_engine::ScopeExitTask scope_exit_task([&]() {
+    *cost_ms = timer.f64_elapsed_ms();
+  });
+
   try {
     engine->infer(&sample->instance, &sample->score);
   } catch (const std::exception& e) {
