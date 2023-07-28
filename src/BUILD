@@ -64,23 +64,52 @@ cc_library(
 )
 
 cc_library(
-  name = "engine",
+  name = "engine_base",
   hdrs = [
     "engine/engine.h",
+  ],
+  strip_include_prefix = "engine",
+  include_prefix = "infer_engine/src/engine",
+  copts = copts,
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
+  name = "tf_engine",
+  hdrs = [
     "engine/tf_engine.h",
-    "engine/onnx_engine.h",
   ],
   srcs = [
     "engine/tf_engine.cpp",
+  ],
+  deps = [
+    ":util",
+    ":data",
+    ":engine_base",
+    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
+    "@com_google_protobuf//:protobuf",
+    "@tensorflow//:tensorflow",
+  ],
+  strip_include_prefix = "engine",
+  include_prefix = "infer_engine/src/engine",
+  copts = copts,
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
+  name = "onnx_engine",
+  hdrs = [
+    "engine/onnx_engine.h",
+  ],
+  srcs = [
     "engine/onnx_engine.cpp",
   ],
   deps = [
     ":util",
     ":data",
+    ":engine_base",
     "@com_github_google_glog//:glog",
-    "@com_google_absl//:absl",
-    "@com_google_protobuf//:protobuf",
-    "@tensorflow//:tensorflow",
     "@onnxruntime//:onnxruntime",
   ],
   strip_include_prefix = "engine",
@@ -97,7 +126,8 @@ cc_binary(
   deps = [
     ":util",
     ":data",
-    ":engine",
+    ":tf_engine",
+    ":onnx_engine",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",
     "@bs_thread_pool//:bs_thread_pool",
