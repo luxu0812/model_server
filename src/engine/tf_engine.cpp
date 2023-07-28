@@ -272,14 +272,27 @@ void TFEngine::set_session_options() {
   tensorflow::OptimizerOptions tf_optimizer_opts;
   tf_optimizer_opts.set_do_constant_folding(true);
   tf_optimizer_opts.set_do_function_inlining(true);
-  tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L1);
-  tf_optimizer_opts.set_cpu_global_jit(true);
-  tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_2);
+  if (0 == session_conf_.opt_level) {
+    tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L0);
+  } else {
+    tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L1);
+  }
+  if (0 == session_conf_.jit_level) {
+    tf_optimizer_opts.set_cpu_global_jit(false);
+    tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_OFF);
+  } else if (1 == session_conf_.jit_level) {
+    tf_optimizer_opts.set_cpu_global_jit(true);
+    tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_1);
+  } else {
+    tf_optimizer_opts.set_cpu_global_jit(true);
+    tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_2);
+  }
 
   tensorflow::ConfigProto tf_session_conf;
   tf_session_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
-  tf_session_conf.set_intra_op_parallelism_threads(1);
-  tf_session_conf.set_inter_op_parallelism_threads(1);
+  tf_session_conf.set_intra_op_parallelism_threads(session_conf_.intra_op_parallelism_threads);
+  tf_session_conf.set_inter_op_parallelism_threads(session_conf_.inter_op_parallelism_threads);
+  LOG(INFO) << "[" << model_spec_.brief() << "] Session config: " << tf_session_conf.DebugString();
 
   std::string tf_session_conf_str;
   tf_session_conf.SerializeToString(&tf_session_conf_str);

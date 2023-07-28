@@ -22,6 +22,10 @@
 DEFINE_uint32(concurrency, 1, "Number of concurrent workers");
 DEFINE_uint32(batch_size, 128, "Batch size");
 DEFINE_uint32(test_data_size, 10000, "Test data size");
+DEFINE_int32(opt_level, 0, "Optimization level");
+DEFINE_int32(jit_level, 0, "JIT level");
+DEFINE_int32(inter_op_parallelism_threads, 1, "Inter op parallelism threads");
+DEFINE_int32(intra_op_parallelism_threads, 1, "Intra op parallelism threads");
 DEFINE_string(engine_brand, "TensorFlow", "Engine brand");
 
 infer_engine::Engine *create_engine();
@@ -59,10 +63,10 @@ int main(int argc, char **argv) {
 
 infer_engine::Engine *create_engine() {
   infer_engine::SessionConf session_conf {
-    .opt_level = 0,
-    .jit_level = 0,
-    .inter_op_parallelism_threads = 1,
-    .intra_op_parallelism_threads = 1,
+    .opt_level = FLAGS_opt_level,
+    .jit_level = FLAGS_jit_level,
+    .inter_op_parallelism_threads = FLAGS_inter_op_parallelism_threads,
+    .intra_op_parallelism_threads = FLAGS_intra_op_parallelism_threads
   };
 
   if (FLAGS_engine_brand == "TensorFlow") {
