@@ -7,7 +7,7 @@
 #include <string>
 #include "infer_engine/src/data/type.h"
 #include "infer_engine/src/data/model_spec.h"
-#include "infer_engine/src/data/session_conf.h"
+#include "infer_engine/src/data/runtime_conf.h"
 
 namespace infer_engine {
 
@@ -18,9 +18,9 @@ const char kBrandONNXDNNL[] = "ONNX-DNNL";
 
 class Engine {
  public:
-  Engine(const ModelSpec& model_spec, const SessionConf& session_conf) :
+  Engine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
     model_spec_(model_spec),
-    session_conf_(session_conf) {}
+    runtime_conf_(runtime_conf) {}
   virtual ~Engine() {}
 
   Engine() = delete;
@@ -70,7 +70,7 @@ class Engine {
   ModelSpec model_spec_;
   ModelMeta model_meta_;
 
-  SessionConf session_conf_;
+  RuntimeConf runtime_conf_;
 };
 
 }  // namespace infer_engine

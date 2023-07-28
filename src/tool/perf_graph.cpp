@@ -13,7 +13,7 @@
 #include "infer_engine/src/util/process/process_initiator.h"
 #include "infer_engine/src/util/functional/timer.h"
 #include "infer_engine/src/data/model_spec.h"
-#include "infer_engine/src/data/session_conf.h"
+#include "infer_engine/src/data/runtime_conf.h"
 #include "infer_engine/src/data/type.h"
 #include "infer_engine/src/engine/engine.h"
 #include "infer_engine/src/engine/tf_engine.h"
@@ -62,29 +62,24 @@ int main(int argc, char **argv) {
 }
 
 infer_engine::Engine *create_engine() {
-  infer_engine::SessionConf session_conf {
+  infer_engine::RuntimeConf runtime_conf {
     .opt_level = FLAGS_opt_level,
     .jit_level = FLAGS_jit_level,
     .inter_op_parallelism_threads = FLAGS_inter_op_parallelism_threads,
     .intra_op_parallelism_threads = FLAGS_intra_op_parallelism_threads
   };
+  infer_engine::ModelSpec model_spec {
+    .name = "test",
+    .version = "1.0.0",
+    .meta_file = "test/data/model1/graph_meta.json"
+  };
 
   if (FLAGS_engine_brand == "TensorFlow") {
-    infer_engine::ModelSpec tf_model_spec {
-      .name = "test",
-      .version = "1.0.0",
-      .graph_file = "test/data/model1/graph.pb",
-      .meta_file = "test/data/model1/graph_meta.json"
-    };
-    return new infer_engine::TFEngine(tf_model_spec, session_conf);
+    model_spec.graph_file = "test/data/model1/graph.pb";
+    return new infer_engine::TFEngine(model_spec, runtime_conf);
   } else if (FLAGS_engine_brand == "ONNX") {
-    infer_engine::ModelSpec onnx_model_spec {
-      .name = "test",
-      .version = "1.0.0",
-      .graph_file = "test/data/model1/graph.onnx",
-      .meta_file = "test/data/model1/graph_meta.json"
-    };
-    return new infer_engine::ONNXEngine(onnx_model_spec, session_conf);
+    model_spec.graph_file = "test/data/model1/graph.onnx";
+    return new infer_engine::ONNXEngine(model_spec, runtime_conf);
   } else {
     throw std::runtime_error("Unknown engine brand");
   }

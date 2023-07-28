@@ -45,7 +45,7 @@ cc_library(
   hdrs = [
     "data/return_status.h",
     "data/model_spec.h",
-    "data/session_conf.h",
+    "data/runtime_conf.h",
     "data/type.h"
   ],
   srcs = [
@@ -67,6 +67,9 @@ cc_library(
   name = "engine_base",
   hdrs = [
     "engine/engine.h",
+  ],
+  deps = [
+    ":data"
   ],
   strip_include_prefix = "engine",
   include_prefix = "infer_engine/src/engine",

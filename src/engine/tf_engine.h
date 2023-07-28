@@ -41,7 +41,7 @@ struct TFModelMeta {
 
 class TFEngine : public Engine {
  public:
-  TFEngine(const ModelSpec& model_spec, const SessionConf& session_conf);
+  TFEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf);
   ~TFEngine();
 
   TFEngine() = delete;

@@ -6,8 +6,8 @@
 
 namespace infer_engine {
 
-ONNXEngine::ONNXEngine(const ModelSpec& model_spec, const SessionConf& session_conf) :
-  Engine(model_spec, session_conf),
+ONNXEngine::ONNXEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
+  Engine(model_spec, runtime_conf),
   env_(nullptr),
   session_opts_(nullptr),
   session_(nullptr) {
