@@ -5,7 +5,7 @@
 
 #include <stdint.h>
 #include <string>
-#include "infer_engine/src/data/type.h"
+#include "infer_engine/src/data/sample.h"
 #include "infer_engine/src/data/model_spec.h"
 #include "infer_engine/src/data/runtime_conf.h"
 

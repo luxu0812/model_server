@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_DATA_TYPE_H_
-#define INFER_ENGINE_SRC_DATA_TYPE_H_
+#ifndef INFER_ENGINE_SRC_DATA_SAMPLE_H_
+#define INFER_ENGINE_SRC_DATA_SAMPLE_H_
 
 #include <stdint.h>
 #include <vector>
@@ -30,4 +30,4 @@ struct Sample {
 
 }  // namespace infer_engine
 
-#endif  // INFER_ENGINE_SRC_DATA_TYPE_H_
+#endif  // INFER_ENGINE_SRC_DATA_SAMPLE_H_

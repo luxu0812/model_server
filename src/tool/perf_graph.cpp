@@ -14,7 +14,7 @@
 #include "infer_engine/src/util/functional/timer.h"
 #include "infer_engine/src/data/model_spec.h"
 #include "infer_engine/src/data/runtime_conf.h"
-#include "infer_engine/src/data/type.h"
+#include "infer_engine/src/data/sample.h"
 #include "infer_engine/src/engine/engine.h"
 #include "infer_engine/src/engine/tf_engine.h"
 #include "infer_engine/src/engine/onnx_engine.h"

@@ -46,7 +46,7 @@ cc_library(
     "data/return_status.h",
     "data/model_spec.h",
     "data/runtime_conf.h",
-    "data/type.h"
+    "data/sample.h"
   ],
   srcs = [
     "data/return_status.cpp"
