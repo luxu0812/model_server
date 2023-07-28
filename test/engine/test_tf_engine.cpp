@@ -2,41 +2,41 @@
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"
-#include "infer_engine/src/util/process/process_initiator.h"
-#include "infer_engine/src/engine/tf_engine.h"
+#include "model_server/src/util/process/process_initiator.h"
+#include "model_server/src/engine/tf_engine.h"
 
 TEST(TFEngine, LoadSuccess) {
-  infer_engine::ModelSpec tf_model_spec {
+  model_server::ModelSpec tf_model_spec {
     .name = "model1",
     .version = "1.0.0",
     .graph_file = "test/data/model1/graph.pb",
     .meta_file = "test/data/model1/graph_meta.json"
   };
-  ASSERT_NO_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); });
+  ASSERT_NO_THROW({ model_server::TFEngine tf_engine(tf_model_spec); });
 }
 
 TEST(TFEngine, LoadFailNonExistentGraph) {
-  infer_engine::ModelSpec tf_model_spec {
+  model_server::ModelSpec tf_model_spec {
     .name = "model1",
     .version = "1.0.0",
     .graph_file = "test/data/model1/non-existent.pb",
     .meta_file = "test/data/model1/graph_meta.json"
   };
-  ASSERT_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
+  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
 }
 
 TEST(TFEngine, LoadFailNonExistentMeta) {
-  infer_engine::ModelSpec tf_model_spec {
+  model_server::ModelSpec tf_model_spec {
     .name = "model1",
     .version = "1.0.0",
     .graph_file = "test/data/model1/graph.pb",
     .meta_file = "test/data/model1/non-existent.json"
   };
-  ASSERT_THROW({ infer_engine::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
+  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
 }
 
 int main (int argc, char **argv) {
-  infer_engine::init(argc, argv);
+  model_server::init(argc, argv);
   testing::InitGoogleTest(&argc, argv);
 
   return RUN_ALL_TESTS();

@@ -1,9 +1,9 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_
-#define INFER_ENGINE_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_
+#ifndef MODEL_SERVER_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_
+#define MODEL_SERVER_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_
 
-namespace infer_engine {
+namespace model_server {
 
 class ScopeExitTask {
  public:
@@ -21,6 +21,6 @@ class ScopeExitTask {
   std::function<void()> func_;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_
+#endif  // MODEL_SERVER_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_

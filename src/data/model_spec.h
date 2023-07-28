@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_DATA_MODEL_SPEC_H_
-#define INFER_ENGINE_SRC_DATA_MODEL_SPEC_H_
+#ifndef MODEL_SERVER_SRC_DATA_MODEL_SPEC_H_
+#define MODEL_SERVER_SRC_DATA_MODEL_SPEC_H_
 
 #include <stdint.h>
 #include <fstream>
@@ -9,9 +9,9 @@
 #include <string>
 #include "absl/container/flat_hash_map.h"
 #include "nlohmann/json.hpp"
-#include "infer_engine/src/util/functional/scope_exit_task.h"
+#include "model_server/src/util/functional/scope_exit_task.h"
 
-namespace infer_engine {
+namespace model_server {
 
 static const char kFeatureTypeCategorical[]          = "sparse";
 static const char kFeatureTypeContinuous[]           = "dense";
@@ -197,6 +197,6 @@ struct ModelMeta {
   }
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_DATA_MODEL_SPEC_H_
+#endif  // MODEL_SERVER_SRC_DATA_MODEL_SPEC_H_

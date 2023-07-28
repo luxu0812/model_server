@@ -1,11 +1,11 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_UTIL_FUNCTIONAL_RANDOM_H_
-#define INFER_ENGINE_SRC_UTIL_FUNCTIONAL_RANDOM_H_
+#ifndef MODEL_SERVER_SRC_UTIL_FUNCTIONAL_RANDOM_H_
+#define MODEL_SERVER_SRC_UTIL_FUNCTIONAL_RANDOM_H_
 
 #include <random>
 
-namespace infer_engine {
+namespace model_server {
 
 double uniform_real_distribution(double min_value, double max_value) {
   static std::random_device rd;
@@ -29,6 +29,6 @@ double normal_distribution(double mean, double stddev) {
   return distribution(gen);
 }
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_UTIL_FUNCTIONAL_RANDOM_H_
+#endif  // MODEL_SERVER_SRC_UTIL_FUNCTIONAL_RANDOM_H_

@@ -1,13 +1,13 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_ENGINE_TF_GPU_ENGINE_H_
-#define INFER_ENGINE_SRC_ENGINE_TF_GPU_ENGINE_H_
+#ifndef MODEL_SERVER_SRC_ENGINE_TF_GPU_ENGINE_H_
+#define MODEL_SERVER_SRC_ENGINE_TF_GPU_ENGINE_H_
 
 #include <string>
 #include "tensorflow/c/c_api.h"
-#include "infer_engine/src/engine/tf_engine.h"
+#include "model_server/src/engine/tf_engine.h"
 
-namespace infer_engine {
+namespace model_server {
 
 class TFGPUEngine : public TFEngine {
  public:
@@ -26,6 +26,6 @@ class TFGPUEngine : public TFEngine {
   void set_session_options() override;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_ENGINE_TF_GPU_ENGINE_H_
+#endif  // MODEL_SERVER_SRC_ENGINE_TF_GPU_ENGINE_H_

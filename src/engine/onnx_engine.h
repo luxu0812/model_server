@@ -1,13 +1,13 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_ENGINE_ONNX_ENGINE_H_
-#define INFER_ENGINE_SRC_ENGINE_ONNX_ENGINE_H_
+#ifndef MODEL_SERVER_SRC_ENGINE_ONNX_ENGINE_H_
+#define MODEL_SERVER_SRC_ENGINE_ONNX_ENGINE_H_
 
 #include <string>
 #include "onnxruntime/core/session/onnxruntime_cxx_api.h"
-#include "infer_engine/src/engine/engine.h"
+#include "model_server/src/engine/engine.h"
 
-namespace infer_engine {
+namespace model_server {
 
 class ONNXEngine : public Engine {
  public:
@@ -46,6 +46,6 @@ class ONNXEngine : public Engine {
   Ort::Session        *session_;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_ENGINE_ONNX_ENGINE_H_
+#endif  // MODEL_SERVER_SRC_ENGINE_ONNX_ENGINE_H_

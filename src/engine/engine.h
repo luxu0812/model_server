@@ -1,15 +1,15 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_ENGINE_ENGINE_H_
-#define INFER_ENGINE_SRC_ENGINE_ENGINE_H_
+#ifndef MODEL_SERVER_SRC_ENGINE_ENGINE_H_
+#define MODEL_SERVER_SRC_ENGINE_ENGINE_H_
 
 #include <stdint.h>
 #include <string>
-#include "infer_engine/src/data/sample.h"
-#include "infer_engine/src/data/model_spec.h"
-#include "infer_engine/src/data/runtime_conf.h"
+#include "model_server/src/data/sample.h"
+#include "model_server/src/data/model_spec.h"
+#include "model_server/src/data/runtime_conf.h"
 
-namespace infer_engine {
+namespace model_server {
 
 const char kBrandTF[]       = "TensorFlow";
 const char kBrandTFGPU[]    = "TensorFlow-GPU";
@@ -73,6 +73,6 @@ class Engine {
   RuntimeConf runtime_conf_;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_ENGINE_ENGINE_H_
+#endif  // MODEL_SERVER_SRC_ENGINE_ENGINE_H_

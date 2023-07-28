@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_
-#define INFER_ENGINE_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_
+#ifndef MODEL_SERVER_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_
+#define MODEL_SERVER_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_
 
 #include <signal.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include "absl/debugging/symbolize.h"
 #include "absl/debugging/failure_signal_handler.h"
 
-namespace infer_engine {
+namespace model_server {
 
 const std::vector<int32_t> kExitSignals = {
   SIGTERM, SIGSEGV, SIGINT, SIGILL, SIGABRT, SIGFPE
@@ -47,6 +47,6 @@ void init(
   absl::InstallFailureSignalHandler(signal_handler_options);
 }
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_
+#endif  // MODEL_SERVER_SRC_UTIL_PROCESS_PROCESS_INITIATOR_H_

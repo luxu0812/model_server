@@ -1,9 +1,9 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_DATA_RUNTIME_CONF_H_
-#define INFER_ENGINE_SRC_DATA_RUNTIME_CONF_H_
+#ifndef MODEL_SERVER_SRC_DATA_RUNTIME_CONF_H_
+#define MODEL_SERVER_SRC_DATA_RUNTIME_CONF_H_
 
-namespace infer_engine {
+namespace model_server {
 
 struct RuntimeConf {
     int32_t opt_level;
@@ -13,6 +13,6 @@ struct RuntimeConf {
     int32_t intra_op_parallelism_threads;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_DATA_RUNTIME_CONF_H_
+#endif  // MODEL_SERVER_SRC_DATA_RUNTIME_CONF_H_

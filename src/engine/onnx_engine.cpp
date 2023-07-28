@@ -2,9 +2,9 @@
 
 #include <vector>
 #include "glog/logging.h"
-#include "infer_engine/src/engine/onnx_engine.h"
+#include "model_server/src/engine/onnx_engine.h"
 
-namespace infer_engine {
+namespace model_server {
 
 ONNXEngine::ONNXEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
   Engine(model_spec, runtime_conf),
@@ -96,4 +96,4 @@ void ONNXEngine::create_session() {
   LOG(INFO) << "[" << model_spec_.brief() << "] Session created";
 }
 
-}  // namespace infer_engine
+}  // namespace model_server

@@ -2,9 +2,9 @@
 
 #include <vector>
 #include "glog/logging.h"
-#include "infer_engine/src/engine/onnx_dnnl_engine.h"
+#include "model_server/src/engine/onnx_dnnl_engine.h"
 
-namespace infer_engine {
+namespace model_server {
 
 ONNXDNNLEngine::ONNXDNNLEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
   ONNXEngine(model_spec, runtime_conf) {}
@@ -25,4 +25,4 @@ void ONNXDNNLEngine::set_session_options() {
   LOG(INFO) << "[" << model_spec_.brief() << "] Session options set";
 }
 
-}  // namespace infer_engine
+}  // namespace model_server

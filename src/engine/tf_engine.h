@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_ENGINE_TF_ENGINE_H_
-#define INFER_ENGINE_SRC_ENGINE_TF_ENGINE_H_
+#ifndef MODEL_SERVER_SRC_ENGINE_TF_ENGINE_H_
+#define MODEL_SERVER_SRC_ENGINE_TF_ENGINE_H_
 
 #include <stdint.h>
 #include <vector>
@@ -10,9 +10,9 @@
 #include <shared_mutex>
 #include "absl/container/flat_hash_map.h"
 #include "tensorflow/c/c_api.h"
-#include "infer_engine/src/engine/engine.h"
+#include "model_server/src/engine/engine.h"
 
-namespace infer_engine {
+namespace model_server {
 
 struct TFTensorMeta {
   TF_Output           *output = nullptr;
@@ -112,6 +112,6 @@ class TFEngine : public Engine {
   TF_Session        *session_;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_ENGINE_TF_ENGINE_H_
+#endif  // MODEL_SERVER_SRC_ENGINE_TF_ENGINE_H_

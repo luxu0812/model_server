@@ -1,6 +1,6 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#include "infer_engine/src/engine/tf_engine.h"
+#include "model_server/src/engine/tf_engine.h"
 
 #include <fstream>
 #include <string>
@@ -10,9 +10,9 @@
 #include "tensorflow/c/c_api.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
-#include "infer_engine/src/util/functional/scope_exit_task.h"
+#include "model_server/src/util/functional/scope_exit_task.h"
 
-namespace infer_engine {
+namespace model_server {
 
 TFEngine::TFEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
   Engine(model_spec, runtime_conf),
@@ -475,4 +475,4 @@ std::string TFModelMeta::to_string() {
   return message;
 }
 
-}  // namespace infer_engine
+}  // namespace model_server

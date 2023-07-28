@@ -35,7 +35,7 @@ cc_library(
     "@com_google_absl//:absl",
   ],
   strip_include_prefix = "util",
-  include_prefix = "infer_engine/src/util",
+  include_prefix = "model_server/src/util",
   copts = copts,
   visibility = ["//visibility:public"],
 )
@@ -58,7 +58,7 @@ cc_library(
     "@nlohmann_json//:nlohmann_json",
   ],
   strip_include_prefix = "data",
-  include_prefix = "infer_engine/src/data",
+  include_prefix = "model_server/src/data",
   copts = copts,
   visibility = ["//visibility:public"],
 )
@@ -72,7 +72,7 @@ cc_library(
     ":data"
   ],
   strip_include_prefix = "engine",
-  include_prefix = "infer_engine/src/engine",
+  include_prefix = "model_server/src/engine",
   copts = copts,
   visibility = ["//visibility:public"],
 )
@@ -95,7 +95,7 @@ cc_library(
     "@tensorflow//:tensorflow",
   ],
   strip_include_prefix = "engine",
-  include_prefix = "infer_engine/src/engine",
+  include_prefix = "model_server/src/engine",
   copts = copts,
   visibility = ["//visibility:public"],
 )
@@ -116,7 +116,7 @@ cc_library(
     "@onnxruntime//:onnxruntime",
   ],
   strip_include_prefix = "engine",
-  include_prefix = "infer_engine/src/engine",
+  include_prefix = "model_server/src/engine",
   copts = copts,
   visibility = ["//visibility:public"],
 )

@@ -10,14 +10,14 @@
 #include "glog/logging.h"
 #include "BShoshany/BS_thread_pool.hpp"
 
-#include "infer_engine/src/util/process/process_initiator.h"
-#include "infer_engine/src/util/functional/timer.h"
-#include "infer_engine/src/data/model_spec.h"
-#include "infer_engine/src/data/runtime_conf.h"
-#include "infer_engine/src/data/sample.h"
-#include "infer_engine/src/engine/engine.h"
-#include "infer_engine/src/engine/tf_engine.h"
-#include "infer_engine/src/engine/onnx_engine.h"
+#include "model_server/src/util/process/process_initiator.h"
+#include "model_server/src/util/functional/timer.h"
+#include "model_server/src/data/model_spec.h"
+#include "model_server/src/data/runtime_conf.h"
+#include "model_server/src/data/sample.h"
+#include "model_server/src/engine/engine.h"
+#include "model_server/src/engine/tf_engine.h"
+#include "model_server/src/engine/onnx_engine.h"
 
 DEFINE_uint32(concurrency, 1, "Number of concurrent workers");
 DEFINE_uint32(batch_size, 128, "Batch size");
@@ -28,19 +28,19 @@ DEFINE_int32(inter_op_parallelism_threads, 1, "Inter op parallelism threads");
 DEFINE_int32(intra_op_parallelism_threads, 1, "Intra op parallelism threads");
 DEFINE_string(engine_brand, "TensorFlow", "Engine brand");
 
-infer_engine::Engine *create_engine();
-std::vector<infer_engine::Sample> *create_samples();
-void infer(infer_engine::Engine *engine, infer_engine::Sample *sample, double *cost_ms);
+model_server::Engine *create_engine();
+std::vector<model_server::Sample> *create_samples();
+void infer(model_server::Engine *engine, model_server::Sample *sample, double *cost_ms);
 
 int main(int argc, char **argv) {
-  infer_engine::init(argc, argv);
+  model_server::init(argc, argv);
   try {
-    std::unique_ptr<infer_engine::Engine> engine(create_engine());
-    std::unique_ptr<std::vector<infer_engine::Sample>> samples(create_samples());
+    std::unique_ptr<model_server::Engine> engine(create_engine());
+    std::unique_ptr<std::vector<model_server::Sample>> samples(create_samples());
     std::vector<double> cost_ms(samples->size());
 
     BS::thread_pool works(FLAGS_concurrency);
-    infer_engine::Timer timer;
+    model_server::Timer timer;
     for (int32_t i = 0; i < samples->size(); ++i) {
       works.push_task(infer, engine.get(), &(samples->at(i)), &(cost_ms[i]));
     }
@@ -61,14 +61,14 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-infer_engine::Engine *create_engine() {
-  infer_engine::RuntimeConf runtime_conf {
+model_server::Engine *create_engine() {
+  model_server::RuntimeConf runtime_conf {
     .opt_level = FLAGS_opt_level,
     .jit_level = FLAGS_jit_level,
     .inter_op_parallelism_threads = FLAGS_inter_op_parallelism_threads,
     .intra_op_parallelism_threads = FLAGS_intra_op_parallelism_threads
   };
-  infer_engine::ModelSpec model_spec {
+  model_server::ModelSpec model_spec {
     .name = "test",
     .version = "1.0.0",
     .meta_file = "test/data/model1/graph_meta.json"
@@ -76,10 +76,10 @@ infer_engine::Engine *create_engine() {
 
   if (FLAGS_engine_brand == "TensorFlow") {
     model_spec.graph_file = "test/data/model1/graph.pb";
-    return new infer_engine::TFEngine(model_spec, runtime_conf);
+    return new model_server::TFEngine(model_spec, runtime_conf);
   } else if (FLAGS_engine_brand == "ONNX") {
     model_spec.graph_file = "test/data/model1/graph.onnx";
-    return new infer_engine::ONNXEngine(model_spec, runtime_conf);
+    return new model_server::ONNXEngine(model_spec, runtime_conf);
   } else {
     throw std::runtime_error("Unknown engine brand");
   }
@@ -87,15 +87,15 @@ infer_engine::Engine *create_engine() {
   return nullptr;
 }
 
-std::vector<infer_engine::Sample> *create_samples() {
+std::vector<model_server::Sample> *create_samples() {
   std::random_device rd;
   std::mt19937 gen(rd());
 
   std::string meta_file = "test/data/model1/graph_meta.json";
-  infer_engine::ModelMeta model_meta;
+  model_server::ModelMeta model_meta;
   model_meta.load(meta_file);
 
-  std::vector<infer_engine::Sample> *samples = new std::vector<infer_engine::Sample>();
+  std::vector<model_server::Sample> *samples = new std::vector<model_server::Sample>();
   samples->resize(FLAGS_test_data_size);
   for (auto& sample : *samples) {
     sample.instance.batch_size = FLAGS_batch_size;
@@ -123,9 +123,9 @@ std::vector<infer_engine::Sample> *create_samples() {
   return samples;
 }
 
-void infer(infer_engine::Engine *engine, infer_engine::Sample *sample, double *cost_ms) {
-  infer_engine::Timer timer;
-  infer_engine::ScopeExitTask scope_exit_task([&]() {
+void infer(model_server::Engine *engine, model_server::Sample *sample, double *cost_ms) {
+  model_server::Timer timer;
+  model_server::ScopeExitTask scope_exit_task([&]() {
     *cost_ms = timer.f64_elapsed_ms();
   });
 

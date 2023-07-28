@@ -1,9 +1,9 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#include "infer_engine/src/data/return_status.h"
+#include "model_server/src/data/return_status.h"
 #include "glog/logging.h"
 
-namespace infer_engine {
+namespace model_server {
 
 const int32_t ReturnStatus::kSuccess = 0;
 const int32_t ReturnStatus::kNoImplement = 1;
@@ -43,4 +43,4 @@ std::string ReturnStatus::message() const {
   return message_;
 }
 
-}  // namespace infer_engine
+}  // namespace model_server

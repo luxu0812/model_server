@@ -1,12 +1,12 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_DATA_RETURN_STATUS_H_
-#define INFER_ENGINE_SRC_DATA_RETURN_STATUS_H_
+#ifndef MODEL_SERVER_SRC_DATA_RETURN_STATUS_H_
+#define MODEL_SERVER_SRC_DATA_RETURN_STATUS_H_
 
 #include <stdint.h>
 #include <string>
 
-namespace infer_engine {
+namespace model_server {
 
 class ReturnStatus {
  public:
@@ -46,6 +46,6 @@ class ReturnStatus {
 
 
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_DATA_RETURN_STATUS_H_
+#endif  // MODEL_SERVER_SRC_DATA_RETURN_STATUS_H_

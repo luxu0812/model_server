@@ -1,13 +1,13 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_DATA_SAMPLE_H_
-#define INFER_ENGINE_SRC_DATA_SAMPLE_H_
+#ifndef MODEL_SERVER_SRC_DATA_SAMPLE_H_
+#define MODEL_SERVER_SRC_DATA_SAMPLE_H_
 
 #include <stdint.h>
 #include <vector>
 #include <string>
 
-namespace infer_engine {
+namespace model_server {
 
 struct Tensor {
   std::string name;
@@ -28,6 +28,6 @@ struct Sample {
   Score score;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_DATA_SAMPLE_H_
+#endif  // MODEL_SERVER_SRC_DATA_SAMPLE_H_

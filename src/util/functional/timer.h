@@ -1,12 +1,12 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef INFER_ENGINE_SRC_UTIL_FUNCTIONAL_TIMER_H_
-#define INFER_ENGINE_SRC_UTIL_FUNCTIONAL_TIMER_H_
+#ifndef MODEL_SERVER_SRC_UTIL_FUNCTIONAL_TIMER_H_
+#define MODEL_SERVER_SRC_UTIL_FUNCTIONAL_TIMER_H_
 
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 
-namespace infer_engine {
+namespace model_server {
 
 class Timer {
  public:
@@ -42,6 +42,6 @@ class Timer {
   absl::Time start_;
 };
 
-}  // namespace infer_engine
+}  // namespace model_server
 
-#endif  // INFER_ENGINE_SRC_UTIL_FUNCTIONAL_TIMER_H_
+#endif  // MODEL_SERVER_SRC_UTIL_FUNCTIONAL_TIMER_H_
