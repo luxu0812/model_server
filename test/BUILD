@@ -3,7 +3,8 @@ cc_binary(
   srcs = ["engine/test_tf_engine.cpp"],
   deps = [
     "@//src:util",
-    "@//src:engine",
+    "@//src:engine_base",
+    "@//src:tf_engine",
     "@com_google_googletest//:gtest",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",
@@ -21,7 +22,8 @@ cc_binary(
   srcs = ["engine/test_onnx_engine.cpp"],
   deps = [
     "@//src:util",
-    "@//src:engine",
+    "@//src:engine_base",
+    "@//src:onnx_engine",
     "@com_google_googletest//:gtest",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",
