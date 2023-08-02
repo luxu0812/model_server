@@ -154,6 +154,7 @@ cc_library(
     ":lifecycle",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
+    "@bs_thread_pool//:bs_thread_pool",
   ],
   strip_include_prefix = "population",
   include_prefix = "model_server/src/population",

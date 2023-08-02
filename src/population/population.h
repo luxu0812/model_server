@@ -4,6 +4,7 @@
 #define MODEL_SERVER_SRC_POPULATION_POPULATION_H_
 
 #include <memory>
+#include <mutex>  // NOLINT
 #include <shared_mutex>
 #include <string>
 #include "absl/container/flat_hash_map.h"
@@ -24,10 +25,11 @@ class Population {
   std::shared_ptr<Lifecycle> summon(const std::string& name) noexcept(false);
 
  private:
-  void born(const IndivadualInfo& indivadual_info) noexcept(false);
-  void die(const IndivadualInfo& indivadual_info) noexcept(false);
+  std::shared_ptr<Lifecycle> born(const IndivadualInfo& indivadual_info) noexcept;
+  void die(const IndivadualInfo& indivadual_info) noexcept;
 
-  std::shared_mutex evolvement_mutex_;
+  std::mutex evolvement_mutex_;
+  std::shared_mutex population_mutex_;
   std::string settlement_path_;
   std::unique_ptr<Roster> roster_;
   absl::flat_hash_map<std::string, std::shared_ptr<Lifecycle>> indivaduals_;
