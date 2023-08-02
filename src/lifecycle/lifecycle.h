@@ -16,11 +16,11 @@ class Lifecycle {
   explicit Lifecycle(const IndivadualInfo& indivadual_info) {}
   virtual ~Lifecycle() = default;
 
-  Engine& operator=(const Engine&) = delete;
-  Engine(const Engine&) = delete;
+  Lifecycle& operator=(const Lifecycle&) = delete;
+  Lifecycle(const Lifecycle&) = delete;
 
   void age(const std::string& new_age) {}
-  void undertake(Instance *instance, Score *score)) {}
+  void undertake(Instance *instance, Score *score) {}
 
  private:
   std::vector<std::string> memories_;

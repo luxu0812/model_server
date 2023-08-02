@@ -16,7 +16,7 @@ struct IndivadualInfo {
 };
 
 struct Roster {
-  absl::flat_hash_map<IndivadualInfo> indivaduals;
+  absl::flat_hash_map<std::string, IndivadualInfo> indivaduals;
 
   void load(const std::string& path) noexcept(false) {}
 };
