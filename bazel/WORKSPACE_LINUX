@@ -20,7 +20,7 @@ workspace(name = "ModelServer")
 #------------------------------- gflags -------------------------------#
 new_local_repository(
   name = "com_github_gflags_gflags",
-  path = "${HOME}/.conan/data/gflags/2.2.1/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934",
+  path = "${HOME}/.local/lib/gflags",
   build_file = "bazel/gflags.BUILD",
 )
 
@@ -34,28 +34,28 @@ new_local_repository(
 #----------------------------- googletest -----------------------------#
 new_local_repository(
   name = "com_google_googletest",
-  path = "${HOME}/.conan/data/googletest/1.8.0/user/stable/package/bfba58110feb727aea0b1c3a5cdcfd7d7f00530e/",
+  path = "${HOME}/.local/lib/googletest",
   build_file = "bazel/googletest.BUILD",
 )
 
 #------------------------------- abseil -------------------------------#
 new_local_repository(
   name = "com_google_absl",
-  path = "${HOME}/.conan/data/abseil/20211102.0-conan/user/stable/package/3c16e11e139fc44ce87907092473006570fef7c5/",
+  path = "${HOME}/.local/lib/absl",
   build_file = "bazel/absl.BUILD" 
 )
 
 #-------------------------------- zlib --------------------------------#
 new_local_repository(
   name = "com_github_madler_zlib",
-  path = "${HOME}/.conan/data/zlib/1.2.11/user/stable/package/d065d9b77a5f28035781daedf1fe27aa338ed934/",
+  path = "${HOME}/.local/lib/zlib",
   build_file = "bazel/zlib.BUILD"
 )
 
 #------------------------------ protobuf ------------------------------#
 new_local_repository(
   name = "com_google_protobuf",
-  path = "${HOME}/.conan/data/protobuf/3.6.1/user/stable/package/8a0d45a6500f8b1a5c8dac95788a152d902fd44e/",
+  path = "${HOME}/.local/lib/protobuf",
   build_file = "bazel/protobuf.BUILD",
 )
 
@@ -76,7 +76,7 @@ new_local_repository(
 #---------------------------- libtensorflow ---------------------------#
 new_local_repository(
   name = "tensorflow",
-  path = "${HOME}/.conan/data/tensorflow/1.15.5_pred/user/stable/package/7074939bced47b372f39e9ea6beadb82c7e0bc1c/",
+  path = "${HOME}/.local/lib/libtensorflow",
   build_file = "bazel/libtensorflow.BUILD",
 )
 
