@@ -77,13 +77,14 @@ fi
 
 #----------------------------------- test ------------------------------------#
 bazelisk test //test:test_tf_engine   \
-   --compilation_mode dbg             \
+   --compilation_mode opt             \
    --jobs=10                          \
    --cxxopt='-std=c++17'              \
    --test_output=all                  \
    --verbose_failures                 \
    --sandbox_debug                    \
    --test_verbose_timeout_warnings    \
+   --dynamic_mode=off                 \
    --spawn_strategy=standalone        \
    --strategy=Genrule=standalone
 
@@ -95,6 +96,7 @@ bazelisk test //test:test_onnx_engine \
    --verbose_failures                 \
    --sandbox_debug                    \
    --test_verbose_timeout_warnings    \
+   --dynamic_mode=off                 \
    --spawn_strategy=standalone        \
    --strategy=Genrule=standalone
 
