@@ -20,8 +20,8 @@ class Population {
   Population(const Population&) = delete;
 
   void evolve() noexcept(false);
-  void born(const std::string& name, const std::string& home_path) noexcept(false);
-  void die(const std::string& name) noexcept(false);
+  void born(const IndivadualInfo& indivadual) noexcept(false);
+  void die(const IndivadualInfo& indivadual) noexcept(false);
   *Lifecycle summon(const std::string& name) noexcept(false);
 
  private:

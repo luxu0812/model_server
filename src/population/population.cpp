@@ -24,18 +24,18 @@ void Population::evolve() noexcept(false) {
   roster_.load(pupulation_conf_file);
 
   for (auto& indivadual : roster_.indivaduals) {
-    if (indivaduals_.find(indivadual.name) == indivaduals_.end()) {
-      indivaduals_[indivadual.name] = new Lifecycle(indivadual);
-    } else {
+    if (indivaduals_.find(indivadual.name) != indivaduals_.end()) {
       indivaduals_[indivadual.name]->age(indivadual.age);
+    } else {
+      born(indivadual);
     }
   }
 }
 
-void Population::born(const std::string& name, const std::string& home_path) noexcept(false) {
+void Population::born(const IndivadualInfo& indivadual) noexcept(false) {
 }
 
-void Population::die(const std::string& name) noexcept(false) {
+void Population::die(const IndivadualInfo& indivadual) noexcept(false) {
 }
 
 *Lifecycle Population::summon(const std::string& name) noexcept(false) {
