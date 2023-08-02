@@ -1,4 +1,4 @@
-cc_binary(
+cc_test(
   name = "test_tf_engine",
   srcs = ["engine/test_tf_engine.cpp"],
   deps = [
@@ -17,7 +17,7 @@ cc_binary(
   # timeout = "short",
 )
 
-cc_binary(
+cc_test(
   name = "test_onnx_engine",
   srcs = ["engine/test_onnx_engine.cpp"],
   deps = [
