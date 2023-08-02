@@ -17,8 +17,9 @@ class Population {
   Population& operator=(const Population&) = delete;
   Population(const Population&) = delete;
 
-  void born() {}
-  void die() {}
+  void born(const std::string& name, const std::string& home_path) noexcept(false);
+  void die(const std::string& name) noexcept(false);
+  *Lifecycle summon(const std::string& name) noexcept(false);
 
  private:
   abseil::flat_hash_map<std::string, *Lifecycle> indivaduals_;

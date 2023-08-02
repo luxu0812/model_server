@@ -19,13 +19,13 @@ class ONNXEngine : public Engine {
   ONNXEngine(const ONNXEngine&) = delete;
 
   // Get brand of engine
-  std::string brand() override;
+  std::string brand() noexcept override;
 
   // Perform inference using the ONNX runtime
-  void infer(Instance *instance, Score *score) override;
+  void infer(Instance *instance, Score *score) noexcept(false) override;
 
   // Perform inference with trace using the ONNX runtime
-  void trace() override;
+  void trace() noexcept(false) override;
 
  protected:
   // Load the TensorFlow graph from the .pb file

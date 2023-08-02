@@ -77,11 +77,11 @@ TFEngine::~TFEngine() {
   }
 }
 
-std::string TFEngine::brand() {
+std::string TFEngine::brand() noexcept {
   return kBrandTF;
 }
 
-void TFEngine::infer(Instance *instance, Score *score) {
+void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
@@ -157,7 +157,7 @@ void TFEngine::infer(Instance *instance, Score *score) {
   }
 }
 
-void TFEngine::trace() {
+void TFEngine::trace() noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["

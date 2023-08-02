@@ -34,12 +34,12 @@ ONNXEngine::~ONNXEngine() {
   }
 }
 
-std::string ONNXEngine::brand() {
+std::string ONNXEngine::brand() noexcept {
   return kBrandONNX;
 }
 
   // Perform inference using the ONNX runtime
-void ONNXEngine::infer(Instance *instance, Score *score) {
+void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
   // // Prepare input tensors
   // std::vector<const char*> input_names = session_->GetInputNames();
   // std::vector<Ort::Value> input_tensors(input_names.size());
@@ -66,7 +66,7 @@ void ONNXEngine::infer(Instance *instance, Score *score) {
   // // ...
 }
 
-void ONNXEngine::trace() {
+void ONNXEngine::trace() noexcept(false) {
 }
 
 void ONNXEngine::load() {

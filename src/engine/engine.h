@@ -28,13 +28,13 @@ class Engine {
   Engine(const Engine&) = delete;
 
   // Get brand of engine
-  virtual std::string brand() = 0;
+  virtual std::string brand() noexcept = 0;
 
   // Perform inference
-  virtual void infer(Instance *instance, Score *score) = 0;
+  virtual void infer(Instance *instance, Score *score) noexcept(false) = 0;
 
   // Perform inference with trace
-  virtual void trace() = 0;
+  virtual void trace() noexcept(false) = 0;
 
  protected:
   // Initialize engine

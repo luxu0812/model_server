@@ -49,13 +49,13 @@ class TFEngine : public Engine {
   TFEngine(const TFEngine&) = delete;
 
   // Get brand of engine
-  std::string brand() override;
+  std::string brand() noexcept override;
 
   // Perform inference using the TF runtime
-  void infer(Instance *instance, Score *score) override;
+  void infer(Instance *instance, Score *score) noexcept(false) override;
 
   // Perform inference with trace using the TF runtime
-  void trace() override;
+  void trace() noexcept(false) override;
 
  protected:
   // Load the TensorFlow graph from the .pb file
