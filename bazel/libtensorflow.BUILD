@@ -1,11 +1,11 @@
 cc_library(
   name = "tensorflow",
   hdrs = glob([
-    "include/**",
+    "include/**/*.h",
   ]),
   includes = [
     "include",
   ],
-  srcs = ["lib/libtensorflow.so", "lib/libtensorflow_framework.so"],
+  srcs = ["lib/libtensorflow.so.2", "lib/libtensorflow_framework.so.2"],
   visibility = ["//visibility:public"],
 )
