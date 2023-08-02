@@ -14,7 +14,7 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
-  # timeout = "short",
+  timeout = "short",
 )
 
 cc_test(
@@ -33,5 +33,5 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
-  # timeout = "short",
+  timeout = "short",
 )

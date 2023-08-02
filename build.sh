@@ -83,7 +83,9 @@ bazelisk test //test:test_tf_engine   \
    --test_output=all                  \
    --verbose_failures                 \
    --sandbox_debug                    \
-   --test_verbose_timeout_warnings
+   --test_verbose_timeout_warnings    \
+   --spawn_strategy=standalone        \
+   --strategy=Genrule=standalone
 
 bazelisk test //test:test_onnx_engine \
    --compilation_mode dbg             \
@@ -92,7 +94,9 @@ bazelisk test //test:test_onnx_engine \
    --test_output=all                  \
    --verbose_failures                 \
    --sandbox_debug                    \
-   --test_verbose_timeout_warnings
+   --test_verbose_timeout_warnings    \
+   --spawn_strategy=standalone        \
+   --strategy=Genrule=standalone
 
 #----------------------------------- build -----------------------------------#
 bazelisk build //src:perf_graph \
