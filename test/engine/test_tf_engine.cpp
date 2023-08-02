@@ -5,6 +5,13 @@
 #include "model_server/src/util/process/process_initiator.h"
 #include "model_server/src/engine/tf_engine.h"
 
+model_server::RuntimeConf runtime_conf {
+  .opt_level = 0,
+  .jit_level = 0,
+  .inter_op_parallelism_threads = 1,
+  .intra_op_parallelism_threads = 1
+};
+
 TEST(TFEngine, LoadSuccess) {
   model_server::ModelSpec tf_model_spec {
     .name = "model1",
@@ -12,7 +19,7 @@ TEST(TFEngine, LoadSuccess) {
     .graph_file = "test/data/model1/graph.pb",
     .meta_file = "test/data/model1/graph_meta.json"
   };
-  ASSERT_NO_THROW({ model_server::TFEngine tf_engine(tf_model_spec); });
+  ASSERT_NO_THROW({ model_server::TFEngine tf_engine(tf_model_spec, runtime_conf); });
 }
 
 TEST(TFEngine, LoadFailNonExistentGraph) {
@@ -22,7 +29,7 @@ TEST(TFEngine, LoadFailNonExistentGraph) {
     .graph_file = "test/data/model1/non-existent.pb",
     .meta_file = "test/data/model1/graph_meta.json"
   };
-  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
+  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec, runtime_conf); }, std::runtime_error);
 }
 
 TEST(TFEngine, LoadFailNonExistentMeta) {
@@ -32,7 +39,7 @@ TEST(TFEngine, LoadFailNonExistentMeta) {
     .graph_file = "test/data/model1/graph.pb",
     .meta_file = "test/data/model1/non-existent.json"
   };
-  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec); }, std::runtime_error);
+  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec, runtime_conf); }, std::runtime_error);
 }
 
 int main (int argc, char **argv) {
