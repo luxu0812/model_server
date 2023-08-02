@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include "model_server/src/data/roster.h"
 #include "model_server/src/data/sample.h"
 #include "model_server/src/engine/engine.h"
 
@@ -12,7 +13,7 @@ namespace model_server {
 
 class Lifecycle {
  public:
-  Lifecycle() = default;
+  explicit Lifecycle(const IndivadualInfo& indivadual_info) {}
   virtual ~Lifecycle() = default;
 
   Engine& operator=(const Engine&) = delete;

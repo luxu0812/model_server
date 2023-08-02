@@ -43,11 +43,11 @@ struct ModelSpec {
   std::string graph_file;
   std::string meta_file;
 
-  std::string to_string() {
+  std::string to_string() noexcept {
     return "name: " + name + ", version: " + version + ", graph_file: " + graph_file + ", meta_file: " + meta_file;
   }
 
-  std::string brief() {
+  std::string brief() noexcept {
     return name + ":" + version;
   }
 };
@@ -67,7 +67,7 @@ struct ModelMeta {
   std::string json_file;
   nlohmann::json conf;
 
-  void load(const std::string& meta_file) {
+  void load(const std::string& meta_file) noexcept(false) {
     std::ifstream file(meta_file);
     if (!file.is_open()) {
       throw std::runtime_error("Failed to open meta file: " + meta_file);

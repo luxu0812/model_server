@@ -109,4 +109,4 @@ bazelisk build //src:perf_graph \
   --jobs=10                     \
   --cxxopt='-std=c++17'         \
   --compilation_mode opt
-${SCRIPT_DIR}/bazel-bin/src/perf_graph
+# ${SCRIPT_DIR}/bazel-bin/src/perf_graph
