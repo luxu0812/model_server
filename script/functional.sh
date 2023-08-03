@@ -63,45 +63,25 @@ function static_code_check() {
              ${srcs}
 }
 
-function unit_test() {
-  bazelisk test //src:test_tf_engine   \
-    --compilation_mode opt             \
-    --jobs=10                          \
-    --cxxopt='-std=c++17'              \
-    --define "malloc=jemalloc"         \
-    --test_output=all                  \
-    --verbose_failures                 \
-    --sandbox_debug                    \
-    --test_verbose_timeout_warnings    \
-    --dynamic_mode=off                 \
-    --spawn_strategy=standalone        \
-    --strategy=Genrule=standalone
-  
-  bazelisk test //src:test_onnx_engine \
-    --compilation_mode opt             \
-    --jobs=10                          \
-    --cxxopt='-std=c++17'              \
-    --define "malloc=jemalloc"         \
-    --test_output=all                  \
-    --verbose_failures                 \
-    --sandbox_debug                    \
-    --test_verbose_timeout_warnings    \
-    --dynamic_mode=off                 \
-    --spawn_strategy=standalone        \
+function bazel_test() {
+  bazelisk test "$@"                \
+    --compilation_mode opt          \
+    --jobs=10                       \
+    --cxxopt='-std=c++17'           \
+    --test_output=all               \
+    --verbose_failures              \
+    --sandbox_debug                 \
+    --test_verbose_timeout_warnings \
+    --dynamic_mode=off              \
+    --spawn_strategy=standalone     \
     --strategy=Genrule=standalone
 }
 
+function unit_test() {
+  bazel_test //src:test_tf_engine   --define "malloc=jemalloc"
+  bazel_test //src:test_onnx_engine --define "malloc=jemalloc" 
+}
+
 function benchmark_test() {
-  bazelisk test //src:bm_flat_hash_map \
-    --compilation_mode opt             \
-    --jobs=10                          \
-    --cxxopt='-std=c++17'              \
-    --define "malloc=jemalloc"         \
-    --test_output=all                  \
-    --verbose_failures                 \
-    --sandbox_debug                    \
-    --test_verbose_timeout_warnings    \
-    --dynamic_mode=off                 \
-    --spawn_strategy=standalone        \
-    --strategy=Genrule=standalone
+  bazel_test //src:bm_flat_hash_map --define "malloc=jemalloc"
 }
