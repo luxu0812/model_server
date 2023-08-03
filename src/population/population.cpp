@@ -17,73 +17,79 @@ Population::~Population() {}
 void Population::evolve() noexcept(false) {
   std::string pupulation_conf_file = settlement_path_ + "/" + kPopulationConfFileName;
 
-  // create new roster and indivaduals for temporary use
-  std::unique_ptr<Roster> roster(new Roster());
-  roster->load(pupulation_conf_file);
-  absl::flat_hash_map<std::string, std::shared_ptr<Lifecycle>> indivaduals;
-  {
-    std::shared_lock lock(population_mutex_);
-    indivaduals = indivaduals_;
-  }
+  std::lock_guard lock(evolvement_mutex_);
+  roster_->load(pupulation_conf_file);
 
-  // evolve
-  {
-    std::lock_guard lock(evolvement_mutex_);
-    for (auto& [name, lifecycle] : indivaduals) {
-      auto indivadual_info = roster->indivaduals.find(name);
-      if (roster->indivaduals.end() == indivadual_info) {
-        die(indivadual_info->second);
-        indivaduals.erase(name);
+  BS::thread_pool evolve_thread_pool(kEvolveThreadNum);
+
+  { // evalove
+    std::shared_lock lock(population_mutex_);
+
+    for (auto& [name, lifecycle] : indivaduals_) {
+      auto indivadual_ptr = roster_->indivaduals.find(name);
+      if (roster_->indivaduals.end() == indivadual_ptr) {
+        evolve_thread_pool.push_task(
+          [this](const std::string name) {
+            try {
+              this->die(name);
+            } catch (const std::exception& e) {
+              LOG(ERROR) << e.what();
+            } catch (...) {
+              LOG(ERROR) << "unknown exception";
+            }
+          }, name
+        );  // NOLINT
       } else {
-        lifecycle->age(roster->indivaduals[name].age);
+        evolve_thread_pool.push_task(
+          [](std::shared_ptr<Lifecycle> lifecycle, const std::string age) {
+            try {
+              lifecycle->age(age);
+            } catch (const std::exception& e) {
+              LOG(ERROR) << e.what();
+            } catch (...) {
+              LOG(ERROR) << "unknown exception";
+            }
+          }, lifecycle, roster_->indivaduals[name].age
+        );  // NOLINT
       }
     }
 
-    BS::thread_pool evolve_thread_pool(kEvolveThreadNum);
-    for (const auto& [name, indivadual_info] : roster->indivaduals) {
-      if (indivaduals.find(name) == indivaduals.end()) {
-        indivaduals.try_emplace(name, nullptr);
+    for (const auto& [name, indivadual_info] : roster_->indivaduals) {
+      if (indivaduals_.find(name) == indivaduals_.end()) {
         evolve_thread_pool.push_task(
-          [this](std::shared_ptr<Lifecycle> *dest, const IndivadualInfo& indivadual_info) {
+          [this](const std::string name, const IndivadualInfo indivadual_info) {
             try {
-              this->born(indivadual_info, dest);
+              this->born(name, indivadual_info);
             } catch (const std::exception& e) {
-              *dest = nullptr;
               LOG(ERROR) << e.what();
             } catch (...) {
-              *dest = nullptr;
               LOG(ERROR) << "unknown exception";
             }
-          },
-          &(indivaduals[name]), indivadual_info
+          }, name, indivadual_info
         ); // NOLINT
       }
     }
-    evolve_thread_pool.wait_for_tasks();
 
-    for (const auto& [name, lifecycle] : indivaduals) {
-      if (nullptr == lifecycle) {
-        std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__)
-                            + "] indivadual " + name + " born failed";
-        throw std::runtime_error(err_msg);
-      }
-    }
-
-    // update router_ and indivaduals_
-    {
-      std::unique_lock lock(population_mutex_);
-      roster_.swap(roster);
-      indivaduals_.swap(indivaduals);
-    }
+    // release the lock
   }
 
-  // destroy old roster and indivaduals
+  evolve_thread_pool.wait_for_tasks();
 }
 
-void Population::born(const IndivadualInfo& indivadual_info, std::shared_ptr<Lifecycle> *dest) noexcept(false) {
+void Population::born(const std::string& name, const IndivadualInfo& indivadual_info) noexcept(false) {
+  std::shared_ptr<Lifecycle> womb = std::make_shared<Lifecycle>(indivadual_info);
+  {
+    std::unique_lock lock(population_mutex_);
+    indivaduals_.try_emplace(name, womb);
+  }
 }
 
-void Population::die(const IndivadualInfo& indivadual_info) noexcept(false) {
+void Population::die(const std::string& name) noexcept(false) {
+  std::shared_ptr<Lifecycle> heaven = indivaduals_[name];
+  {
+    std::unique_lock lock(population_mutex_);
+    indivaduals_.erase(name);
+  }
 }
 
 std::shared_ptr<Lifecycle> Population::summon(const std::string& name) noexcept(false) {

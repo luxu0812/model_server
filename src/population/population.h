@@ -25,8 +25,8 @@ class Population {
   std::shared_ptr<Lifecycle> summon(const std::string& name) noexcept(false);
 
  private:
-  void born(const IndivadualInfo& indivadual_info, std::shared_ptr<Lifecycle> *dest) noexcept(false);
-  void die(const IndivadualInfo& indivadual_info) noexcept(false);
+  void born(const std::string& name, const IndivadualInfo& indivadual_info) noexcept(false);
+  void die(const std::string& name) noexcept(false);
 
   std::mutex evolvement_mutex_;
   std::shared_mutex population_mutex_;
