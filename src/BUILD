@@ -1,9 +1,3 @@
-copts = [
-  "-Wno-unused-parameter",
-  "-fno-omit-frame-pointer",
-  "-fPIC",
-]
-
 config_setting(
   name = "use_jemalloc",
   values = {"define": "malloc=jemalloc"},
@@ -30,7 +24,6 @@ cc_library(
   ],
   strip_include_prefix = "util",
   include_prefix = "model_server/src/util",
-  copts = copts,
   visibility = ["//visibility:public"],
 )
 
@@ -56,7 +49,6 @@ cc_library(
   ],
   strip_include_prefix = "data",
   include_prefix = "model_server/src/data",
-  copts = copts,
   visibility = ["//visibility:public"],
 )
 
@@ -70,7 +62,6 @@ cc_library(
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
-  copts = copts,
   visibility = ["//visibility:public"],
 )
 
@@ -93,7 +84,6 @@ cc_library(
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
-  copts = copts,
   visibility = ["//visibility:public"],
 )
 
@@ -114,7 +104,6 @@ cc_library(
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
-  copts = copts,
   visibility = ["//visibility:public"],
 )
 
@@ -137,7 +126,6 @@ cc_library(
   ],
   strip_include_prefix = "population",
   include_prefix = "model_server/src/population",
-  copts = copts,
   visibility = ["//visibility:public"],
 )
 
@@ -178,7 +166,6 @@ cc_test(
     ":use_jemalloc": "@jemalloc//:jemalloc",
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
-  copts = copts,
   timeout = "short",
 )
 
@@ -201,7 +188,6 @@ cc_test(
     ":use_jemalloc": "@jemalloc//:jemalloc",
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
-  copts = copts,
   timeout = "short",
 )
 
@@ -219,6 +205,5 @@ cc_test(
     ":use_jemalloc": "@jemalloc//:jemalloc",
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
-  copts = copts,
   timeout = "short",
 )

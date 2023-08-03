@@ -11,14 +11,16 @@ source ${SCRIPT_DIR}/script/functional.sh
 #------------------------------ trap debug info ------------------------------#
 trap 'error_info ${SCRIPT_NAME} ${LINENO} $?' ERR
 
-#----------------------------------- check -----------------------------------#
+#----------------------------------- build -----------------------------------#
 setup
 clean
 check
 
-#----------------------------------- build -----------------------------------#
-bazelisk build //src:perf_graph \
-  --jobs=10                     \
-  --cxxopt='-std=c++17'         \
-  --compilation_mode opt
+bazelisk build //src:perf_graph      \
+  --jobs=10                          \
+  --compilation_mode opt             \
+  --cxxopt='-std=c++17'              \
+  --cxxopt='-Wno-unused-parameter'   \
+  --cxxopt='-fno-omit-frame-pointer' \
+  --cxxopt='-fPIC'
 # ${SCRIPT_DIR}/bazel-bin/src/perf_graph

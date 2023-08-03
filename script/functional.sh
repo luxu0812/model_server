@@ -65,17 +65,20 @@ function static_code_check() {
 }
 
 function bazel_test() {
-  bazelisk test "$@"                \
-    --compilation_mode opt          \
-    --jobs=10                       \
-    --cxxopt='-std=c++17'           \
-    --test_output=all               \
-    --verbose_failures              \
-    --sandbox_debug                 \
-    --test_verbose_timeout_warnings \
-    --dynamic_mode=off              \
-    --spawn_strategy=standalone     \
-    --strategy=Genrule=standalone
+  bazelisk test "$@"                   \
+    --compilation_mode opt             \
+    --jobs=10                          \
+    --test_output=all                  \
+    --verbose_failures                 \
+    --sandbox_debug                    \
+    --test_verbose_timeout_warnings    \
+    --dynamic_mode=off                 \
+    --spawn_strategy=standalone        \
+    --strategy=Genrule=standalone      \
+    --cxxopt='-std=c++17'              \
+    --cxxopt='-Wno-unused-parameter'   \
+    --cxxopt='-fno-omit-frame-pointer' \
+    --cxxopt='-fPIC'
 }
 
 function unit_test() {
