@@ -45,7 +45,15 @@ void Population::evolve() noexcept(false) {
         indivaduals.try_emplace(name, nullptr);
         evolve_thread_pool.push_task(
           [this](std::shared_ptr<Lifecycle> *dest, const IndivadualInfo& indivadual_info) {
-            *dest = this->born(indivadual_info);
+            try {
+              this->born(indivadual_info, dest);
+            } catch (const std::exception& e) {
+              *dest = nullptr;
+              LOG(ERROR) << e.what();
+            } catch (...) {
+              *dest = nullptr;
+              LOG(ERROR) << "unknown exception";
+            }
           },
           &(indivaduals[name]), indivadual_info
         ); // NOLINT
@@ -56,7 +64,7 @@ void Population::evolve() noexcept(false) {
     for (const auto& [name, lifecycle] : indivaduals) {
       if (nullptr == lifecycle) {
         std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__)
-                            + "][indivadual " + name + " born failed";
+                            + "] indivadual " + name + " born failed";
         throw std::runtime_error(err_msg);
       }
     }
@@ -72,18 +80,10 @@ void Population::evolve() noexcept(false) {
   // destroy old roster and indivaduals
 }
 
-std::shared_ptr<Lifecycle> Population::born(const IndivadualInfo& indivadual_info) noexcept {
-  std::shared_ptr<Lifecycle> new_lifecycle(nullptr);
-  try {
-  } catch (const std::exception& e) {
-    LOG(ERROR) << e.what();
-  } catch (...) {
-    LOG(ERROR) << "Unknown exception";
-  }
-  return new_lifecycle;
+void Population::born(const IndivadualInfo& indivadual_info, std::shared_ptr<Lifecycle> *dest) noexcept(false) {
 }
 
-void Population::die(const IndivadualInfo& indivadual_info) noexcept {
+void Population::die(const IndivadualInfo& indivadual_info) noexcept(false) {
 }
 
 std::shared_ptr<Lifecycle> Population::summon(const std::string& name) noexcept(false) {
