@@ -76,30 +76,30 @@ else
 fi
 
 #----------------------------------- test ------------------------------------#
-bazelisk test //test:test_tf_engine   \
-   --compilation_mode opt             \
-   --jobs=10                          \
-   --cxxopt='-std=c++17'              \
-   --define "malloc=jemalloc"         \
-   --test_output=all                  \
-   --verbose_failures                 \
-   --sandbox_debug                    \
-   --test_verbose_timeout_warnings    \
-   --dynamic_mode=off                 \
-   --spawn_strategy=standalone        \
+bazelisk test //src:test_tf_engine   \
+   --compilation_mode opt            \
+   --jobs=10                         \
+   --cxxopt='-std=c++17'             \
+   --define "malloc=jemalloc"        \
+   --test_output=all                 \
+   --verbose_failures                \
+   --sandbox_debug                   \
+   --test_verbose_timeout_warnings   \
+   --dynamic_mode=off                \
+   --spawn_strategy=standalone       \
    --strategy=Genrule=standalone
 
-bazelisk test //test:test_onnx_engine \
-   --compilation_mode dbg             \
-   --jobs=10                          \
-   --cxxopt='-std=c++17'              \
-   --define "malloc=jemalloc"         \
-   --test_output=all                  \
-   --verbose_failures                 \
-   --sandbox_debug                    \
-   --test_verbose_timeout_warnings    \
-   --dynamic_mode=off                 \
-   --spawn_strategy=standalone        \
+bazelisk test //src:test_onnx_engine \
+   --compilation_mode dbg            \
+   --jobs=10                         \
+   --cxxopt='-std=c++17'             \
+   --define "malloc=jemalloc"        \
+   --test_output=all                 \
+   --verbose_failures                \
+   --sandbox_debug                   \
+   --test_verbose_timeout_warnings   \
+   --dynamic_mode=off                \
+   --spawn_strategy=standalone       \
    --strategy=Genrule=standalone
 
 #----------------------------------- build -----------------------------------#

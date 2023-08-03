@@ -14,11 +14,6 @@ config_setting(
   values = {"define": "malloc=tcmalloc"},
 )
 
-config_setting(
-  name = "use_mkl",
-  values = {"define": "blas=mkl"},
-)
-
 cc_library(
   name = "util",
   hdrs = [
@@ -180,4 +175,48 @@ cc_binary(
     "@bs_thread_pool//:bs_thread_pool",
   ],
   # linkopts = ["-Wl,-rpath,$ORIGIN/../lib"],
+)
+
+cc_test(
+  name = "test_tf_engine",
+  srcs = ["unittest/engine/test_tf_engine.cpp"],
+  deps = [
+    ":util",
+    ":engine_base",
+    ":tf_engine",
+    "@com_google_googletest//:gtest",
+    "@com_github_google_glog//:glog",
+    "@com_github_gflags_gflags//:gflags",
+  ],
+  data = [
+    "@//data:model_1",
+  ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
+  timeout = "short",
+)
+
+cc_test(
+  name = "test_onnx_engine",
+  srcs = ["unittest/engine/test_onnx_engine.cpp"],
+  deps = [
+    ":util",
+    ":engine_base",
+    ":onnx_engine",
+    "@com_google_googletest//:gtest",
+    "@com_github_google_glog//:glog",
+    "@com_github_gflags_gflags//:gflags",
+  ],
+  data = [
+    "@//data:model_1",
+  ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
+  timeout = "short",
 )

@@ -14,35 +14,41 @@ model_server::RuntimeConf runtime_conf {
 
 TEST(TFEngine, LoadSuccess) {
   model_server::ModelSpec tf_model_spec {
-    .name = "model1",
+    .name = "model_1",
     .version = "1.0.0",
-    .graph_file = "test/data/model1/graph.pb",
-    .meta_file = "test/data/model1/graph_meta.json"
+    .graph_file = "data/models/model_1/graph.pb",
+    .meta_file = "data/models/model_1/graph_meta.json"
   };
-  ASSERT_NO_THROW({ model_server::TFEngine tf_engine(tf_model_spec, runtime_conf); });
+  ASSERT_NO_THROW({
+    model_server::TFEngine tf_engine(tf_model_spec, runtime_conf);
+  });
 }
 
 TEST(TFEngine, LoadFailNonExistentGraph) {
   model_server::ModelSpec tf_model_spec {
-    .name = "model1",
+    .name = "model_1",
     .version = "1.0.0",
-    .graph_file = "test/data/model1/non-existent.pb",
-    .meta_file = "test/data/model1/graph_meta.json"
+    .graph_file = "data/models/model_1/non-existent.pb",
+    .meta_file = "data/models/model_1/graph_meta.json"
   };
-  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec, runtime_conf); }, std::runtime_error);
+  ASSERT_THROW({
+    model_server::TFEngine tf_engine(tf_model_spec, runtime_conf);
+  }, std::runtime_error);
 }
 
 TEST(TFEngine, LoadFailNonExistentMeta) {
   model_server::ModelSpec tf_model_spec {
-    .name = "model1",
+    .name = "model_1",
     .version = "1.0.0",
-    .graph_file = "test/data/model1/graph.pb",
-    .meta_file = "test/data/model1/non-existent.json"
+    .graph_file = "data/models/model_1/graph.pb",
+    .meta_file = "data/models/model_1/non-existent.json"
   };
-  ASSERT_THROW({ model_server::TFEngine tf_engine(tf_model_spec, runtime_conf); }, std::runtime_error);
+  ASSERT_THROW({
+    model_server::TFEngine tf_engine(tf_model_spec, runtime_conf);
+  }, std::runtime_error);
 }
 
-int main (int argc, char **argv) {
+int main(int argc, char **argv) {
   model_server::init(argc, argv);
   testing::InitGoogleTest(&argc, argv);
 
