@@ -20,18 +20,21 @@ setup
 
 #----------------------------------- test ------------------------------------#
 if [[ "${STATIC_CODE_CHECK}" = true || "${DEFAULT_STATIC_CODE_CHECK}" = true ]]; then
+  log ${SCRIPT_NAME} ${LINENO} "static analysis is running ..."
   static_code_check
 else
   log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
 fi
 
 if [[ "${UNIT_TEST}" = true || "${DEFAULT_UNIT_TEST}" = true ]]; then
+  log ${SCRIPT_NAME} ${LINENO} "unit test is running ..."
   unit_test
 else
   log ${SCRIPT_NAME} ${LINENO} "unit test is omitted."
 fi
 
 if [[ "${BENCHMARK_TEST}" = true || "$DEFAULT_BENCHMARK_TEST" = true ]]; then
+  log ${SCRIPT_NAME} ${LINENO} "benchmark test is running ..."
   benchmark_test
 else
   log ${SCRIPT_NAME} ${LINENO} "benchmark test is omitted."
