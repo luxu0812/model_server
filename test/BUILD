@@ -49,6 +49,7 @@ cc_test(
     "data/model1/samples.dat",
   ],
   malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
     ":use_jemalloc": "@jemalloc//:jemalloc",
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
