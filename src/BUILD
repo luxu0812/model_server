@@ -196,6 +196,7 @@ cc_test(
     ":use_jemalloc": "@jemalloc//:jemalloc",
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
+  copts = copts,
   timeout = "short",
 )
 
@@ -218,5 +219,24 @@ cc_test(
     ":use_jemalloc": "@jemalloc//:jemalloc",
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
+  copts = copts,
+  timeout = "short",
+)
+
+cc_test(
+  name = "bm_flat_hash_map",
+  srcs = [
+    "benchmark/bm_flat_hash_map.cpp",
+  ],
+  deps = [
+    "@com_github_google_benchmark//:benchmark",
+    "@com_google_absl//:absl",
+  ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
+  copts = copts,
   timeout = "short",
 )

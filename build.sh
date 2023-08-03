@@ -90,7 +90,7 @@ bazelisk test //src:test_tf_engine   \
    --strategy=Genrule=standalone
 
 bazelisk test //src:test_onnx_engine \
-   --compilation_mode dbg            \
+   --compilation_mode opt            \
    --jobs=10                         \
    --cxxopt='-std=c++17'             \
    --define "malloc=jemalloc"        \
@@ -102,6 +102,20 @@ bazelisk test //src:test_onnx_engine \
    --spawn_strategy=standalone       \
    --strategy=Genrule=standalone
 
+bazelisk test //src:bm_flat_hash_map \
+   --compilation_mode opt            \
+   --jobs=10                         \
+   --cxxopt='-std=c++17'             \
+   --define "malloc=jemalloc"        \
+   --test_output=all                 \
+   --verbose_failures                \
+   --sandbox_debug                   \
+   --test_verbose_timeout_warnings   \
+   --dynamic_mode=off                \
+   --spawn_strategy=standalone       \
+   --strategy=Genrule=standalone
+
+#----------------------------------- build -----------------------------------#
 #----------------------------------- build -----------------------------------#
 bazelisk build //src:perf_graph \
   --jobs=10                     \

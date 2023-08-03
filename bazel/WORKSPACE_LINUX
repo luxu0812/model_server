@@ -38,6 +38,13 @@ new_local_repository(
   build_file = "bazel/googletest.BUILD",
 )
 
+#-------------------------- google-benchmark --------------------------#
+new_local_repository(
+  name = "com_github_google_benchmark",
+  path = "${HOME}/.local/lib/benchmark",
+  build_file = "bazel/benchmark.BUILD",
+)
+
 #------------------------------- abseil -------------------------------#
 new_local_repository(
   name = "com_google_absl",

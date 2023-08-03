@@ -100,7 +100,7 @@ git clone https://github.com/google/benchmark.git
 pushd benchmark
 git checkout tags/v1.8.2 -b v1.8.2
 mkdir build
-cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/googletest -DCMAKE_BUILD_TYPE=Release -DGOOGLETEST_PATH=../googletest -S . -B build
+cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/benchmark -DCMAKE_BUILD_TYPE=Release -DGOOGLETEST_PATH=../googletest -S . -B build
 cmake --build build -j10
 cmake --build build --target install
 popd
