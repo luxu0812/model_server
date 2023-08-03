@@ -1,6 +1,6 @@
-STATIC_CODE_CHECK=true
-UNIT_TEST=false
-BENCHMARK_TEST=false
+DEFAULT_STATIC_CODE_CHECK=true
+DEFAULT_UNIT_TEST=false
+DEFAULT_BENCHMARK_TEST=false
 
 function log() {
   echo "$(date +"%Y/%m/%d %H:%M:%S")][$1:$2][INFO] $3"
