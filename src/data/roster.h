@@ -17,8 +17,7 @@ struct IndivadualInfo {
 
 struct Roster {
   absl::flat_hash_map<std::string, IndivadualInfo> indivaduals;
-
-  void load(const std::string& path) noexcept(false) {}
+  void load(const std::string& path) noexcept(false);
 };
 
 }  // namespace model_server

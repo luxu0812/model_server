@@ -49,7 +49,9 @@ cc_library(
     "data/sample.h"
   ],
   srcs = [
-    "data/return_status.cpp"
+    "data/return_status.cpp",
+    "data/roster.cpp",
+    "data/model_spec.cpp",
   ],
   deps = [
     ":util",
