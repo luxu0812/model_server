@@ -116,7 +116,7 @@ function check() {
 function clean() {
   if [[ "${CLEAN}" = true || "${DEFAULT_CLEAN}" = true ]]; then
     log ${SCRIPT_NAME} ${LINENO} "bazel cleaning ..."
-    bazel clean --expunge
+    bazelisk clean --expunge
   else
     log ${SCRIPT_NAME} ${LINENO} "bazel cleaning is omitted."
   fi
