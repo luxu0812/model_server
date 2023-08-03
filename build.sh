@@ -5,81 +5,37 @@ REAL_FILE=$(readlink -f $0)
 SCRIPT_NAME=${REAL_FILE##*/}
 SCRIPT_DIR=$(cd "$(dirname "${REAL_FILE}")"; pwd)
 
-#------------------------------ trap debug info ------------------------------#
-function log() {
-  echo "$(date +"%Y/%m/%d %H:%M:%S")][$1:$2][INFO] $3"
-}
-function debug_info() {
-  cmd=`sed -n $2p $1`
-  echo "$(date +"%Y/%m/%d %H:%M:%S")][$1:$2][DEBUG] execute command \"${cmd}\" ..."
-}
-function error_info() {
-  let begin=$2-10
-  let end=$2
-  cmd=`sed -n ${begin},${end}p $1`
-  echo "$(date +"%Y/%m/%d %H:%M:%S")][$1:$2][ERROR] exit with status $3, cmd:"
-  echo "${cmd}"
-  exit $3
-}
-
-# trap 'debug_info ${SCRIPT_NAME} ${LINENO}' DEBUG
-trap 'error_info ${SCRIPT_NAME} ${LINENO} $?' ERR
-
-function glob() {
-  path=$1
-  regex=$2
-
-  for file in ${path}/* ; do
-    if [[ -d "${file}" ]]; then
-      if [[ `basename ${file}` != "practice" ]]; then
-        glob ${file} ${regex}
-      fi
-    elif [[ -f "${file}" ]]; then
-      if [[ "${file}" =~ ${regex} ]]; then
-        echo ${file}
-      fi
-    fi
-  done
-}
-#-----------------------------------------------------------------------------#
 pushd ${SCRIPT_DIR}
+source ${SCRIPT_DIR}/script/functional.sh
+
+#------------------------------ trap debug info ------------------------------#
+trap 'error_info ${SCRIPT_NAME} ${LINENO} $?' ERR
+# trap 'debug_info ${SCRIPT_NAME} ${LINENO}' DEBUG
 
 #----------------------------------- clean -----------------------------------#
-# bazel clean --async
+# bazel clean --expunge
 
-#---------------------------------- cpplint ----------------------------------#
-if [[ "${LINT}" = true ]]; then
-  log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
-else
-  srcs=`glob ./src ".*\.(c|cc|cpp|cxx|c\+\+|C|h|hh|hpp|hxx|inc)$"`
-  cpplint.py --verbose=0         \
-             --linelength=120    \
-             --counting=detailed \
-             --repository=..     \
-             ${srcs}
-fi
-
-#-----------------------------------------------------------------------------#
-uname=`uname`
-if [[ "${uname}" == "Darwin" ]]; then
-  cp bazel/WORKSPACE_MACOS ./WORKSPACE
-  HOME_PATH=$(echo ~)
-  sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
-elif [[ "${uname}" == "Linux" ]]; then
-  cp bazel/bazelrc_linux ./.bazelrc
-  cp bazel/WORKSPACE_LINUX ./WORKSPACE
-  HOME_PATH=$(echo ~)
-  sed -i "s|\${HOME}|${HOME}|g" WORKSPACE
-else
-  log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
-  exit 1
-fi
+#----------------------------------- setup -----------------------------------#
+setup
 
 #----------------------------------- test ------------------------------------#
-source scripts/test.sh
-unit_test
-benchmark_test
+if [[ "${STATIC_CODE_CHECK}" = true ]]; then
+  static_code_check
+else
+  log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
+fi
 
+if [[ "${UNIT_TEST}" = true ]]; then
+  unit_test
+else
+  log ${SCRIPT_NAME} ${LINENO} "unit test is omitted."
+fi
+
+if [[ "${BENCHMARK_TEST}" = true ]]; then
+  benchmark_test
+else
+  log ${SCRIPT_NAME} ${LINENO} "benchmark test is omitted."
+fi
 
 #----------------------------------- build -----------------------------------#
 bazelisk build //src:perf_graph \
