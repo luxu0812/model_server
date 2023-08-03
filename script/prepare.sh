@@ -54,6 +54,12 @@ source ${HOME}/.bashrc
 pyenv install 3.11.0
 pyenv global 3.11.0
 
+# Install bazelisk
+# MACOS arm64
+# wget https://github.com/bazelbuild/bazelisk/releases/download/v1.17.0/bazelisk-darwin-arm64 -O ${HOME}/.local/bin/bazelisk
+# Linux x86_64
+wget https://github.com/bazelbuild/bazelisk/releases/download/v1.17.0/bazelisk-linux-amd64 -O ${HOME}/.local/bin/bazelisk
+
 # Install cmake
 wget https://github.com/Kitware/CMake/releases/download/v3.27.0-rc4/cmake-3.27.0-rc4.tar.gz
 tar zxvf cmake-3.27.0-rc4.tar.gz
