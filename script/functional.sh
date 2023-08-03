@@ -44,9 +44,7 @@ function glob() {
 
   for file in ${path}/* ; do
     if [[ -d "${file}" ]]; then
-      if [[ `basename ${file}` != "practice" ]]; then
-        glob ${file} ${regex}
-      fi
+      glob ${file} ${regex}
     elif [[ -f "${file}" ]]; then
       if [[ "${file}" =~ ${regex} ]]; then
         echo ${file}
