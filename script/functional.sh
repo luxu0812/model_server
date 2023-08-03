@@ -1,3 +1,4 @@
+DEFAULT_CLEAN=false
 DEFAULT_STATIC_CODE_CHECK=true
 DEFAULT_UNIT_TEST=false
 DEFAULT_BENCHMARK_TEST=false
@@ -84,4 +85,36 @@ function unit_test() {
 
 function benchmark_test() {
   bazel_test //src:bm_flat_hash_map --define "malloc=jemalloc"
+}
+
+function check() {
+  if [[ "${STATIC_CODE_CHECK}" = true || "${DEFAULT_STATIC_CODE_CHECK}" = true ]]; then
+    log ${SCRIPT_NAME} ${LINENO} "static analysis is running ..."
+    static_code_check
+  else
+    log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
+  fi
+  
+  if [[ "${UNIT_TEST}" = true || "${DEFAULT_UNIT_TEST}" = true ]]; then
+    log ${SCRIPT_NAME} ${LINENO} "unit test is running ..."
+    unit_test
+  else
+    log ${SCRIPT_NAME} ${LINENO} "unit test is omitted."
+  fi
+  
+  if [[ "${BENCHMARK_TEST}" = true || "${DEFAULT_BENCHMARK_TEST}" = true ]]; then
+    log ${SCRIPT_NAME} ${LINENO} "benchmark test is running ..."
+    benchmark_test
+  else
+    log ${SCRIPT_NAME} ${LINENO} "benchmark test is omitted."
+  fi
+}
+
+function clean() {
+  if [[ "${CLEAN}" = true || "${DEFAULT_CLEAN}" = true ]]; then
+    log ${SCRIPT_NAME} ${LINENO} "bazel cleaning ..."
+    bazel clean --expunge
+  else
+    log ${SCRIPT_NAME} ${LINENO} "bazel cleaning is omitted."
+  fi
 }
