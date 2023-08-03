@@ -19,58 +19,57 @@ void Population::evolve() noexcept(false) {
 
   std::lock_guard lock(evolvement_mutex_);
   roster_->load(pupulation_conf_file);
+  absl::flat_hash_map<std::string, std::shared_ptr<Lifecycle>> indivaduals;
+  {
+    std::shared_lock lock(population_mutex_);
+    indivaduals = indivaduals_;
+  }
 
   BS::thread_pool evolve_thread_pool(kEvolveThreadNum);
 
-  { // evalove
-    std::shared_lock lock(population_mutex_);
-
-    for (auto& [name, lifecycle] : indivaduals_) {
-      auto indivadual_ptr = roster_->indivaduals.find(name);
-      if (roster_->indivaduals.end() == indivadual_ptr) {
-        evolve_thread_pool.push_task(
-          [this](const std::string name) {
-            try {
-              this->die(name);
-            } catch (const std::exception& e) {
-              LOG(ERROR) << e.what();
-            } catch (...) {
-              LOG(ERROR) << "unknown exception";
-            }
-          }, name
-        );  // NOLINT
-      } else {
-        evolve_thread_pool.push_task(
-          [](std::shared_ptr<Lifecycle> lifecycle, const std::string age) {
-            try {
-              lifecycle->age(age);
-            } catch (const std::exception& e) {
-              LOG(ERROR) << e.what();
-            } catch (...) {
-              LOG(ERROR) << "unknown exception";
-            }
-          }, lifecycle, roster_->indivaduals[name].age
-        );  // NOLINT
-      }
+  for (auto& [name, lifecycle] : indivaduals) {
+    auto indivadual_ptr = roster_->indivaduals.find(name);
+    if (roster_->indivaduals.end() == indivadual_ptr) {
+      evolve_thread_pool.push_task(
+        [this](const std::string name) {
+          try {
+            this->die(name);
+          } catch (const std::exception& e) {
+            LOG(ERROR) << e.what();
+          } catch (...) {
+            LOG(ERROR) << "unknown exception";
+          }
+        }, name
+      );  // NOLINT
+    } else {
+      evolve_thread_pool.push_task(
+        [](std::shared_ptr<Lifecycle> lifecycle, const std::string age) {
+          try {
+            lifecycle->age(age);
+          } catch (const std::exception& e) {
+            LOG(ERROR) << e.what();
+          } catch (...) {
+            LOG(ERROR) << "unknown exception";
+          }
+        }, lifecycle, roster_->indivaduals[name].age
+      );  // NOLINT
     }
+  }
 
-    for (const auto& [name, indivadual_info] : roster_->indivaduals) {
-      if (indivaduals_.find(name) == indivaduals_.end()) {
-        evolve_thread_pool.push_task(
-          [this](const std::string name, const IndivadualInfo indivadual_info) {
-            try {
-              this->born(name, indivadual_info);
-            } catch (const std::exception& e) {
-              LOG(ERROR) << e.what();
-            } catch (...) {
-              LOG(ERROR) << "unknown exception";
-            }
-          }, name, indivadual_info
-        ); // NOLINT
-      }
+  for (const auto& [name, indivadual_info] : roster_->indivaduals) {
+    if (indivaduals_.find(name) == indivaduals_.end()) {
+      evolve_thread_pool.push_task(
+        [this](const std::string name, const IndivadualInfo indivadual_info) {
+          try {
+            this->born(name, indivadual_info);
+          } catch (const std::exception& e) {
+            LOG(ERROR) << e.what();
+          } catch (...) {
+            LOG(ERROR) << "unknown exception";
+          }
+        }, name, indivadual_info
+      ); // NOLINT
     }
-
-    // release the lock
   }
 
   evolve_thread_pool.wait_for_tasks();

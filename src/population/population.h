@@ -9,7 +9,7 @@
 #include <string>
 #include "absl/container/flat_hash_map.h"
 #include "model_server/src/data/roster.h"
-#include "model_server/src/lifecycle/lifecycle.h"
+#include "model_server/src/population/lifecycle.h"
 
 namespace model_server {
 

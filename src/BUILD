@@ -119,27 +119,10 @@ cc_library(
 )
 
 cc_library(
-  name = "lifecycle",
-  hdrs = [
-    "lifecycle/lifecycle.h",
-  ],
-  deps = [
-    ":util",
-    ":data",
-    ":engine_base",
-    "@com_github_google_glog//:glog",
-    "@com_google_absl//:absl",
-  ],
-  strip_include_prefix = "lifecycle",
-  include_prefix = "model_server/src/lifecycle",
-  copts = copts,
-  visibility = ["//visibility:public"],
-)
-
-cc_library(
   name = "population",
   hdrs = [
     "population/population.h",
+    "population/lifecycle.h",
   ],
   srcs = [
     "population/population.cpp",
@@ -148,7 +131,6 @@ cc_library(
     ":util",
     ":data",
     ":engine_base",
-    ":lifecycle",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@bs_thread_pool//:bs_thread_pool",
