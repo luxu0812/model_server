@@ -1,3 +1,13 @@
+config_setting(
+  name = "use_jemalloc",
+  values = {"define": "malloc=jemalloc"},
+)
+
+config_setting(
+  name = "use_tcmalloc",
+  values = {"define": "malloc=tcmalloc"},
+)
+
 cc_test(
   name = "test_tf_engine",
   srcs = ["engine/test_tf_engine.cpp"],
@@ -14,6 +24,11 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
   timeout = "short",
 )
 
@@ -33,5 +48,9 @@ cc_test(
     "data/model1/graph_meta.json",
     "data/model1/samples.dat",
   ],
+  malloc = select({
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
   timeout = "short",
 )

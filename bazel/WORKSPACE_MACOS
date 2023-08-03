@@ -19,8 +19,7 @@ workspace(name = "ModelServer")
 
 #------------------------------- gflags -------------------------------#
 new_local_repository(
-  name = "com_github_gflags_gflags",
-  path = "${HOME}/.local/lib/gflags",
+  name = "com_github_gflags_gflags", path = "${HOME}/.local/lib/gflags",
   build_file = "bazel/gflags.BUILD",
 )
 
@@ -85,4 +84,18 @@ new_local_repository(
   name = "onnxruntime",
   path = "${HOME}/.local/lib/onnxruntime",
   build_file = "bazel/onnxruntime_macos.BUILD",
+)
+
+#------------------------------ tcmalloc ------------------------------#
+new_local_repository(
+  name = "tcmalloc",
+  path = "${HOME}/.local/lib/tcmalloc",
+  build_file = "bazel/tcmalloc.BUILD",
+)
+
+#------------------------------ jemalloc ------------------------------#
+new_local_repository(
+  name = "jemalloc",
+  path = "${HOME}/.local/lib/jemalloc",
+  build_file = "bazel/jemalloc.BUILD",
 )

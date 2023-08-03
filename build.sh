@@ -80,6 +80,7 @@ bazelisk test //test:test_tf_engine   \
    --compilation_mode opt             \
    --jobs=10                          \
    --cxxopt='-std=c++17'              \
+   --define "malloc=jemalloc"         \
    --test_output=all                  \
    --verbose_failures                 \
    --sandbox_debug                    \
@@ -92,6 +93,7 @@ bazelisk test //test:test_onnx_engine \
    --compilation_mode dbg             \
    --jobs=10                          \
    --cxxopt='-std=c++17'              \
+   --define "malloc=jemalloc"         \
    --test_output=all                  \
    --verbose_failures                 \
    --sandbox_debug                    \

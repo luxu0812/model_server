@@ -203,3 +203,16 @@ git checkout tags/v3.5.0 -b v3.5.0
 mkdir -p ~/.local/lib/bs_thread_pool/include/BShoshany
 mv include/* ~/.local/lib/bs_thread_pool/include/BShoshany
 popd
+
+# Install jemalloc
+git clone https://github.com/jemalloc/jemalloc.git
+pushd jemalloc
+git checkout tags/5.3.0 -b 5.3.0
+./autogen.sh
+./configure --prefix=${HOME}/.local/lib/jemalloc
+make -j10 && make install
+popd
+
+# Install tcmalloc
+git clone https://github.com/google/tcmalloc.git
+mv tcmalloc ~/.local/lib/tcmalloc
