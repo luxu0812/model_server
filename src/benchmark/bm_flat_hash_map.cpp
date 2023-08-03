@@ -1,6 +1,5 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <random>

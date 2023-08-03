@@ -144,7 +144,7 @@ cc_library(
 cc_binary(
   name = "perf_graph",
   srcs = [
-    "tool/perf_graph.cpp",
+    "bin/perf_graph.cpp",
   ],
   deps = [
     ":util",
