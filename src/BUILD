@@ -31,13 +31,11 @@ cc_library(
   name = "data",
   hdrs = [
     "data/return_status.h",
-    "data/roster.h",
     "data/model_spec.h",
     "data/sample.h"
   ],
   srcs = [
     "data/return_status.cpp",
-    "data/roster.cpp",
     "data/model_spec.cpp",
   ],
   deps = [
@@ -111,9 +109,11 @@ cc_library(
   hdrs = [
     "population/population.h",
     "population/lifecycle.h",
+    "population/roster.h",
   ],
   srcs = [
     "population/population.cpp",
+    "population/roster.cpp",
   ],
   deps = [
     ":util",

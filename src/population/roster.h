@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef MODEL_SERVER_SRC_DATA_ROSTER_H_
-#define MODEL_SERVER_SRC_DATA_ROSTER_H_
+#ifndef MODEL_SERVER_SRC_POPULATION_ROSTER_H_
+#define MODEL_SERVER_SRC_POPULATION_ROSTER_H_
 
 #include <vector>
 #include <string>
@@ -22,4 +22,4 @@ struct Roster {
 
 }  // namespace model_server
 
-#endif  // MODEL_SERVER_SRC_DATA_ROSTER_H_
+#endif  // MODEL_SERVER_SRC_POPULATION_ROSTER_H_

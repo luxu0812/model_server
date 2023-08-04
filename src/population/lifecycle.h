@@ -5,9 +5,9 @@
 
 #include <vector>
 #include <string>
-#include "model_server/src/data/roster.h"
 #include "model_server/src/data/sample.h"
 #include "model_server/src/engine/engine.h"
+#include "model_server/src/population/roster.h"
 
 namespace model_server {
 
