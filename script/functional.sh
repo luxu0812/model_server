@@ -60,6 +60,9 @@ function static_code_check() {
              --counting=detailed \
              --repository=..     \
              ${srcs}
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
 }
 
 function bazel_test() {
@@ -77,21 +80,37 @@ function bazel_test() {
     --cxxopt='-Wno-unused-parameter'   \
     --cxxopt='-fno-omit-frame-pointer' \
     --cxxopt='-fPIC'
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
 }
 
 function unit_test() {
   bazel_test //src:test_tf_engine   --define "malloc=jemalloc"
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
   bazel_test //src:test_onnx_engine --define "malloc=jemalloc" 
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
 }
 
 function benchmark_test() {
   bazel_test //src:bm_flat_hash_map --define "malloc=jemalloc"
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
 }
 
 function check() {
   if [[ "${STATIC_CODE_CHECK}" = true || "${DEFAULT_STATIC_CODE_CHECK}" = true ]]; then
     log ${SCRIPT_NAME} ${LINENO} "static analysis is running ..."
     static_code_check
+    if [[ $? -ne 0 ]]; then
+      log ${SCRIPT_NAME} ${LINENO} "static analysis failed."
+      return 1
+    fi
   else
     log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
   fi
@@ -99,6 +118,10 @@ function check() {
   if [[ "${UNIT_TEST}" = true || "${DEFAULT_UNIT_TEST}" = true ]]; then
     log ${SCRIPT_NAME} ${LINENO} "unit test is running ..."
     unit_test
+    if [[ $? -ne 0 ]]; then
+      log ${SCRIPT_NAME} ${LINENO} "unit test failed."
+      return 1
+    fi
   else
     log ${SCRIPT_NAME} ${LINENO} "unit test is omitted."
   fi
@@ -106,6 +129,10 @@ function check() {
   if [[ "${BENCHMARK_TEST}" = true || "${DEFAULT_BENCHMARK_TEST}" = true ]]; then
     log ${SCRIPT_NAME} ${LINENO} "benchmark test is running ..."
     benchmark_test
+    if [[ $? -ne 0 ]]; then
+      log ${SCRIPT_NAME} ${LINENO} "benchmark test failed."
+      return 1
+    fi
   else
     log ${SCRIPT_NAME} ${LINENO} "benchmark test is omitted."
   fi

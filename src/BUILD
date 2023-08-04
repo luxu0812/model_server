@@ -33,7 +33,6 @@ cc_library(
     "data/return_status.h",
     "data/roster.h",
     "data/model_spec.h",
-    "data/runtime_conf.h",
     "data/sample.h"
   ],
   srcs = [

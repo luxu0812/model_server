@@ -6,8 +6,8 @@
 
 namespace model_server {
 
-ONNXDNNLEngine::ONNXDNNLEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
-  ONNXEngine(model_spec, runtime_conf) {}
+ONNXDNNLEngine::ONNXDNNLEngine(const EngineConf& engine_conf) :
+  ONNXEngine(engine_conf) {}
 
 ONNXDNNLEngine::~ONNXDNNLEngine() {}
 

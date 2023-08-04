@@ -4,10 +4,9 @@
 #define MODEL_SERVER_SRC_ENGINE_ENGINE_H_
 
 #include <stdint.h>
+#include <vector>
 #include <string>
 #include "model_server/src/data/sample.h"
-#include "model_server/src/data/model_spec.h"
-#include "model_server/src/data/runtime_conf.h"
 
 namespace model_server {
 
@@ -16,11 +15,36 @@ const char kBrandTFGPU[]    = "TensorFlow-GPU";
 const char kBrandONNX[]     = "ONNX";
 const char kBrandONNXDNNL[] = "ONNX-DNNL";
 
+struct EngineConf {
+  std::string name;
+  std::string version;
+  std::string graph_file_loc;
+  std::vector<std::string> input_nodes;
+  std::vector<std::string> output_nodes;
+
+  int32_t opt_level;
+  int32_t jit_level;
+
+  int32_t inter_op_parallelism_threads;
+  int32_t intra_op_parallelism_threads;
+
+  std::string detail() noexcept {
+    return "name: " + name + ", version: " + version + ", graph_file_loc: " + graph_file_loc
+      + ", input_nodes: " + std::to_string(input_nodes.size())
+      + ", output_nodes: " + std::to_string(output_nodes.size())
+      + ", opt_level: " + std::to_string(opt_level) + ", jit_level: " + std::to_string(jit_level)
+      + ", inter_op_parallelism_threads: " + std::to_string(inter_op_parallelism_threads)
+      + ", intra_op_parallelism_threads: " + std::to_string(intra_op_parallelism_threads);
+  }
+
+  std::string brief() noexcept {
+    return name + ":" + version;
+  }
+};
+
 class Engine {
  public:
-  Engine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
-    model_spec_(model_spec),
-    runtime_conf_(runtime_conf) {}
+  explicit Engine(const EngineConf& engine_conf) : conf_(engine_conf) {}
   virtual ~Engine() {}
 
   Engine() = delete;
@@ -39,17 +63,11 @@ class Engine {
  protected:
   // Initialize engine
   void init() {
-    load_model_meta();
     load();
     build();
     set_session_options();
     create_session();
     sub_init();
-  }
-
-  // Load model meta data
-  void load_model_meta() {
-    model_meta_.load(model_spec_.meta_file);
   }
 
   // Load the TensorFlow graph from the .pb file
@@ -67,10 +85,7 @@ class Engine {
   // Personalized initialization for subclasses
   virtual void sub_init() {}
 
-  ModelSpec model_spec_;
-  ModelMeta model_meta_;
-
-  RuntimeConf runtime_conf_;
+  EngineConf conf_;
 };
 
 }  // namespace model_server

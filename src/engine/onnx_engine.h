@@ -11,7 +11,7 @@ namespace model_server {
 
 class ONNXEngine : public Engine {
  public:
-  ONNXEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf);
+  explicit ONNXEngine(const EngineConf& engine_conf);
   ~ONNXEngine();
 
   ONNXEngine() = delete;

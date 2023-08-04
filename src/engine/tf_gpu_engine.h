@@ -11,7 +11,7 @@ namespace model_server {
 
 class TFGPUEngine : public TFEngine {
  public:
-  TFGPUEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf);
+  explicit TFGPUEngine(const EngineConf& engine_conf);
   ~TFGPUEngine();
 
   TFGPUEngine() = delete;

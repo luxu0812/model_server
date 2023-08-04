@@ -13,8 +13,7 @@
 
 namespace model_server {
 
-TFGPUEngine::TFGPUEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
-  TFEngine(model_spec, runtime_conf) {}
+TFGPUEngine::TFGPUEngine(const EngineConf& engine_conf) : TFEngine(engine_conf) {}
 
 TFGPUEngine::~TFGPUEngine() {}
 

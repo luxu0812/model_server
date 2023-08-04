@@ -5,46 +5,37 @@
 #include "model_server/src/util/process/process_initiator.h"
 #include "model_server/src/engine/tf_engine.h"
 
-model_server::RuntimeConf runtime_conf {
-  .opt_level = 0,
-  .jit_level = 0,
-  .inter_op_parallelism_threads = 1,
-  .intra_op_parallelism_threads = 1
-};
-
 TEST(TFEngine, LoadSuccess) {
-  model_server::ModelSpec tf_model_spec {
+  model_server::EngineConf tf_engine_conf {
     .name = "model_1",
     .version = "1.0.0",
-    .graph_file = "data/models/model_1/graph.pb",
-    .meta_file = "data/models/model_1/graph_meta.json"
+    .graph_file_loc = "data/models/model_1/graph.pb",
+    .input_nodes = {"dense", "sparse_input_unfolded"},
+    .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
+    .opt_level = 0,
+    .jit_level = 0,
+    .inter_op_parallelism_threads = 1,
+    .intra_op_parallelism_threads = 1
   };
   ASSERT_NO_THROW({
-    model_server::TFEngine tf_engine(tf_model_spec, runtime_conf);
+    model_server::TFEngine tf_engine(tf_engine_conf);
   });
 }
 
 TEST(TFEngine, LoadFailNonExistentGraph) {
-  model_server::ModelSpec tf_model_spec {
+  model_server::EngineConf tf_engine_conf {
     .name = "model_1",
     .version = "1.0.0",
-    .graph_file = "data/models/model_1/non-existent.pb",
-    .meta_file = "data/models/model_1/graph_meta.json"
+    .graph_file_loc = "data/models/model_1/non-existent.pb",
+    .input_nodes = {"dense", "sparse_input_unfolded"},
+    .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
+    .opt_level = 0,
+    .jit_level = 0,
+    .inter_op_parallelism_threads = 1,
+    .intra_op_parallelism_threads = 1
   };
   ASSERT_THROW({
-    model_server::TFEngine tf_engine(tf_model_spec, runtime_conf);
-  }, std::runtime_error);
-}
-
-TEST(TFEngine, LoadFailNonExistentMeta) {
-  model_server::ModelSpec tf_model_spec {
-    .name = "model_1",
-    .version = "1.0.0",
-    .graph_file = "data/models/model_1/graph.pb",
-    .meta_file = "data/models/model_1/non-existent.json"
-  };
-  ASSERT_THROW({
-    model_server::TFEngine tf_engine(tf_model_spec, runtime_conf);
+    model_server::TFEngine tf_engine(tf_engine_conf);
   }, std::runtime_error);
 }
 

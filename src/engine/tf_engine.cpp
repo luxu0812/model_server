@@ -14,8 +14,8 @@
 
 namespace model_server {
 
-TFEngine::TFEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
-  Engine(model_spec, runtime_conf),
+TFEngine::TFEngine(const EngineConf& engine_conf) :
+  Engine(engine_conf),
   engine_mtx_(),
   inited_(false),
   graph_buffer_(nullptr),
@@ -38,37 +38,37 @@ TFEngine::~TFEngine() {
       TF_CloseSession(session_, tf_status);
       if (TF_GetCode(tf_status) != TF_OK) {
         const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-          + model_spec_.brief() + "] " + "Failed to close session: " + std::string(TF_Message(tf_status));
+          + conf_.brief() + "] " + "Failed to close session: " + std::string(TF_Message(tf_status));
         throw std::runtime_error(err_msg);
       }
-      LOG(INFO) << "[" << model_spec_.brief() << "] Session closed";
+      LOG(INFO) << "[" << conf_.brief() << "] Session closed";
 
       TF_DeleteSession(session_, tf_status);
       if (TF_GetCode(tf_status) != TF_OK) {
         const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-          + model_spec_.brief() + "] " + "Failed to delete session: " + std::string(TF_Message(tf_status));
+          + conf_.brief() + "] " + "Failed to delete session: " + std::string(TF_Message(tf_status));
         throw std::runtime_error(err_msg);
       }
       session_ = nullptr;
-      LOG(INFO) << "[" << model_spec_.brief() << "] Session deleted";
+      LOG(INFO) << "[" << conf_.brief() << "] Session deleted";
     }
 
     if (nullptr != session_opts_) {
       TF_DeleteSessionOptions(session_opts_);
       session_opts_ = nullptr;
-      LOG(INFO) << "[" << model_spec_.brief() << "] Session options deleted";
+      LOG(INFO) << "[" << conf_.brief() << "] Session options deleted";
     }
 
     if (nullptr != graph_) {
       TF_DeleteGraph(graph_);
       graph_ = nullptr;
-      LOG(INFO) << "[" << model_spec_.brief() << "] Graph deleted";
+      LOG(INFO) << "[" << conf_.brief() << "] Graph deleted";
     }
 
     if (nullptr != graph_buffer_) {
       TF_DeleteBuffer(graph_buffer_);
       graph_buffer_ = nullptr;
-      LOG(INFO) << "[" << model_spec_.brief() << "] Graph buffer deleted";
+      LOG(INFO) << "[" << conf_.brief() << "] Graph buffer deleted";
     }
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
@@ -85,7 +85,7 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Engine not initialized";
+      + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
 
@@ -115,7 +115,7 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
                  << ", feature_data_size: " << feature.data.size() * sizeof(feature.data[0]);
       if (feature.data.size() * sizeof(feature.data[0]) != tensor_data_size) {
         const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-          + model_spec_.brief() + "] " + "Feature data size mismatch: " + feature_name;
+          + conf_.brief() + "] " + "Feature data size mismatch: " + feature_name;
         throw std::runtime_error(err_msg);
       }
       std::vector<int64_t> tensor_shape = it->second.shape;
@@ -161,7 +161,7 @@ void TFEngine::trace() noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Engine not initialized";
+      + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
 
@@ -207,17 +207,17 @@ void TFEngine::run_session(
 
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to run session: " + std::string(TF_Message(tf_status));
+      + conf_.brief() + "] " + "Failed to run session: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 }
 
 void TFEngine::load() {
-  const std::string& graph_file = model_spec_.graph_file;
+  const std::string& graph_file = conf_.graph_file_loc;
   std::ifstream file(graph_file, std::ios::binary | std::ios::ate);
   if (!file.is_open()) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to open graph file: " + graph_file;
+      + conf_.brief() + "] " + "Failed to open graph file: " + graph_file;
     throw std::runtime_error(err_msg);
   }
   ScopeExitTask close_file([&file]() { file.close(); });
@@ -230,7 +230,7 @@ void TFEngine::load() {
     delete[] buffer_data;
 
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to read graph file: " + graph_file;
+      + conf_.brief() + "] " + "Failed to read graph file: " + graph_file;
     throw std::runtime_error(err_msg);
   }
 
@@ -241,7 +241,7 @@ void TFEngine::load() {
     delete[] static_cast<char*>(data);
   };
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] Graph file loaded: " << graph_file;
+  LOG(INFO) << "[" << conf_.brief() << "] Graph file loaded: " << graph_file;
 }
 
 void TFEngine::build() {
@@ -256,11 +256,11 @@ void TFEngine::build() {
   TF_GraphImportGraphDef(graph_, graph_buffer_, tf_import_graph_def_opts, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to import graph: " + std::string(TF_Message(tf_status));
+      + conf_.brief() + "] " + "Failed to import graph: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] Graph imported";
+  LOG(INFO) << "[" << conf_.brief() << "] Graph imported";
 }
 
 void TFEngine::set_session_options() {
@@ -272,15 +272,15 @@ void TFEngine::set_session_options() {
   tensorflow::OptimizerOptions tf_optimizer_opts;
   tf_optimizer_opts.set_do_constant_folding(true);
   tf_optimizer_opts.set_do_function_inlining(true);
-  if (0 == runtime_conf_.opt_level) {
+  if (0 == conf_.opt_level) {
     tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L0);
   } else {
     tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L1);
   }
-  if (0 == runtime_conf_.jit_level) {
+  if (0 == conf_.jit_level) {
     tf_optimizer_opts.set_cpu_global_jit(false);
     tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_OFF);
-  } else if (1 == runtime_conf_.jit_level) {
+  } else if (1 == conf_.jit_level) {
     tf_optimizer_opts.set_cpu_global_jit(true);
     tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_1);
   } else {
@@ -290,9 +290,9 @@ void TFEngine::set_session_options() {
 
   tensorflow::ConfigProto tf_session_conf;
   tf_session_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
-  tf_session_conf.set_intra_op_parallelism_threads(runtime_conf_.intra_op_parallelism_threads);
-  tf_session_conf.set_inter_op_parallelism_threads(runtime_conf_.inter_op_parallelism_threads);
-  LOG(INFO) << "[" << model_spec_.brief() << "] Session config: " << tf_session_conf.DebugString();
+  tf_session_conf.set_intra_op_parallelism_threads(conf_.intra_op_parallelism_threads);
+  tf_session_conf.set_inter_op_parallelism_threads(conf_.inter_op_parallelism_threads);
+  LOG(INFO) << "[" << conf_.brief() << "] Session config: " << tf_session_conf.DebugString();
 
   std::string tf_session_conf_str;
   tf_session_conf.SerializeToString(&tf_session_conf_str);
@@ -301,11 +301,11 @@ void TFEngine::set_session_options() {
   TF_SetConfig(session_opts_, tf_session_conf_str.data(), tf_session_conf_str.size(), tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to set session config: " + std::string(TF_Message(tf_status));
+      + conf_.brief() + "] " + "Failed to set session config: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] Session options set";
+  LOG(INFO) << "[" << conf_.brief() << "] Session options set";
 }
 
 void TFEngine::create_session() {
@@ -317,11 +317,11 @@ void TFEngine::create_session() {
   session_ = TF_NewSession(graph_, session_opts_, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to create session: " + std::string(TF_Message(tf_status));
+      + conf_.brief() + "] " + "Failed to create session: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] Session created";
+  LOG(INFO) << "[" << conf_.brief() << "] Session created";
 }
 
 void TFEngine::sub_init() {
@@ -331,14 +331,12 @@ void TFEngine::sub_init() {
   });
 
   int32_t input_index = 0;
-  for (const auto& tensor_info : model_meta_.input_shapes) {
-    const std::string& tensor_name = tensor_info.first;
+  for (const auto& tensor_name : conf_.input_nodes) {
     get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_metas, &input_index);
   }
 
   int32_t output_index = 0;
-  for (const auto& tensor_info : model_meta_.output_shapes) {
-    const std::string& tensor_name = tensor_info.first;
+  for (const auto& tensor_name : conf_.output_nodes) {
     get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_metas, &output_index);
   }
 
@@ -377,7 +375,7 @@ void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
   TF_Operation *tf_operation = TF_GraphOperationByName(graph_, tf_operation_name.c_str());
   if (nullptr == tf_operation) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to get operation: " + tf_operation_name;
+      + conf_.brief() + "] " + "Failed to get operation: " + tf_operation_name;
     throw std::runtime_error(err_msg);
   }
 
@@ -417,12 +415,12 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
   tf_tensor_meta->num_dims = TF_GraphGetTensorNumDims(graph_, tf_output, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to get tensor num dims: " + std::string(TF_Message(tf_status));
+      + conf_.brief() + "] " + "Failed to get tensor num dims: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
   if (!(tf_tensor_meta->num_dims > 0)) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + tf_tensor_meta->operation_name + " has no dimensions";
+      + conf_.brief() + "] " + tf_tensor_meta->operation_name + " has no dimensions";
     throw std::runtime_error(err_msg);
   }
 
@@ -430,7 +428,7 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
   TF_GraphGetTensorShape(graph_, tf_output, tf_tensor_meta->shape.data(), tf_tensor_meta->num_dims, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + model_spec_.brief() + "] " + "Failed to get tensor shape: " + std::string(TF_Message(tf_status));
+      + conf_.brief() + "] " + "Failed to get tensor shape: " + std::string(TF_Message(tf_status));
     throw std::runtime_error(err_msg);
   }
 

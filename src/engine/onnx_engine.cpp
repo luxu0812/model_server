@@ -6,8 +6,8 @@
 
 namespace model_server {
 
-ONNXEngine::ONNXEngine(const ModelSpec& model_spec, const RuntimeConf& runtime_conf) :
-  Engine(model_spec, runtime_conf),
+ONNXEngine::ONNXEngine(const EngineConf& engine_conf) :
+  Engine(engine_conf),
   env_(nullptr),
   session_opts_(nullptr),
   session_(nullptr) {
@@ -19,13 +19,13 @@ ONNXEngine::~ONNXEngine() {
     if (nullptr != session_) {
       delete session_;
       session_ = nullptr;
-      LOG(INFO) << "[" << model_spec_.brief() << "] Session deleted";
+      LOG(INFO) << "[" << conf_.brief() << "] Session deleted";
     }
 
     if (nullptr != env_) {
       delete env_;
       env_ = nullptr;
-      LOG(INFO) << "[" << model_spec_.brief() << "] Env deleted";
+      LOG(INFO) << "[" << conf_.brief() << "] Env deleted";
     }
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
@@ -87,13 +87,13 @@ void ONNXEngine::set_session_options() {
   session_opts_->SetInterOpNumThreads(1);
   // session_opts_->DisablePerSessionThreads();
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] Session options set";
+  LOG(INFO) << "[" << conf_.brief() << "] Session options set";
 }
 
 void ONNXEngine::create_session() {
   // create session
-  session_ = new Ort::Session(*env_, model_spec_.graph_file.c_str(), *session_opts_);
-  LOG(INFO) << "[" << model_spec_.brief() << "] Session created";
+  session_ = new Ort::Session(*env_, conf_.graph_file_loc.c_str(), *session_opts_);
+  LOG(INFO) << "[" << conf_.brief() << "] Session created";
 }
 
 }  // namespace model_server

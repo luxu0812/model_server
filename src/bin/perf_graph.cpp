@@ -13,7 +13,6 @@
 #include "model_server/src/util/process/process_initiator.h"
 #include "model_server/src/util/functional/timer.h"
 #include "model_server/src/data/model_spec.h"
-#include "model_server/src/data/runtime_conf.h"
 #include "model_server/src/data/sample.h"
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/engine/tf_engine.h"
@@ -62,24 +61,23 @@ int main(int argc, char **argv) {
 }
 
 model_server::Engine *create_engine() {
-  model_server::RuntimeConf runtime_conf {
+  model_server::EngineConf engine_conf {
+    .name = "model_1",
+    .version = "1.0.0",
+    .input_nodes = {"dense", "sparse_input_unfolded"},
+    .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
     .opt_level = FLAGS_opt_level,
     .jit_level = FLAGS_jit_level,
     .inter_op_parallelism_threads = FLAGS_inter_op_parallelism_threads,
     .intra_op_parallelism_threads = FLAGS_intra_op_parallelism_threads
   };
-  model_server::ModelSpec model_spec {
-    .name = "test",
-    .version = "1.0.0",
-    .meta_file = "test/data/model1/graph_meta.json"
-  };
 
   if (FLAGS_engine_brand == "TensorFlow") {
-    model_spec.graph_file = "test/data/model1/graph.pb";
-    return new model_server::TFEngine(model_spec, runtime_conf);
+    engine_conf.graph_file_loc = "data/models/model_1/graph.pb";
+    return new model_server::TFEngine(engine_conf);
   } else if (FLAGS_engine_brand == "ONNX") {
-    model_spec.graph_file = "test/data/model1/graph.onnx";
-    return new model_server::ONNXEngine(model_spec, runtime_conf);
+    engine_conf.graph_file_loc = "data/models/model_1/graph.onnx";
+    return new model_server::ONNXEngine(engine_conf);
   } else {
     throw std::runtime_error("Unknown engine brand");
   }
@@ -91,7 +89,7 @@ std::vector<model_server::Sample> *create_samples() {
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  std::string meta_file = "test/data/model1/graph_meta.json";
+  std::string meta_file = "data/models/model_1/graph_meta.json";
   model_server::ModelMeta model_meta;
   model_meta.load(meta_file);
 
