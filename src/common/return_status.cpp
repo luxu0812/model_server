@@ -1,6 +1,6 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#include "model_server/src/data/return_status.h"
+#include "model_server/src/common/return_status.h"
 #include "glog/logging.h"
 
 namespace model_server {

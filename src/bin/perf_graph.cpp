@@ -12,8 +12,8 @@
 
 #include "model_server/src/util/process/process_initiator.h"
 #include "model_server/src/util/functional/timer.h"
-#include "model_server/src/data/model_spec.h"
-#include "model_server/src/data/sample.h"
+#include "model_server/src/common/model_spec.h"
+#include "model_server/src/common/sample.h"
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/engine/tf_engine.h"
 #include "model_server/src/engine/onnx_engine.h"

@@ -1,6 +1,6 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#include "model_server/src/data/model_spec.h"
+#include "model_server/src/common/model_spec.h"
 
 namespace model_server {
 

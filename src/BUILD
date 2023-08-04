@@ -28,15 +28,15 @@ cc_library(
 )
 
 cc_library(
-  name = "data",
+  name = "common",
   hdrs = [
-    "data/return_status.h",
-    "data/model_spec.h",
-    "data/sample.h"
+    "common/return_status.h",
+    "common/model_spec.h",
+    "common/sample.h"
   ],
   srcs = [
-    "data/return_status.cpp",
-    "data/model_spec.cpp",
+    "common/return_status.cpp",
+    "common/model_spec.cpp",
   ],
   deps = [
     ":util",
@@ -44,8 +44,8 @@ cc_library(
     "@com_google_absl//:absl",
     "@nlohmann_json//:nlohmann_json",
   ],
-  strip_include_prefix = "data",
-  include_prefix = "model_server/src/data",
+  strip_include_prefix = "common",
+  include_prefix = "model_server/src/common",
   visibility = ["//visibility:public"],
 )
 
@@ -55,7 +55,7 @@ cc_library(
     "engine/engine.h",
   ],
   deps = [
-    ":data"
+    ":common"
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
@@ -72,7 +72,7 @@ cc_library(
   ],
   deps = [
     ":util",
-    ":data",
+    ":common",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
@@ -94,7 +94,7 @@ cc_library(
   ],
   deps = [
     ":util",
-    ":data",
+    ":common",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@onnxruntime//:onnxruntime",
@@ -117,7 +117,7 @@ cc_library(
   ],
   deps = [
     ":util",
-    ":data",
+    ":common",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
@@ -135,7 +135,7 @@ cc_binary(
   ],
   deps = [
     ":util",
-    ":data",
+    ":common",
     ":tf_engine",
     ":onnx_engine",
     ":population",
