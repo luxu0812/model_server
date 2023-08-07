@@ -30,12 +30,24 @@ cc_library(
 )
 
 cc_library(
-  name = "engine_base",
+  name = "sample",
   hdrs = [
-    "engine/engine.h",
     "engine/sample.h"
   ],
   deps = [
+  ],
+  strip_include_prefix = "engine",
+  include_prefix = "model_server/src/engine",
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
+  name = "engine_base",
+  hdrs = [
+    "engine/engine.h",
+  ],
+  deps = [
+    ":sample",
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
@@ -52,6 +64,7 @@ cc_library(
   ],
   deps = [
     ":util",
+    ":sample",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
@@ -73,6 +86,7 @@ cc_library(
   ],
   deps = [
     ":util",
+    ":sample",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@onnxruntime//:onnxruntime",
@@ -98,6 +112,7 @@ cc_library(
   ],
   deps = [
     ":util",
+    ":sample",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
@@ -116,6 +131,7 @@ cc_binary(
   ],
   deps = [
     ":util",
+    ":sample",
     ":tf_engine",
     ":onnx_engine",
     ":population",
@@ -131,6 +147,7 @@ cc_test(
   srcs = ["unittest/engine/test_tf_engine.cpp"],
   deps = [
     ":util",
+    ":sample",
     ":engine_base",
     ":tf_engine",
     "@com_google_googletest//:gtest",
@@ -153,6 +170,7 @@ cc_test(
   srcs = ["unittest/engine/test_onnx_engine.cpp"],
   deps = [
     ":util",
+    ":sample",
     ":engine_base",
     ":onnx_engine",
     "@com_google_googletest//:gtest",
