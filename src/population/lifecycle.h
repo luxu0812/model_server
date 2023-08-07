@@ -3,6 +3,7 @@
 #ifndef MODEL_SERVER_SRC_POPULATION_LIFECYCLE_H_
 #define MODEL_SERVER_SRC_POPULATION_LIFECYCLE_H_
 
+#include <memory>
 #include <vector>
 #include <string>
 #include "model_server/src/engine/sample.h"
@@ -28,7 +29,8 @@ class Lifecycle {
   std::string              age_;
   IndivadualInfo           indivadual_info_;
   ModelMeta                model_meta_;
-  Engine*                  engine_;
+  EngineConf               engine_conf_;
+  std::unique_ptr<Engine>  engine_;
 };
 
 }  // namespace model_server

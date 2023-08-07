@@ -114,6 +114,8 @@ cc_library(
     ":util",
     ":sample",
     ":engine_base",
+    ":tf_engine",
+    ":onnx_engine",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@bs_thread_pool//:bs_thread_pool",

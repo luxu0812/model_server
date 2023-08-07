@@ -4,11 +4,11 @@
 
 namespace model_server {
 
-std::string IndivadualInfo::graph_file_path() const noexcept(false) {
+std::string IndivadualInfo::graph_file_loc() const noexcept(false) {
   return home_path + "/" + name + "/" + age + "/graph";
 }
 
-std::string IndivadualInfo::model_conf_path() const noexcept(false) {
+std::string IndivadualInfo::model_conf_loc() const noexcept(false) {
   return home_path + "/" + name + "/model_conf.json";
 }
 

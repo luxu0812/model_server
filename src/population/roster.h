@@ -14,8 +14,8 @@ struct IndivadualInfo {
   std::string age;
   std::string home_path;
 
-  std::string graph_file_path() const noexcept(false);
-  std::string model_conf_path() const noexcept(false);
+  std::string graph_file_loc() const noexcept(false);
+  std::string model_conf_loc() const noexcept(false);
 };
 
 struct Roster {

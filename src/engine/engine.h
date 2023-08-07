@@ -16,17 +16,17 @@ const char kBrandONNX[]     = "ONNX";
 const char kBrandONNXDNNL[] = "ONNX-DNNL";
 
 struct EngineConf {
-  std::string name;
-  std::string version;
-  std::string graph_file_loc;
-  std::vector<std::string> input_nodes;
-  std::vector<std::string> output_nodes;
+  std::string name                      = "";
+  std::string version                   = "";
+  std::string graph_file_loc            = "";
+  std::vector<std::string> input_nodes  = {};
+  std::vector<std::string> output_nodes = {};
 
-  int32_t opt_level;
-  int32_t jit_level;
+  int32_t opt_level                     = 0;
+  int32_t jit_level                     = 0;
 
-  int32_t inter_op_parallelism_threads;
-  int32_t intra_op_parallelism_threads;
+  int32_t inter_op_parallelism_threads  = 32;
+  int32_t intra_op_parallelism_threads  = 1;
 
   std::string detail() noexcept {
     return "name: " + name + ", version: " + version + ", graph_file_loc: " + graph_file_loc
