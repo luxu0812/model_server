@@ -1,0 +1,201 @@
+{
+  "inputs": {},
+  "outputs": [
+    "predict_node",
+    "p0_click",
+    "p0_atc",
+    "p0_order"
+  ],
+  "optimized_inputs": [
+    {
+      "name": "dense",
+      "dim": 3,
+      "shared": false
+    },
+    {
+      "name": "sparse_input_unfolded",
+      "dim": 140,
+      "shared": false,
+      "input_tensors": [
+        {
+          "slot": 2001,
+          "category": 0,
+          "emb_slot": 2001,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 0,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2009,
+          "category": 0,
+          "emb_slot": 2009,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 10,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2010,
+          "category": 0,
+          "emb_slot": 2010,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 20,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2011,
+          "category": 0,
+          "emb_slot": 2011,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 30,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2023,
+          "category": 0,
+          "emb_slot": 2023,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 40,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2031,
+          "category": 0,
+          "emb_slot": 2031,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 50,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2033,
+          "category": 0,
+          "emb_slot": 2033,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 60,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2066,
+          "category": 0,
+          "emb_slot": 2066,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 70,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2013,
+          "category": 0,
+          "emb_slot": 2013,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 80,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2014,
+          "category": 0,
+          "emb_slot": 2014,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 90,
+          "combiner": "sum"
+        },
+        {
+          "slot": 2015,
+          "category": 0,
+          "emb_slot": 2015,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 100,
+          "combiner": "sum"
+        },
+        {
+          "slot": 26152,
+          "category": 0,
+          "emb_slot": 26152,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 110,
+          "combiner": "sum"
+        },
+        {
+          "slot": 26153,
+          "category": 0,
+          "emb_slot": 26153,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 120,
+          "combiner": "sum"
+        },
+        {
+          "slot": 26154,
+          "category": 0,
+          "emb_slot": 26154,
+          "type": "sparse",
+          "dim": 10,
+          "optimized_offset": 130,
+          "combiner": "sum"
+        }
+      ]
+    }
+  ],
+  "use_online_ps": true,
+  "ps_cluster_name": "onlineps-recommendationc",
+  "dense_param_names": [
+    "time_distributed_2/kernel",
+    "time_distributed_2/bias",
+    "dense_1/kernel",
+    "dense_1_1/kernel",
+    "dense_2/kernel",
+    "time_distributed/kernel",
+    "time_distributed/bias",
+    "layer_normalization/gamma",
+    "layer_normalization/beta",
+    "conv1d/kernel",
+    "conv1d/bias",
+    "conv1d_1/kernel",
+    "conv1d_1/bias",
+    "layer_normalization_1/gamma",
+    "layer_normalization_1/beta",
+    "dense_4/kernel",
+    "dense_5/kernel",
+    "dense_6/kernel",
+    "time_distributed_1/kernel",
+    "time_distributed_1/bias",
+    "layer_normalization_2/gamma",
+    "layer_normalization_2/beta",
+    "conv1d_2/kernel",
+    "conv1d_2/bias",
+    "conv1d_3/kernel",
+    "conv1d_3/bias",
+    "layer_normalization_3/gamma",
+    "layer_normalization_3/beta",
+    "shared_task_net_bottom/layer_1/kernel",
+    "shared_task_net_bottom/layer_1/bias",
+    "shared_task_net_bottom/layer_2/kernel",
+    "shared_task_net_bottom/layer_2/bias",
+    "shared_task_net_bottom/layer_3/kernel",
+    "shared_task_net_bottom/layer_3/bias",
+    "shared_task_net_bottom/layer_4/kernel",
+    "shared_task_net_bottom/layer_4/bias",
+    "shared_task_net_click_top/layer_1/kernel",
+    "shared_task_net_click_top/layer_1/bias",
+    "shared_task_net_click_top/layer_2/kernel",
+    "shared_task_net_click_top/layer_2/bias",
+    "shared_task_net_cart_top/layer_1/kernel",
+    "shared_task_net_cart_top/layer_1/bias",
+    "shared_task_net_cart_top/layer_2/kernel",
+    "shared_task_net_cart_top/layer_2/bias",
+    "shared_task_net_order_top/layer_1/kernel",
+    "shared_task_net_order_top/layer_1/bias",
+    "shared_task_net_order_top/layer_2/kernel",
+    "shared_task_net_order_top/layer_2/bias"
+  ]
+}

@@ -37,16 +37,6 @@ static const char kInputShapeFieldName[]             = "dim";
 static const char kInputFeatureFieldName[]           = "input_tensors";
 static const char kOutputFieldName[]                 = "outputs";
 
-struct ModelSpec {
-  std::string name;
-  std::string version;
-  std::string graph_file;
-  std::string meta_file;
-
-  std::string to_string() noexcept;
-  std::string brief() noexcept;
-};
-
 struct FeatureMeta{
   std::string type;
   std::string aggregator;

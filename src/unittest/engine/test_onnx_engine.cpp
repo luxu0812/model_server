@@ -9,7 +9,7 @@ TEST(ONNXEngine, LoadSuccess) {
   model_server::EngineConf onnx_engine_conf {
     .name = "model_1",
     .version = "1.0.0",
-    .graph_file_loc = "data/models/model_1/graph.onnx",
+    .graph_file_loc = "data/models/model_1/2/graph.onnx",
     .input_nodes = {"dense", "sparse_input_unfolded"},
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
     .opt_level = 0,
@@ -26,7 +26,7 @@ TEST(ONNXEngine, LoadFailNonExistentGraph) {
   model_server::EngineConf onnx_engine_conf {
     .name = "model_1",
     .version = "1.0.0",
-    .graph_file_loc = "data/models/model_1/non-existent.onnx",
+    .graph_file_loc = "data/models/model_1/2/non-existent.onnx",
     .input_nodes = {"dense", "sparse_input_unfolded"},
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
     .opt_level = 0,

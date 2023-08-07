@@ -4,14 +4,6 @@
 
 namespace model_server {
 
-std::string ModelSpec::to_string() noexcept {
-  return "name: " + name + ", version: " + version + ", graph_file: " + graph_file + ", meta_file: " + meta_file;
-}
-
-std::string ModelSpec::brief() noexcept {
-  return name + ":" + version;
-}
-
 void ModelMeta::load(const std::string& meta_file) noexcept(false) {
   std::ifstream file(meta_file);
   if (!file.is_open()) {

@@ -9,7 +9,7 @@ TEST(TFEngine, LoadSuccess) {
   model_server::EngineConf tf_engine_conf {
     .name = "model_1",
     .version = "1.0.0",
-    .graph_file_loc = "data/models/model_1/graph.pb",
+    .graph_file_loc = "data/models/model_1/2/graph.pb",
     .input_nodes = {"dense", "sparse_input_unfolded"},
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
     .opt_level = 0,
@@ -26,7 +26,7 @@ TEST(TFEngine, LoadFailNonExistentGraph) {
   model_server::EngineConf tf_engine_conf {
     .name = "model_1",
     .version = "1.0.0",
-    .graph_file_loc = "data/models/model_1/non-existent.pb",
+    .graph_file_loc = "data/models/model_1/2/non-existent.pb",
     .input_nodes = {"dense", "sparse_input_unfolded"},
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
     .opt_level = 0,

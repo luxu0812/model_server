@@ -8,6 +8,7 @@
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/population/roster.h"
+#include "model_server/src/population/model_spec.h"
 
 namespace model_server {
 
@@ -25,6 +26,8 @@ class Lifecycle {
  private:
   std::vector<std::string> memories_;
   std::string              age_;
+  IndivadualInfo           indivadual_info_;
+  ModelMeta                model_meta_;
   Engine*                  engine_;
 };
 

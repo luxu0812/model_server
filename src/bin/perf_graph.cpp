@@ -73,10 +73,10 @@ model_server::Engine *create_engine() {
   };
 
   if (FLAGS_engine_brand == "TensorFlow") {
-    engine_conf.graph_file_loc = "data/models/model_1/graph.pb";
+    engine_conf.graph_file_loc = "data/models/model_1/2/graph.pb";
     return new model_server::TFEngine(engine_conf);
   } else if (FLAGS_engine_brand == "ONNX") {
-    engine_conf.graph_file_loc = "data/models/model_1/graph.onnx";
+    engine_conf.graph_file_loc = "data/models/model_1/2/graph.onnx";
     return new model_server::ONNXEngine(engine_conf);
   } else {
     throw std::runtime_error("Unknown engine brand");
@@ -89,7 +89,7 @@ std::vector<model_server::Sample> *create_samples() {
   std::random_device rd;
   std::mt19937 gen(rd());
 
-  std::string meta_file = "data/models/model_1/graph_meta.json";
+  std::string meta_file = "data/models/model_1/model_conf.json";
   model_server::ModelMeta model_meta;
   model_meta.load(meta_file);
 
