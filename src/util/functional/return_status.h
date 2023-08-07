@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef MODEL_SERVER_SRC_COMMON_RETURN_STATUS_H_
-#define MODEL_SERVER_SRC_COMMON_RETURN_STATUS_H_
+#ifndef MODEL_SERVER_SRC_UTIL_FUNCTIONAL_RETURN_STATUS_H_
+#define MODEL_SERVER_SRC_UTIL_FUNCTIONAL_RETURN_STATUS_H_
 
 #include <stdint.h>
 #include <string>
@@ -46,4 +46,4 @@ class ReturnStatus {
 
 }  // namespace model_server
 
-#endif  // MODEL_SERVER_SRC_COMMON_RETURN_STATUS_H_
+#endif  // MODEL_SERVER_SRC_UTIL_FUNCTIONAL_RETURN_STATUS_H_

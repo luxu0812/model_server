@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
-#include "model_server/src/common/sample.h"
+#include "model_server/src/engine/sample.h"
 
 namespace model_server {
 

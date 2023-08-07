@@ -11,12 +11,14 @@ config_setting(
 cc_library(
   name = "util",
   hdrs = [
+    "util/functional/return_status.h",
     "util/functional/scope_exit_task.h",
     "util/functional/random.h",
     "util/functional/timer.h",
     "util/process/process_initiator.h"
   ],
   srcs = [
+    "util/functional/return_status.cpp",
   ],
   deps = [
     "@com_github_google_glog//:glog",
@@ -28,34 +30,12 @@ cc_library(
 )
 
 cc_library(
-  name = "common",
-  hdrs = [
-    "common/return_status.h",
-    "common/model_spec.h",
-    "common/sample.h"
-  ],
-  srcs = [
-    "common/return_status.cpp",
-    "common/model_spec.cpp",
-  ],
-  deps = [
-    ":util",
-    "@com_github_google_glog//:glog",
-    "@com_google_absl//:absl",
-    "@nlohmann_json//:nlohmann_json",
-  ],
-  strip_include_prefix = "common",
-  include_prefix = "model_server/src/common",
-  visibility = ["//visibility:public"],
-)
-
-cc_library(
   name = "engine_base",
   hdrs = [
     "engine/engine.h",
+    "engine/sample.h"
   ],
   deps = [
-    ":common"
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
@@ -72,7 +52,6 @@ cc_library(
   ],
   deps = [
     ":util",
-    ":common",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
@@ -94,7 +73,6 @@ cc_library(
   ],
   deps = [
     ":util",
-    ":common",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@onnxruntime//:onnxruntime",
@@ -110,19 +88,21 @@ cc_library(
     "population/population.h",
     "population/lifecycle.h",
     "population/roster.h",
+    "population/model_spec.h",
   ],
   srcs = [
     "population/population.cpp",
     "population/lifecycle.cpp",
     "population/roster.cpp",
+    "population/model_spec.cpp",
   ],
   deps = [
     ":util",
-    ":common",
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@bs_thread_pool//:bs_thread_pool",
+    "@nlohmann_json//:nlohmann_json",
   ],
   strip_include_prefix = "population",
   include_prefix = "model_server/src/population",
@@ -136,7 +116,6 @@ cc_binary(
   ],
   deps = [
     ":util",
-    ":common",
     ":tf_engine",
     ":onnx_engine",
     ":population",

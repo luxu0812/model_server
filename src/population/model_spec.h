@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef MODEL_SERVER_SRC_COMMON_MODEL_SPEC_H_
-#define MODEL_SERVER_SRC_COMMON_MODEL_SPEC_H_
+#ifndef MODEL_SERVER_SRC_POPULATION_MODEL_SPEC_H_
+#define MODEL_SERVER_SRC_POPULATION_MODEL_SPEC_H_
 
 #include <stdint.h>
 #include <fstream>
@@ -72,4 +72,4 @@ struct ModelMeta {
 
 }  // namespace model_server
 
-#endif  // MODEL_SERVER_SRC_COMMON_MODEL_SPEC_H_
+#endif  // MODEL_SERVER_SRC_POPULATION_MODEL_SPEC_H_

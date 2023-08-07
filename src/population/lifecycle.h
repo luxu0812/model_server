@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <string>
-#include "model_server/src/common/sample.h"
+#include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/population/roster.h"
 

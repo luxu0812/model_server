@@ -1,7 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
-#ifndef MODEL_SERVER_SRC_COMMON_SAMPLE_H_
-#define MODEL_SERVER_SRC_COMMON_SAMPLE_H_
+#ifndef MODEL_SERVER_SRC_ENGINE_SAMPLE_H_
+#define MODEL_SERVER_SRC_ENGINE_SAMPLE_H_
 
 #include <stdint.h>
 #include <vector>
@@ -30,4 +30,4 @@ struct Sample {
 
 }  // namespace model_server
 
-#endif  // MODEL_SERVER_SRC_COMMON_SAMPLE_H_
+#endif  // MODEL_SERVER_SRC_ENGINE_SAMPLE_H_
