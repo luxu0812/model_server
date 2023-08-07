@@ -44,7 +44,7 @@ struct EngineConf {
 
 class Engine {
  public:
-  explicit Engine(const EngineConf& engine_conf) : conf_(engine_conf) {}
+  explicit Engine(const EngineConf& engine_conf) noexcept(false) : conf_(engine_conf) {}
   virtual ~Engine() {}
 
   Engine() = delete;

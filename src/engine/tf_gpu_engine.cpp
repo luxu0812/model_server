@@ -13,11 +13,11 @@
 
 namespace model_server {
 
-TFGPUEngine::TFGPUEngine(const EngineConf& engine_conf) : TFEngine(engine_conf) {}
+TFGPUEngine::TFGPUEngine(const EngineConf& engine_conf) noexcept(false) : TFEngine(engine_conf) {}
 
 TFGPUEngine::~TFGPUEngine() {}
 
-std::string TFGPUEngine::brand() {
+std::string TFGPUEngine::brand() noexcept {
   return kBrandTFGPU;
 }
 

@@ -11,7 +11,7 @@ namespace model_server {
 
 class TFGPUEngine : public TFEngine {
  public:
-  explicit TFGPUEngine(const EngineConf& engine_conf);
+  explicit TFGPUEngine(const EngineConf& engine_conf) noexcept(false);
   ~TFGPUEngine();
 
   TFGPUEngine() = delete;
@@ -19,11 +19,11 @@ class TFGPUEngine : public TFEngine {
   TFGPUEngine(const TFGPUEngine&) = delete;
 
   // Get brand of engine
-  std::string brand() override;
+  std::string brand() noexcept override;
 
  protected:
   // Set session options
-  void set_session_options() override;
+  void set_session_options() noexcept(false) override;
 };
 
 }  // namespace model_server

@@ -6,7 +6,7 @@
 
 namespace model_server {
 
-ONNXDNNLEngine::ONNXDNNLEngine(const EngineConf& engine_conf) :
+ONNXDNNLEngine::ONNXDNNLEngine(const EngineConf& engine_conf) noexcept(false) :
   ONNXEngine(engine_conf) {}
 
 ONNXDNNLEngine::~ONNXDNNLEngine() {}

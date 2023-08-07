@@ -13,14 +13,14 @@ namespace model_server {
 
 class Lifecycle {
  public:
-  explicit Lifecycle(const IndivadualInfo& indivadual_info) {}
-  virtual ~Lifecycle() = default;
+  explicit Lifecycle(const IndivadualInfo& indivadual_info) noexcept(false);
+  virtual ~Lifecycle();
 
   Lifecycle& operator=(const Lifecycle&) = delete;
   Lifecycle(const Lifecycle&) = delete;
 
-  void age(const std::string& new_age) {}
-  void undertake(Instance *instance, Score *score) {}
+  void age(const std::string& new_age) noexcept(false);
+  void undertake(Instance *instance, Score *score) noexcept(false);
 
  private:
   std::vector<std::string> memories_;

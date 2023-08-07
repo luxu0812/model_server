@@ -113,6 +113,7 @@ cc_library(
   ],
   srcs = [
     "population/population.cpp",
+    "population/lifecycle.cpp",
     "population/roster.cpp",
   ],
   deps = [

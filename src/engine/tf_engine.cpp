@@ -14,7 +14,7 @@
 
 namespace model_server {
 
-TFEngine::TFEngine(const EngineConf& engine_conf) :
+TFEngine::TFEngine(const EngineConf& engine_conf) noexcept(false) :
   Engine(engine_conf),
   engine_mtx_(),
   inited_(false),

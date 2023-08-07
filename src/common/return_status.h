@@ -10,13 +10,13 @@ namespace model_server {
 
 class ReturnStatus {
  public:
-  static ReturnStatus success() {
+  static ReturnStatus success() noexcept {
     return ReturnStatus();
   }
-  static ReturnStatus no_implement() {
+  static ReturnStatus no_implement() noexcept {
     return ReturnStatus(kNoImplement, kNoImplementMessage);
   }
-  static ReturnStatus internal_error(const std::string& message) {
+  static ReturnStatus internal_error(const std::string& message) noexcept {
     return ReturnStatus(kInternalError, message);
   }
 
@@ -29,15 +29,15 @@ class ReturnStatus {
   static const char kNoImplementMessage[];
 
  public:
-  ReturnStatus();
-  ReturnStatus(int32_t code, const std::string& message);
+  ReturnStatus() noexcept;
+  ReturnStatus(int32_t code, const std::string& message) noexcept;
   ~ReturnStatus();
 
-  void set(int32_t code, const std::string& message);
+  void set(int32_t code, const std::string& message) noexcept;
 
-  bool has_error() const;
-  int32_t code() const;
-  std::string message() const;
+  bool has_error() const noexcept;
+  int32_t code() const noexcept;
+  std::string message() const noexcept;
 
  private:
   int32_t code_;

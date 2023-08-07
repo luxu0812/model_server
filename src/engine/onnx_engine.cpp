@@ -6,7 +6,7 @@
 
 namespace model_server {
 
-ONNXEngine::ONNXEngine(const EngineConf& engine_conf) :
+ONNXEngine::ONNXEngine(const EngineConf& engine_conf) noexcept(false) :
   Engine(engine_conf),
   env_(nullptr),
   session_opts_(nullptr),
