@@ -103,12 +103,14 @@ cc_library(
     "population/lifecycle.h",
     "population/roster.h",
     "population/model_spec.h",
+    "population/sample_gen.h"
   ],
   srcs = [
     "population/population.cpp",
     "population/lifecycle.cpp",
     "population/roster.cpp",
     "population/model_spec.cpp",
+    "population/sample_gen.cpp"
   ],
   deps = [
     ":util",
@@ -205,4 +207,29 @@ cc_test(
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
   timeout = "short",
+)
+
+cc_test(
+  name = "bm_tf_engine",
+  srcs = [
+    "benchmark/bm_tf_engine.cpp",
+  ],
+  deps = [
+    ":util",
+    ":sample",
+    ":tf_engine",
+    ":population",
+    "@bs_thread_pool//:bs_thread_pool",
+    "@com_github_google_benchmark//:benchmark",
+    "@com_google_absl//:absl",
+  ],
+  data = [
+    "@//data:model_1",
+  ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
+  timeout = "moderate",
 )

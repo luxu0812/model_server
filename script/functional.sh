@@ -101,6 +101,11 @@ function benchmark_test() {
   if [[ $? -ne 0 ]]; then
     return 1
   fi
+
+  bazel_test //src:bm_tf_engine --define "malloc=jemalloc"
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
 }
 
 function check() {

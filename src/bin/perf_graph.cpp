@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <exception>
 #include <vector>
-#include <random>
-#include <algorithm>
 
 #include "gflags/gflags.h"
 #include "glog/logging.h"
@@ -17,6 +15,7 @@
 #include "model_server/src/engine/tf_engine.h"
 #include "model_server/src/engine/onnx_engine.h"
 #include "model_server/src/population/model_spec.h"
+#include "model_server/src/population/sample_gen.h"
 
 DEFINE_uint32(concurrency, 1, "Number of concurrent workers");
 DEFINE_uint32(batch_size, 128, "Batch size");
@@ -86,37 +85,12 @@ model_server::Engine *create_engine() {
 }
 
 std::vector<model_server::Sample> *create_samples() {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-
   std::string meta_file = "data/models/model_1/model_conf.json";
   model_server::ModelMeta model_meta;
   model_meta.load(meta_file);
 
   std::vector<model_server::Sample> *samples = new std::vector<model_server::Sample>();
-  samples->resize(FLAGS_test_data_size);
-  for (auto& sample : *samples) {
-    sample.instance.batch_size = FLAGS_batch_size;
-
-    sample.instance.features.resize(model_meta.input_shapes.size());
-    int32_t i = 0;
-    for (auto& input : model_meta.input_shapes) {
-      auto& feature = sample.instance.features[i++];
-      int64_t data_size = FLAGS_batch_size;
-      for (auto& dim : input.second) {
-        data_size *= dim;
-      }
-      feature.name = input.first;
-      feature.data.resize(data_size);
-
-      // fill random data
-      for (auto& data : feature.data) {
-        data = std::uniform_real_distribution<float>(0.0, 1.0)(gen);
-      }
-    }
-
-    sample.score.targets.resize(model_meta.output_shapes.size());
-  }
+  model_server::random_sample_gen(model_meta, samples, FLAGS_batch_size, FLAGS_test_data_size);
 
   return samples;
 }
