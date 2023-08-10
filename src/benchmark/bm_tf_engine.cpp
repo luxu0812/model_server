@@ -1,6 +1,7 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
 #include <vector>
+#include "glog/logging.h"
 #include "benchmark/benchmark.h"
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/tf_engine.h"
@@ -12,6 +13,10 @@ const int32_t kBatchSize = 128;
 static std::vector<model_server::Sample> g_samples;
 
 static void do_setup(const benchmark::State& state) {
+  FLAGS_logbufsecs = 0;
+  FLAGS_minloglevel = google::ERROR;
+  FLAGS_logtostdout = true;
+
   std::string meta_file = "data/models/model_1/model_conf.json";
   model_server::ModelMeta model_meta;
   model_meta.load(meta_file);

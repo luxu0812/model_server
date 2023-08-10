@@ -102,7 +102,7 @@ function benchmark_test() {
     return 1
   fi
 
-  bazel_test //src:bm_tf_engine --define "malloc=jemalloc"
+  bazel_test //src:bm_tf_engine --define "malloc=jemalloc" --test_arg="--benchmark_format=console"
   if [[ $? -ne 0 ]]; then
     return 1
   fi

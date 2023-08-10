@@ -219,6 +219,7 @@ cc_test(
     ":sample",
     ":tf_engine",
     ":population",
+    "@com_github_google_glog//:glog",
     "@bs_thread_pool//:bs_thread_pool",
     "@com_github_google_benchmark//:benchmark",
     "@com_google_absl//:absl",
