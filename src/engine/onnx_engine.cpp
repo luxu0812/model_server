@@ -102,6 +102,18 @@ void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
 }
 
 void ONNXEngine::trace() noexcept(false) {
+  // session_opts_.EnableProfiling(conf_.name.c_str());
+
+  // static std::atomic<int> sess_cnt = 0;
+  // if (sess_cnt.load() < 5) {
+  //     sess_cnt.fetch_add(1);
+  // } else {
+  //     Ort::AllocatorWithDefaultOptions allocator;
+  //     auto profile_file = _session->EndProfilingAllocated(allocator);
+  //     if (std::string(profile_file.get()) != std::string()) {
+  //         LOG(INFO) << "ONNX profiling file has dump to " << std::string(profile_file.get());
+  //     }
+  // }
 }
 
 void ONNXEngine::load() {
