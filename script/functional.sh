@@ -66,7 +66,7 @@ function static_code_check() {
 }
 
 function bazel_test() {
-  bazelisk test "$@"                   \
+  bazelisk test                        \
     --compilation_mode opt             \
     --jobs=10                          \
     --test_output=all                  \
@@ -79,7 +79,8 @@ function bazel_test() {
     --cxxopt='-std=c++17'              \
     --cxxopt='-Wno-unused-parameter'   \
     --cxxopt='-fno-omit-frame-pointer' \
-    --cxxopt='-fPIC'
+    --cxxopt='-fPIC'                   \
+    "$@"
   if [[ $? -ne 0 ]]; then
     return 1
   fi
