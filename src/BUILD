@@ -89,6 +89,7 @@ cc_library(
     ":sample",
     ":engine_base",
     "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
     "@onnxruntime//:onnxruntime",
   ],
   strip_include_prefix = "engine",

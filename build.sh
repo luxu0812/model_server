@@ -23,4 +23,6 @@ bazelisk build //src:perf_graph      \
   --cxxopt='-Wno-unused-parameter'   \
   --cxxopt='-fno-omit-frame-pointer' \
   --cxxopt='-fPIC'
-${SCRIPT_DIR}/bazel-bin/src/perf_graph
+
+${SCRIPT_DIR}/bazel-bin/src/perf_graph --engine_brand="TensorFlow"
+${SCRIPT_DIR}/bazel-bin/src/perf_graph --engine_brand="ONNX"

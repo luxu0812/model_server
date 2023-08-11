@@ -7,6 +7,7 @@
 
 #include "glog/logging.h"
 #include "absl/strings/str_format.h"
+#include "absl/strings/str_join.h"
 #include "tensorflow/c/c_api.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
@@ -84,7 +85,7 @@ std::string TFEngine::brand() noexcept {
 void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
-    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
@@ -160,7 +161,7 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
 void TFEngine::trace() noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
-    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
@@ -442,16 +443,10 @@ std::string TFTensorMeta::to_string() {
   std::string message;
   absl::StrAppendFormat(&message,
     "  operation_name: %s\n  operation_type: %s\n  operation_num_inputs: %d\n  operation_num_outputs: %d\n"
-    "  data_type: %d\n  data_size: %d\n  num_dims: %d\n  instance_size: %llu\n  index: %d\n  shape: ",
+    "  data_type: %d\n  data_size: %d\n  num_dims: %d\n  instance_size: %llu\n  index: %d\n  shape: %s",
     operation_name.c_str(), operation_type.c_str(), operation_num_inputs, operation_num_outputs,
-    data_type, data_size, num_dims, instance_size, index
+    data_type, data_size, num_dims, instance_size, index, absl::StrJoin(shape, ", ").c_str()
   );  // NOLINT
-  for (int32_t i = 0; i < num_dims; ++i) {
-    if (i > 0) {
-      absl::StrAppendFormat(&message, ", ");
-    }
-    absl::StrAppendFormat(&message, "%d", shape[i]);
-  }
 
   return message;
 }
