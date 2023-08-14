@@ -55,7 +55,7 @@ class TFEngine : public Engine {
   void infer(Instance *instance, Score *score) noexcept(false) override;
 
   // Perform inference with trace using the TF runtime
-  void trace() noexcept(false) override;
+  void trace(Instance *instance, Score *score) noexcept(false) override;
 
  protected:
   // Load the TensorFlow graph from the .pb file
@@ -99,6 +99,13 @@ class TFEngine : public Engine {
 
   // Print graph information
   // void print_graph_info();
+
+  void instance_to_tensor(
+    const int32_t& batch_size, Instance *instance, std::vector<TF_Tensor*> *input_tensors
+  ) noexcept(false);  // NOLINT
+  void score_from_tensor(
+    const int32_t& batch_size, const std::vector<TF_Tensor*>& output_tensors, Score *score
+  ) noexcept(false);  // NOLINT
 
  private:
   std::shared_mutex engine_mtx_;

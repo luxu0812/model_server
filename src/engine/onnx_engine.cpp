@@ -114,7 +114,7 @@ void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
   );  // NOLINT
 }
 
-void ONNXEngine::trace() noexcept(false) {
+void ONNXEngine::trace(Instance *instance, Score *score) noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["

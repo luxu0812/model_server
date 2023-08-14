@@ -82,26 +82,9 @@ std::string TFEngine::brand() noexcept {
   return kBrandTF;
 }
 
-void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  if (!inited_) {
-    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + conf_.brief() + "] " + "Engine not initialized";
-    throw std::runtime_error(err_msg);
-  }
-
-  const auto& batch_size = instance->batch_size;
-
-  // Convert BatchInstance to TF_Output and TF_Tensor
-  std::vector<TF_Tensor*> input_tensors;
-  input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
-  ScopeExitTask delete_input_tensors([&input_tensors]() {
-    for (auto& input_tensor : input_tensors) {
-      if (nullptr != input_tensor) {
-        TF_DeleteTensor(input_tensor);
-      }
-    }
-  });
+void TFEngine::instance_to_tensor(
+  const int32_t& batch_size, Instance *instance, std::vector<TF_Tensor*> *input_tensors
+) {
   for (auto& feature : instance->features) {
     const std::string& feature_name = feature.name;
     const auto it = tf_model_meta_.input_metas.find(feature_name);
@@ -127,24 +110,16 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
         tensor_data_type, tensor_shape.data(), tensor_num_dims, feature_value, tensor_data_size,
         [](void*, size_t, void*) {}, nullptr
       );  // NOLINT
-      input_tensors[it->second.index] = tf_tensor;
+      (*input_tensors)[it->second.index] = tf_tensor;
     } else {
       DLOG(INFO) << "Feature not found: " << feature_name;
     }
   }
+}
 
-  std::vector<TF_Tensor*> output_tensors;
-  output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
-  ScopeExitTask delete_output_tensors([&output_tensors]() {
-    for (auto& output_tensor : output_tensors) {
-      if (nullptr != output_tensor) {
-        TF_DeleteTensor(output_tensor);
-      }
-    }
-  });
-
-  run_session(&input_tensors, &output_tensors);
-
+void TFEngine::score_from_tensor(
+  const int32_t& batch_size, const std::vector<TF_Tensor*>& output_tensors, Score *score
+) {
   // Convert TF_Output and TF_Tensor to BatchScore
   score->targets.resize(tf_model_meta_.output_specs.size());
   for (const auto& output_meta : tf_model_meta_.output_metas) {
@@ -158,7 +133,43 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
   }
 }
 
-void TFEngine::trace() noexcept(false) {
+void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
+
+  const auto& batch_size = instance->batch_size;
+
+  // Convert BatchInstance to TF_Output and TF_Tensor
+  std::vector<TF_Tensor*> input_tensors;
+  input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
+  ScopeExitTask delete_input_tensors([&input_tensors]() {
+    for (auto& input_tensor : input_tensors) {
+      if (nullptr != input_tensor) {
+        TF_DeleteTensor(input_tensor);
+      }
+    }
+  });
+
+  std::vector<TF_Tensor*> output_tensors;
+  output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
+  ScopeExitTask delete_output_tensors([&output_tensors]() {
+    for (auto& output_tensor : output_tensors) {
+      if (nullptr != output_tensor) {
+        TF_DeleteTensor(output_tensor);
+      }
+    }
+  });
+
+  instance_to_tensor(batch_size, instance, &input_tensors);
+  run_session(&input_tensors, &output_tensors);
+  score_from_tensor(batch_size, output_tensors, score);
+}
+
+void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
@@ -178,7 +189,31 @@ void TFEngine::trace() noexcept(false) {
   TF_Buffer *tf_metadata = TF_NewBuffer();
   ScopeExitTask delete_tf_metadata([&tf_metadata]() { TF_DeleteBuffer(tf_metadata); });
 
-  // run_session(tf_run_opts_data, tf_metadata);
+  const auto& batch_size = instance->batch_size;
+
+  std::vector<TF_Tensor*> input_tensors;
+  input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
+  ScopeExitTask delete_input_tensors([&input_tensors]() {
+    for (auto& input_tensor : input_tensors) {
+      if (nullptr != input_tensor) {
+        TF_DeleteTensor(input_tensor);
+      }
+    }
+  });
+
+  std::vector<TF_Tensor*> output_tensors;
+  output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
+  ScopeExitTask delete_output_tensors([&output_tensors]() {
+    for (auto& output_tensor : output_tensors) {
+      if (nullptr != output_tensor) {
+        TF_DeleteTensor(output_tensor);
+      }
+    }
+  });
+
+  instance_to_tensor(batch_size, instance, &input_tensors);
+  run_session(&input_tensors, &output_tensors, tf_run_opts_data, tf_metadata);
+  score_from_tensor(batch_size, output_tensors, score);
 
   static std::mutex trace_data_mtx;
   static std::atomic<int> trace_data_index = 0;

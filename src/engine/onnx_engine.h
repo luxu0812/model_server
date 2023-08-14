@@ -45,7 +45,7 @@ class ONNXEngine : public Engine {
   void infer(Instance *instance, Score *score) noexcept(false) override;
 
   // Perform inference with trace using the ONNX runtime
-  void trace() noexcept(false) override;
+  void trace(Instance *instance, Score *score) noexcept(false) override;
 
  protected:
   // Load the TensorFlow graph from the .pb file
