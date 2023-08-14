@@ -48,7 +48,8 @@ int main(int argc, char **argv) {
     std::sort(cost_ms.begin(), cost_ms.end());
     double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
     double cost_p99 = cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)];
-    LOG(INFO) << "Total cost: " << total_cost_sec << " sec, avg cost: "
+    LOG(INFO) << "Total cost: " << total_cost_sec << " sec, throughput: "
+              << static_cast<float>(FLAGS_test_data_size) / total_cost_sec << ", avg cost: "
               << cost_avg << " ms, p99 cost: " << cost_p99 << " ms";
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
