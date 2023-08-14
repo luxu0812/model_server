@@ -63,6 +63,8 @@ class ONNXEngine : public Engine {
   // Sub initialization
   void sub_init() override;
 
+  void run_session(Instance *instance, Score *score, Ort::Session *session) noexcept(false);
+
  private:
   std::shared_mutex engine_mtx_;
   bool inited_;

@@ -1,6 +1,7 @@
 // Copyright 2023 zh.luxu1986@gmail.com
 
 #include <utility>
+#include <memory>
 #include <vector>
 #include "glog/logging.h"
 #include "absl/strings/str_format.h"
@@ -62,6 +63,10 @@ void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
     throw std::runtime_error(err_msg);
   }
 
+  run_session(instance, score, session_);
+}
+
+void ONNXEngine::run_session(Instance *instance, Score *score, Ort::Session *session) noexcept(false) {
   const auto& batch_size = instance->batch_size;
 
   // Create memory info
@@ -107,7 +112,7 @@ void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
 
   // Run inference using the ONNX runtime
   Ort::RunOptions run_options;
-  session_->Run(
+  session->Run(
     run_options,
     input_names.data(), input_tensors.data(), input_names.size(),
     output_names.data(), output_tensors.data(), output_names.size()
@@ -122,18 +127,25 @@ void ONNXEngine::trace(Instance *instance, Score *score) noexcept(false) {
     throw std::runtime_error(err_msg);
   }
 
-  // session_opts_.EnableProfiling(conf_.name.c_str());
+  std::unique_ptr<Ort::SessionOptions> session_opts(new Ort::SessionOptions());
+  session_opts->EnableProfiling(conf_.name.c_str());
+  session_opts->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
+  session_opts->SetIntraOpNumThreads(conf_.intra_op_parallelism_threads);
+  session_opts->SetInterOpNumThreads(conf_.inter_op_parallelism_threads);
+  std::unique_ptr<Ort::Env> env(new Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, conf_.name.c_str()));
+  std::unique_ptr<Ort::Session> session(new Ort::Session(*env, conf_.graph_file_loc.c_str(), *session_opts));
 
-  // static std::atomic<int> sess_cnt = 0;
-  // if (sess_cnt.load() < 5) {
-  //     sess_cnt.fetch_add(1);
-  // } else {
-  //     Ort::AllocatorWithDefaultOptions allocator;
-  //     auto profile_file = _session->EndProfilingAllocated(allocator);
-  //     if (std::string(profile_file.get()) != std::string()) {
-  //         LOG(INFO) << "ONNX profiling file has dump to " << std::string(profile_file.get());
-  //     }
-  // }
+  run_session(instance, score, session.get());
+
+  static std::mutex trace_data_mtx;
+  static std::atomic<int> trace_data_index = 0;
+  std::lock_guard<std::mutex> lock(trace_data_mtx);
+  trace_data_index.fetch_add(1);
+  Ort::AllocatorWithDefaultOptions allocator;
+  auto profile_file = session->EndProfilingAllocated(allocator);
+  if (std::string(profile_file.get()) != std::string()) {
+      LOG(INFO) << "ONNX profiling file has dump to " << std::string(profile_file.get());
+  }
 }
 
 void ONNXEngine::load() {
