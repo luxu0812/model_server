@@ -11,14 +11,20 @@ namespace model_server {
 
 ONNXEngine::ONNXEngine(const EngineConf& engine_conf) noexcept(false) :
   Engine(engine_conf),
+  engine_mtx_(),
+  inited_(false),
   env_(nullptr),
   session_opts_(nullptr),
   session_(nullptr) {
   init();
+  inited_ = true;
 }
 
 ONNXEngine::~ONNXEngine() {
   try {
+    std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
+    inited_ = false;
+
     if (nullptr != session_) {
       delete session_;
       session_ = nullptr;
@@ -49,6 +55,13 @@ std::string ONNXEngine::brand() noexcept {
 
   // Perform inference using the ONNX runtime
 void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
+
   const auto& batch_size = instance->batch_size;
 
   // Create memory info
@@ -102,6 +115,13 @@ void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
 }
 
 void ONNXEngine::trace() noexcept(false) {
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
+
   // session_opts_.EnableProfiling(conf_.name.c_str());
 
   // static std::atomic<int> sess_cnt = 0;

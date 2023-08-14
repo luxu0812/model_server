@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include <shared_mutex>
 #include "absl/container/flat_hash_map.h"
 #include "onnxruntime/core/session/onnxruntime_cxx_api.h"
 #include "model_server/src/engine/engine.h"
@@ -63,6 +64,9 @@ class ONNXEngine : public Engine {
   void sub_init() override;
 
  private:
+  std::shared_mutex engine_mtx_;
+  bool inited_;
+
   Ort::Env            *env_;
   Ort::SessionOptions *session_opts_;
   Ort::Session        *session_;
