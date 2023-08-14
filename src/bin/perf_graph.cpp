@@ -19,7 +19,7 @@
 
 DEFINE_uint32(concurrency, 1, "Number of concurrent workers");
 DEFINE_uint32(batch_size, 128, "Batch size");
-DEFINE_uint32(test_data_size, 10000, "Test data size");
+DEFINE_uint32(test_data_size, 1000, "Test data size");
 DEFINE_int32(opt_level, 0, "Optimization level");
 DEFINE_int32(jit_level, 0, "JIT level");
 DEFINE_int32(inter_op_parallelism_threads, 1, "Inter op parallelism threads");
@@ -61,9 +61,9 @@ int main(int argc, char **argv) {
 
 model_server::Engine *create_engine() {
   model_server::EngineConf engine_conf {
-    .name = "model_1",
+    .name = "model_2",
     .version = "1.0.0",
-    .input_nodes = {"dense", "sparse_input_unfolded"},
+    .input_nodes = {"dense", "onehot", "sparse_input_folded", "sparse_input_unfolded"},
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
     .opt_level = FLAGS_opt_level,
     .jit_level = FLAGS_jit_level,
@@ -72,10 +72,10 @@ model_server::Engine *create_engine() {
   };
 
   if (FLAGS_engine_brand == "TensorFlow") {
-    engine_conf.graph_file_loc = "data/models/model_1/2/graph.pb";
+    engine_conf.graph_file_loc = "data/models/model_2/1/graph.pb";
     return new model_server::TFEngine(engine_conf);
   } else if (FLAGS_engine_brand == "ONNX") {
-    engine_conf.graph_file_loc = "data/models/model_1/2/graph.onnx";
+    engine_conf.graph_file_loc = "data/models/model_2/1/graph.onnx";
     return new model_server::ONNXEngine(engine_conf);
   } else {
     throw std::runtime_error("Unknown engine brand");
@@ -85,7 +85,7 @@ model_server::Engine *create_engine() {
 }
 
 std::vector<model_server::Sample> *create_samples() {
-  std::string meta_file = "data/models/model_1/model_conf.json";
+  std::string meta_file = "data/models/model_2/model_conf.json";
   model_server::ModelMeta model_meta;
   model_meta.load(meta_file);
 
