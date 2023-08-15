@@ -37,6 +37,11 @@ int main(int argc, char **argv) {
     std::unique_ptr<std::vector<model_server::Sample>> samples(create_samples());
     std::vector<double> cost_ms(samples->size());
 
+    // warmup
+    for (int32_t i = 0; i < samples->size(); ++i) {
+      infer(engine.get(), &(samples->at(i)), &(cost_ms[i]));
+    }
+
     BS::thread_pool works(FLAGS_concurrency);
     model_server::Timer timer;
     for (int32_t i = 0; i < samples->size(); ++i) {
