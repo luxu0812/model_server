@@ -16,7 +16,7 @@ namespace model_server {
 class Population {
  public:
   explicit Population(const std::string& settlement_path) noexcept;
-  ~Population();
+  virtual ~Population();
 
   Population& operator=(const Population&) = delete;
   Population(const Population&) = delete;

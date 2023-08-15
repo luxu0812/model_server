@@ -42,7 +42,7 @@ struct TFModelMeta {
 class TFEngine : public Engine {
  public:
   explicit TFEngine(const EngineConf& engine_conf) noexcept(false);
-  ~TFEngine();
+  virtual ~TFEngine();
 
   TFEngine() = delete;
   TFEngine& operator=(const TFEngine&) = delete;

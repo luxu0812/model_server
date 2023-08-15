@@ -32,7 +32,7 @@ struct ONNXModelMeta {
 class ONNXEngine : public Engine {
  public:
   explicit ONNXEngine(const EngineConf& engine_conf) noexcept(false);
-  ~ONNXEngine();
+  virtual ~ONNXEngine();
 
   ONNXEngine() = delete;
   ONNXEngine& operator=(const ONNXEngine&) = delete;

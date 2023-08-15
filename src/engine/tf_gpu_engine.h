@@ -12,7 +12,7 @@ namespace model_server {
 class TFGPUEngine : public TFEngine {
  public:
   explicit TFGPUEngine(const EngineConf& engine_conf) noexcept(false);
-  ~TFGPUEngine();
+  virtual ~TFGPUEngine();
 
   TFGPUEngine() = delete;
   TFGPUEngine& operator=(const TFGPUEngine&) = delete;
