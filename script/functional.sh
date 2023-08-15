@@ -2,6 +2,7 @@ DEFAULT_CLEAN=false
 DEFAULT_STATIC_CODE_CHECK=true
 DEFAULT_UNIT_TEST=false
 DEFAULT_BENCHMARK_TEST=false
+DEFAULT_PERF_DEMO_GRAPH=true
 
 function log() {
   echo "$(date +"%Y/%m/%d %H:%M:%S")][$1:$2][INFO] $3"
@@ -60,6 +61,20 @@ function static_code_check() {
              --counting=detailed \
              --repository=..     \
              ${srcs}
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
+}
+
+function bazel_build() {
+  bazelisk build                       \
+    --jobs=10                          \
+    --compilation_mode opt             \
+    --cxxopt='-std=c++17'              \
+    --cxxopt='-Wno-unused-parameter'   \
+    --cxxopt='-fno-omit-frame-pointer' \
+    --cxxopt='-fPIC'                   \
+  "$@"
   if [[ $? -ne 0 ]]; then
     return 1
   fi
@@ -153,16 +168,24 @@ function clean() {
   fi
 }
 
-function perf_graph() {
-  engine_brands=("TensorFlow" "ONNX")
+function perf_demo_graph() {
+  if [[ "${PERF_DEMO_GRAPH}" = false && "${DEFAULT_PERF_DEMO_GRAPH}" = false ]]; then
+    log ${SCRIPT_NAME} ${LINENO} "perf demo graph is omitted."
+  fi
 
+  bazel_build //src:perf_graph --define "malloc=jemalloc"
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
+
+  engine_brands=("TensorFlow" "ONNX")
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
     for engine_brand in ${engine_brands[@]}; do
       ${SCRIPT_DIR}/bazel-bin/src/perf_graph \
         --engine_brand=${engine_brand}       \
         --test_data_size=1000                \
-        --concurrency=6                      \
+        --concurrency=1                      \
         --opt_level=1                        \
         --jit_level=2                        \
         --inter_op_parallelism_threads=6     \
@@ -179,11 +202,11 @@ function perf_graph() {
         ${SCRIPT_DIR}/bazel-bin/src/perf_graph \
         --engine_brand=${engine_brand}         \
         --test_data_size=1000                  \
-        --concurrency=6                        \
+        --concurrency=1                        \
         --opt_level=1                          \
         --jit_level=2                          \
-        --inter_op_parallelism_threads=6       \
-        --intra_op_parallelism_threads=6
+        --inter_op_parallelism_threads=32      \
+        --intra_op_parallelism_threads=20
     done
   fi
 }

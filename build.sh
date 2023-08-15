@@ -15,13 +15,4 @@ trap 'error_info ${SCRIPT_NAME} ${LINENO} $?' ERR
 setup
 clean
 check
-
-bazelisk build //src:perf_graph      \
-  --jobs=10                          \
-  --compilation_mode opt             \
-  --cxxopt='-std=c++17'              \
-  --cxxopt='-Wno-unused-parameter'   \
-  --cxxopt='-fno-omit-frame-pointer' \
-  --cxxopt='-fPIC'
-
-perf_graph
+perf_demo_graph
