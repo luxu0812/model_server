@@ -152,3 +152,38 @@ function clean() {
     log ${SCRIPT_NAME} ${LINENO} "bazel cleaning is omitted."
   fi
 }
+
+function perf_graph() {
+  engine_brands=("TensorFlow" "ONNX")
+
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
+    for engine_brand in ${engine_brands[@]}; do
+      ${SCRIPT_DIR}/bazel-bin/src/perf_graph \
+        --engine_brand=${engine_brand}       \
+        --test_data_size=1000                \
+        --concurrency=6                      \
+        --opt_level=1                        \
+        --jit_level=2                        \
+        --inter_op_parallelism_threads=6     \
+        --intra_op_parallelism_threads=6
+    done
+  else
+    export MKL_NUM_THREADS=1
+    export OMP_NUM_THREADS=1
+    export MKL_DYNAMIC="FALSE"
+    export OMP_DYNAMIC="FALSE"
+
+    for engine_brand in ${engine_brands[@]}; do
+      numactl --cpunodebind=0 --membind=0      \
+        ${SCRIPT_DIR}/bazel-bin/src/perf_graph \
+        --engine_brand=${engine_brand}         \
+        --test_data_size=1000                  \
+        --concurrency=6                        \
+        --opt_level=1                          \
+        --jit_level=2                          \
+        --inter_op_parallelism_threads=6       \
+        --intra_op_parallelism_threads=6
+    done
+  fi
+}

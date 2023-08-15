@@ -24,18 +24,4 @@ bazelisk build //src:perf_graph      \
   --cxxopt='-fno-omit-frame-pointer' \
   --cxxopt='-fPIC'
 
-${SCRIPT_DIR}/bazel-bin/src/perf_graph \
-  --engine_brand="TensorFlow"          \
-  --concurrency=6                      \
-  --opt_level=0                        \
-  --jit_level=0                        \
-  --inter_op_parallelism_threads=6     \
-  --intra_op_parallelism_threads=6
-
-${SCRIPT_DIR}/bazel-bin/src/perf_graph \
-  --engine_brand="ONNX"                \
-  --concurrency=6                      \
-  --opt_level=0                        \
-  --jit_level=0                        \
-  --inter_op_parallelism_threads=6     \
-  --intra_op_parallelism_threads=6
+perf_graph
