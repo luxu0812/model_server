@@ -96,7 +96,7 @@ std::vector<model_server::Sample> *create_samples() {
   model_meta.load(meta_file);
 
   std::vector<model_server::Sample> *samples = new std::vector<model_server::Sample>();
-  model_server::random_sample_gen(model_meta, samples, FLAGS_batch_size, FLAGS_test_data_size);
+  model_server::random_sample_gen(model_meta, samples, FLAGS_test_data_size, FLAGS_batch_size);
 
   return samples;
 }
