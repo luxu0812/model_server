@@ -4,6 +4,7 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include "BShoshany/BS_thread_pool.hpp"
 
 namespace model_server {
 
@@ -21,28 +22,32 @@ void random_sample_gen(
   std::mt19937 gen(rd());
 
   samples->resize(sample_count);
+  BS::thread_pool works(16);
   for (auto& sample : *samples) {
-    sample.instance.batch_size = batch_size;
+    works.push_task([&](){
+      sample.instance.batch_size = batch_size;
 
-    sample.instance.features.resize(model_meta.input_shapes.size());
-    int32_t i = 0;
-    for (auto& input : model_meta.input_shapes) {
-      auto& feature = sample.instance.features[i++];
-      int64_t data_size = batch_size;
-      for (auto& dim : input.second) {
-        data_size *= dim;
+      sample.instance.features.resize(model_meta.input_shapes.size());
+      int32_t i = 0;
+      for (auto& input : model_meta.input_shapes) {
+        auto& feature = sample.instance.features[i++];
+        int64_t data_size = batch_size;
+        for (auto& dim : input.second) {
+          data_size *= dim;
+        }
+        feature.name = input.first;
+        feature.data.resize(data_size);
+
+        // fill random data
+        for (auto& data : feature.data) {
+          data = std::uniform_real_distribution<float>(0.0, 1.0)(gen);
+        }
       }
-      feature.name = input.first;
-      feature.data.resize(data_size);
 
-      // fill random data
-      for (auto& data : feature.data) {
-        data = std::uniform_real_distribution<float>(0.0, 1.0)(gen);
-      }
-    }
-
-    sample.score.targets.resize(model_meta.output_shapes.size());
+      sample.score.targets.resize(model_meta.output_shapes.size());
+    });
   }
+  works.wait_for_tasks();
 }
 
 }  // namespace model_server
