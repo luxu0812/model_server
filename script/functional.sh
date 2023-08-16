@@ -3,6 +3,10 @@ DEFAULT_STATIC_CODE_CHECK=true
 DEFAULT_UNIT_TEST=false
 DEFAULT_BENCHMARK_TEST=false
 DEFAULT_PERF_DEMO_GRAPH=true
+export MKL_NUM_THREADS=1
+export OMP_NUM_THREADS=1
+export MKL_DYNAMIC="FALSE"
+export OMP_DYNAMIC="FALSE"
 
 function log() {
   echo "$(date +"%Y/%m/%d %H:%M:%S")][$1:$2][INFO] $3"
@@ -119,6 +123,11 @@ function benchmark_test() {
   fi
 
   bazel_test //src:bm_tf_engine --define "malloc=jemalloc" --test_arg="--benchmark_format=console"
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
+
+  bazel_test //src:bm_onnx_engine --define "malloc=jemalloc" --test_arg="--benchmark_format=console"
   if [[ $? -ne 0 ]]; then
     return 1
   fi

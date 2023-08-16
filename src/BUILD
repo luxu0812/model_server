@@ -235,3 +235,29 @@ cc_test(
   }),
   timeout = "moderate",
 )
+
+cc_test(
+  name = "bm_onnx_engine",
+  srcs = [
+    "benchmark/bm_onnx_engine.cpp",
+  ],
+  deps = [
+    ":util",
+    ":sample",
+    ":onnx_engine",
+    ":population",
+    "@com_github_google_glog//:glog",
+    "@bs_thread_pool//:bs_thread_pool",
+    "@com_github_google_benchmark//:benchmark",
+    "@com_google_absl//:absl",
+  ],
+  data = [
+    "@//data:model_2",
+  ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
+  timeout = "moderate",
+)
