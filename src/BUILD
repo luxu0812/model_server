@@ -98,6 +98,16 @@ cc_library(
 )
 
 cc_library(
+  name = "embedding",
+  hdrs = [
+    "embedding/embedding.h",
+  ],
+  strip_include_prefix = "embedding",
+  include_prefix = "model_server/src/embedding",
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
   name = "population",
   hdrs = [
     "population/population.h",
@@ -116,6 +126,7 @@ cc_library(
   deps = [
     ":util",
     ":sample",
+    ":embedding",
     ":engine_base",
     ":tf_engine",
     ":onnx_engine",

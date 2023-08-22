@@ -8,6 +8,7 @@
 #include <string>
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
+#include "model_server/src/embedding/embedding.h"
 #include "model_server/src/population/roster.h"
 #include "model_server/src/population/model_spec.h"
 
@@ -25,12 +26,13 @@ class Lifecycle {
   void undertake(Instance *instance, Score *score) noexcept(false);
 
  private:
-  std::vector<std::string> memories_;
-  std::string              age_;
-  IndivadualInfo           indivadual_info_;
-  ModelMeta                model_meta_;
-  EngineConf               engine_conf_;
-  std::unique_ptr<Engine>  engine_;
+  std::vector<std::string>   memories_;
+  std::string                age_;
+  IndivadualInfo             indivadual_info_;
+  ModelMeta                  model_meta_;
+  EngineConf                 engine_conf_;
+  std::unique_ptr<Engine>    engine_;
+  std::unique_ptr<Embedding> embedding_;
 };
 
 }  // namespace model_server
