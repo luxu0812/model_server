@@ -15,7 +15,7 @@ class Embedding {
   Embedding& operator=(const Embedding&) = delete;
   Embedding(const Embedding&) = delete;
 
-  virtual void get_embedding(const std::vector<uint64_t>& ids, std::vector<float> *embeddings) noexcept(false) = 0;
+  virtual void get_embedding(const std::vector<uint64_t>& ids, std::vector<float*> *embeddings) noexcept(false) = 0;
 };
 
 class LocalEmbedding : public Embedding {
@@ -26,7 +26,7 @@ class LocalEmbedding : public Embedding {
   LocalEmbedding& operator=(const LocalEmbedding&) = delete;
   LocalEmbedding(const LocalEmbedding&) = delete;
 
-  void get_embedding(const std::vector<uint64_t>& ids, std::vector<float> *embeddings) noexcept(false) override {}
+  void get_embedding(const std::vector<uint64_t>& ids, std::vector<float*> *embeddings) noexcept(false) override {}
 };
 
 class RemoteEmebedding : public Embedding {
@@ -37,7 +37,7 @@ class RemoteEmebedding : public Embedding {
   RemoteEmebedding& operator=(const RemoteEmebedding&) = delete;
   RemoteEmebedding(const RemoteEmebedding&) = delete;
 
-  void get_embedding(const std::vector<uint64_t>& ids, std::vector<float> *embeddings) noexcept(false) override {}
+  void get_embedding(const std::vector<uint64_t>& ids, std::vector<float*> *embeddings) noexcept(false) override {}
 };
 
 }  // namespace model_server
