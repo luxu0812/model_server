@@ -1,0 +1,42 @@
+// Copyright 2021 zh.luxu1986@gmail.com
+
+#ifndef UTIL_PROCESS_STATUS_H_
+#define UTIL_PROCESS_STATUS_H_
+
+#include <atomic>
+#include <future> // NOLINT
+#include <thread> // NOLINT
+#include "util/os/resource_used.h"
+
+namespace WORKSPACE::util::process {
+
+class Status {
+ public:
+  Status();
+  ~Status();
+
+  Status& operator=(const Status&) = delete;
+  Status(const Status&) = delete;
+
+  double get_cpu_used() {
+    return cpu_used_.load();
+  }
+  double get_mem_used() {
+    return mem_used_.load();
+  }
+
+ private:
+  void update();
+
+  std::atomic<double> cpu_used_;
+  std::atomic<double> mem_used_;
+  std::atomic<double> cpustamp_;
+  std::atomic<int64_t> timestamp_;
+
+  std::promise<bool> finish_;
+  std::thread update_thread_;
+};  // class Status
+
+}  // namespace WORKSPACE::util::process
+
+#endif  // UTIL_PROCESS_STATUS_H_
