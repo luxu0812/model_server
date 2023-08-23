@@ -76,7 +76,7 @@ function setup_bazel() {
 }
 
 function setup_cmake() {
-  if [[ -f ${HOME}/.local/cmake ]]; then
+  if [[ -d ${HOME}/.local/cmake ]]; then
     echo "cmake already installed"
     return
   fi
@@ -96,7 +96,7 @@ function setup_cmake() {
 }
 
 function setup_gflags() {
-  if [[ -f ${HOME}/.local/lib/gflags ]]; then
+  if [[ -d ${HOME}/.local/lib/gflags ]]; then
     echo "gflags already installed"
     return
   fi
@@ -113,7 +113,7 @@ function setup_gflags() {
 }
 
 function setup_glog() {
-  if [[ -f ${HOME}/.local/lib/glog ]]; then
+  if [[ -d ${HOME}/.local/lib/glog ]]; then
     echo "glog already installed"
     return
   fi
@@ -131,7 +131,7 @@ function setup_glog() {
 }
 
 function setup_googletest() {
-  if [[ -f ${HOME}/.local/lib/googletest ]]; then
+  if [[ -d ${HOME}/.local/lib/googletest ]]; then
     echo "googletest already installed"
     return
   fi
@@ -149,7 +149,7 @@ function setup_googletest() {
 }
 
 function setup_google_benchmark() {
-  if [[ -f ${HOME}/.local/lib/benchmark ]]; then
+  if [[ -d ${HOME}/.local/lib/benchmark ]]; then
     echo "google benchmark already installed"
     return
   fi
@@ -167,7 +167,7 @@ function setup_google_benchmark() {
 }
 
 function setup_tensorflow() {
-  if [[ -f ${HOME}/.local/lib/libtensorflow ]]; then
+  if [[ -d ${HOME}/.local/lib/libtensorflow ]]; then
     echo "tensorflow already installed"
     return
   fi
@@ -189,7 +189,7 @@ function setup_tensorflow() {
 }
 
 function setup_zlib() {
-  if [[ -f ${HOME}/.local/lib/zlib ]]; then
+  if [[ -d ${HOME}/.local/lib/zlib ]]; then
     echo "zlib already installed"
     return
   fi
@@ -204,7 +204,7 @@ function setup_zlib() {
 }
 
 function setup_protobuf() {
-  if [[ -f ${HOME}/.local/lib/protobuf ]]; then
+  if [[ -d ${HOME}/.local/lib/protobuf ]]; then
     echo "protobuf already installed"
     return
   fi
@@ -221,7 +221,7 @@ function setup_protobuf() {
 }
 
 function setup_abseil() {
-  if [[ -f ${HOME}/.local/lib/absl ]]; then
+  if [[ -d ${HOME}/.local/lib/absl ]]; then
     echo "absl already installed"
     return
   fi
@@ -238,7 +238,7 @@ function setup_abseil() {
 }
 
 function setup_onnx() {
-  if [[ -f ${HOME}/.local/lib/onnxruntime ]]; then
+  if [[ -d ${HOME}/.local/lib/onnxruntime ]]; then
     echo "onnxruntime already installed"
     return
   fi
@@ -270,7 +270,7 @@ function setup_onnx_mkl() {
     echo "setup onnxruntime_mkl skipped"
     return
   fi
-  if [[ -f ${HOME}/.local/lib/onnxruntime-mkl ]]; then
+  if [[ -d ${HOME}/.local/lib/onnxruntime-mkl ]]; then
     echo "onnxruntime-mkl already installed"
     return
   fi
@@ -294,7 +294,7 @@ function setup_onnx_dnnl() {
     echo "setup onnxruntime_dnnl skipped"
     return
   fi
-  if [[ -f ${HOME}/.local/lib/onnxruntime_dnnl ]]; then
+  if [[ -d ${HOME}/.local/lib/onnxruntime_dnnl ]]; then
     echo "onnxruntime_dnnl already installed"
     return
   fi
@@ -317,7 +317,7 @@ function setup_onnx_openvino() {
     echo "setup onnxruntime_openvino skipped"
     return
   fi
-  if [[ -f ${HOME}/.local/lib/onnxruntime_openvino ]]; then
+  if [[ -d ${HOME}/.local/lib/onnxruntime_openvino ]]; then
     echo "onnxruntime_openvino already installed"
     return
   fi
@@ -336,7 +336,7 @@ function setup_onnx_openvino() {
 }
 
 function setup_nlohmann_json() {
-  if [[ -f ${HOME}/.local/lib/nlohmann_json ]]; then
+  if [[ -d ${HOME}/.local/lib/nlohmann_json ]]; then
     echo "nlohmann_json already installed"
     return
   fi
@@ -353,7 +353,7 @@ function setup_nlohmann_json() {
 }
 
 function setup_bshoshany_thread_pool() {
-  if [[ -f ${HOME}/.local/lib/bs_thread_pool ]]; then
+  if [[ -d ${HOME}/.local/lib/bs_thread_pool ]]; then
     echo "bs_thread_pool already installed"
     return
   fi
@@ -369,7 +369,7 @@ function setup_bshoshany_thread_pool() {
 }
 
 function setup_jemalloc() {
-  if [[ -f ${HOME}/.local/lib/jemalloc ]]; then
+  if [[ -d ${HOME}/.local/lib/jemalloc ]]; then
     echo "jemalloc already installed"
     return
   fi
@@ -386,7 +386,7 @@ function setup_jemalloc() {
 }
 
 function setup_tcmalloc() {
-  if [[ -f ${HOME}/.local/lib/tcmalloc ]]; then
+  if [[ -d ${HOME}/.local/lib/tcmalloc ]]; then
     echo "tcmalloc already installed"
     return
   fi
