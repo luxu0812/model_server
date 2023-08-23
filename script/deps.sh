@@ -117,6 +117,111 @@ function setup_cpplint() {
   chmod +x ${HOME}/.local/bin/cpplint.py
 }
 
+function setup_skylib() {
+  if [[ -d ${HOME}/.local/lib/bazel-skylib ]]; then
+    echo "bazel-skylib already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  git clone https://github.com/bazelbuild/bazel-skylib.git
+  pushd bazel-skylib
+  git checkout tags/1.4.2 -b 1.4.2
+  popd
+  mv bazel-skylib ~/.local/lib
+  popd
+}
+
+function setup_rules_pkg() {
+  if [[ -d ${HOME}/.local/lib/rules_pkg ]]; then
+    echo "rules_pkg already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  git clone https://github.com/bazelbuild/rules_pkg.git
+  pushd rules_pkg
+  git checkout tags/0.9.1 -b 0.9.1
+  popd
+  mv rules_pkg ~/.local/lib
+  popd
+}
+
+function setup_rules_foreign_cc() {
+  if [[ -d ${HOME}/.local/lib/rules_foreign_cc ]]; then
+    echo "rules_foreign_cc already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  git clone https://github.com/bazelbuild/rules_foreign_cc.git
+  pushd rules_foreign_cc
+  git checkout tags/0.9.0 -b 0.9.0
+  popd
+  mv rules_foreign_cc ~/.local/lib
+  popd
+}
+
+function setup_rules_perl() {
+  if [[ -d ${HOME}/.local/lib/rules_perl ]]; then
+    echo "rules_perl already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  git clone https://github.com/bazelbuild/rules_perl.git
+  pushd rules_perl
+  git checkout tags/0.1.0 -b 0.1.0
+  popd
+  mv rules_perl ~/.local/lib
+  popd
+}
+
+function setup_rules_python() {
+  if [[ -d ${HOME}/.local/lib/rules_python ]]; then
+    echo "rules_python already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  git clone https://github.com/bazelbuild/rules_python.git
+  pushd rules_python
+  git checkout tags/0.25.0 -b 0.25.0
+  popd
+  mv rules_python ~/.local/lib
+  popd
+}
+
+function setup_rules_apple() {
+  if [[ -d ${HOME}/.local/lib/rules_apple ]]; then
+    echo "rules_apple already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  git clone https://github.com/bazelbuild/rules_apple.git
+  pushd rules_apple
+  git checkout tags/0.32.0 -b 0.32.0
+  popd
+  mv rules_apple ~/.local/lib
+  popd
+}
+
+function setup_rules_fuzzing() {
+  if [[ -d ${HOME}/.local/lib/rules_fuzzing ]]; then
+    echo "rules_fuzzing already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  git clone https://github.com/bazelbuild/rules_fuzzing.git
+  pushd rules_fuzzing
+  git checkout tags/0.3.2 -b 0.3.2
+  popd
+  mv rules_fuzzing ~/.local/lib
+  popd
+}
+
 function setup_gflags() {
   if [[ -d ${HOME}/.local/lib/gflags ]]; then
     echo "gflags already installed"
@@ -508,4 +613,11 @@ function setup_deps() {
   setup_onnx_mkl
   setup_onnx_dnnl
   setup_onnx_openvino
+  setup_skylib
+  setup_rules_pkg
+  setup_rules_foreign_cc
+  setup_rules_perl
+  setup_rules_python
+  setup_rules_apple
+  setup_rules_fuzzing
 }

@@ -19,7 +19,8 @@ workspace(name = "ModelServer")
 
 #------------------------------- gflags -------------------------------#
 new_local_repository(
-  name = "com_github_gflags_gflags", path = "${HOME}/.local/lib/gflags",
+  name = "com_github_gflags_gflags",
+  path = "${HOME}/.local/lib/gflags",
   build_file = "bazel/gflags.BUILD",
 )
 
