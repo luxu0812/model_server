@@ -28,13 +28,13 @@ function error_info() {
 }
 
 function setup() {
-  cp bazel/WORKSPACE ./WORKSPACE
+  cp bazel/workspace_raw ./WORKSPACE
   HOME_PATH=$(echo ~)
   sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
   uname=`uname`
   if [[ "${uname}" == "Linux" ]]; then
-    cp bazel/bazelrc_linux ./.bazelrc
+    cp bazel/bazelrc_raw ./.bazelrc
   fi
 }
 
