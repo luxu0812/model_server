@@ -74,6 +74,7 @@ function setup_bazel() {
 
   mkdir -p ${HOME}/.local/bin
   wget ${url} -O ${HOME}/.local/bin/bazelisk
+  chmod +x ${HOME}/.local/bin/bazelisk
 
   shell_config=$(get_shell_config)
   echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> ${shell_config}
