@@ -9,20 +9,20 @@
 
 static const char kSemaphorePath[] = "/semaphore";
 
-template<class FUNC, class... ARGS>
+template <typename FUNC, typename... ARGS>
 static auto ignore_signal_call(
-  FUNC func, ARGS && ... args
-) -> typename std::result_of<FUNC(ARGS...)>::type {
-  for (;;) {
-    auto err = func(args...);
+  FUNC func, ARGS &&... args
+) -> std::invoke_result_t<FUNC, ARGS...> {
+    for (;;) {
+        auto err = std::invoke(func, args...);
 
-    if (err < 0 && errno == EINTR) {
-      fprintf(stdout, "Signal is caught. Ignored.");
-      continue;
+        if (err < 0 && errno == EINTR) {
+            std::cout << "Signal is caught. Ignored." << std::endl;
+            continue;
+        }
+
+        return err;
     }
-
-    return err;
-  }
 }
 
 class Semaphore {
