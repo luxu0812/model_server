@@ -178,43 +178,44 @@ function clean() {
 
 function perf_demo_graph() {
   if [[ "${PERF_DEMO_GRAPH}" = true || "${DEFAULT_PERF_DEMO_GRAPH}" = true ]]; then
-    log ${SCRIPT_NAME} ${LINENO} "perf demo graph is omitted, use PERF_DEMO_GRAPH=true to enable it."
-  fi
+    log ${SCRIPT_NAME} ${LINENO} "perf demo graph is running ..."
+    bazel_build //src:perf_graph --define "malloc=jemalloc"
+    if [[ $? -ne 0 ]]; then
+      return 1
+    fi
 
-  bazel_build //src:perf_graph --define "malloc=jemalloc"
-  if [[ $? -ne 0 ]]; then
-    return 1
-  fi
-
-  engine_brands=("TensorFlow" "ONNX")
-  uname=`uname`
-  if [[ "${uname}" == "Darwin" ]]; then
-    for engine_brand in ${engine_brands[@]}; do
-      ${SCRIPT_DIR}/bazel-bin/src/perf_graph \
-        --engine_brand=${engine_brand}       \
-        --test_data_size=1000                \
-        --concurrency=1                      \
-        --opt_level=1                        \
-        --jit_level=2                        \
-        --inter_op_parallelism_threads=6     \
-        --intra_op_parallelism_threads=6
-    done
-  else
-    export MKL_NUM_THREADS=1
-    export OMP_NUM_THREADS=1
-    export MKL_DYNAMIC="FALSE"
-    export OMP_DYNAMIC="FALSE"
-
-    for engine_brand in ${engine_brands[@]}; do
-      numactl --cpunodebind=0 --membind=0      \
+    engine_brands=("TensorFlow" "ONNX")
+    uname=`uname`
+    if [[ "${uname}" == "Darwin" ]]; then
+      for engine_brand in ${engine_brands[@]}; do
         ${SCRIPT_DIR}/bazel-bin/src/perf_graph \
-        --engine_brand=${engine_brand}         \
-        --test_data_size=1000                  \
-        --concurrency=1                        \
-        --opt_level=1                          \
-        --jit_level=2                          \
-        --inter_op_parallelism_threads=32      \
-        --intra_op_parallelism_threads=20
-    done
+          --engine_brand=${engine_brand}       \
+          --test_data_size=1000                \
+          --concurrency=1                      \
+          --opt_level=1                        \
+          --jit_level=2                        \
+          --inter_op_parallelism_threads=6     \
+          --intra_op_parallelism_threads=6
+      done
+    else
+      export MKL_NUM_THREADS=1
+      export OMP_NUM_THREADS=1
+      export MKL_DYNAMIC="FALSE"
+      export OMP_DYNAMIC="FALSE"
+
+      for engine_brand in ${engine_brands[@]}; do
+        numactl --cpunodebind=0 --membind=0      \
+          ${SCRIPT_DIR}/bazel-bin/src/perf_graph \
+          --engine_brand=${engine_brand}         \
+          --test_data_size=1000                  \
+          --concurrency=1                        \
+          --opt_level=1                          \
+          --jit_level=2                          \
+          --inter_op_parallelism_threads=32      \
+          --intra_op_parallelism_threads=20
+      done
+    fi
+  else
+    log ${SCRIPT_NAME} ${LINENO} "perf demo graph is omitted, use PERF_DEMO_GRAPH=true to enable it."
   fi
 }
