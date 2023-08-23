@@ -177,7 +177,7 @@ function clean() {
 }
 
 function perf_demo_graph() {
-  if [[ "${PERF_DEMO_GRAPH}" = false && "${DEFAULT_PERF_DEMO_GRAPH}" = false ]]; then
+  if [[ "${PERF_DEMO_GRAPH}" = true || "${DEFAULT_PERF_DEMO_GRAPH}" = true ]]; then
     log ${SCRIPT_NAME} ${LINENO} "perf demo graph is omitted, use PERF_DEMO_GRAPH=true to enable it."
   fi
 
