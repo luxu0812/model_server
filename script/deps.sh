@@ -6,8 +6,9 @@ DEFAULT_SETUP_ONNX_DNNL=false
 DEFAULT_SETUP_ONNX_OPENVINO=false
 
 function get_shell_config() {
+  shell_name=$(basename "${SHELL}")
   shell_config=${HOME}/.bashrc
-  if [[ ${SHELL} == "/bin/zsh" ]]; then
+  if [[ ${shell_name} == "zsh" ]]; then
     shell_config=${HOME}/.zshrc
   fi
   echo ${shell_config}
