@@ -1,3 +1,4 @@
+DEFAULT_SETUP_PYTHON=false
 DEFAULT_SETUP_OS=false
 DEFAULT_SETUP_ONNX_MKL=false
 DEFAULT_SETUP_ONNX_DNNL=false
@@ -30,6 +31,11 @@ function setup_os() {
 }
 
 function setup_python() {
+  if [[ ${SETUP_PYTHON} = false && ${DEFAULT_SETUP_PYTHON} = false ]]; then
+    echo "setup python skipped"
+    return
+  fi
+
   if [ -d ~/.pyenv ]; then
     echo "pyenv already installed"
     return
@@ -253,6 +259,10 @@ function setup_onnx() {
 }
 
 function setup_onnx_mkl() {
+  if [[ ${SETUP_ONNX_MKL} = false && ${DEFAULT_SETUP_ONNX_MKL} = false ]]; then
+    echo "setup onnxruntime_mkl skipped"
+    return
+  fi
   if [[ -f ${HOME}/.local/lib/onnxruntime-mkl ]]; then
     echo "onnxruntime-mkl already installed"
     return
@@ -273,6 +283,10 @@ function setup_onnx_mkl() {
 }
 
 function setup_onnx_dnnl() {
+  if [[ ${SETUP_ONNX_DNNL} = false && ${DEFAULT_SETUP_ONNX_DNNL} = false ]]; then
+    echo "setup onnxruntime_dnnl skipped"
+    return
+  fi
   if [[ -f ${HOME}/.local/lib/onnxruntime_dnnl ]]; then
     echo "onnxruntime_dnnl already installed"
     return
@@ -292,6 +306,10 @@ function setup_onnx_dnnl() {
 }
 
 function setup_onnx_openvino() {
+  if [[ ${SETUP_ONNX_OPENVINO} = false && ${DEFAULT_SETUP_ONNX_OPENVINO} = false ]]; then
+    echo "setup onnxruntime_openvino skipped"
+    return
+  fi
   if [[ -f ${HOME}/.local/lib/onnxruntime_openvino ]]; then
     echo "onnxruntime_openvino already installed"
     return
@@ -389,19 +407,12 @@ function setup_deps() {
   setup_zlib
   setup_protobuf
   setup_abseil
-  setup_onnx
   setup_nlohmann_json
   setup_bshoshany_thread_pool
   setup_jemalloc
   setup_tcmalloc
-
-  if [[ ${SETUP_ONNX_MKL} = true || ${DEFAULT_SETUP_ONNX_MKL} = true ]]; then
-    setup_onnx_mkl
-  fi
-  if [[ ${SETUP_ONNX_DNNL} = true || ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
-    setup_onnx_dnnl
-  fi
-  if [[ ${SETUP_ONNX_OPENVINO} = true || ${DEFAULT_SETUP_ONNX_OPENVINO} = true ]]; then
-    setup_onnx_openvino
-  fi
+  setup_onnx
+  setup_onnx_mkl
+  setup_onnx_dnnl
+  setup_onnx_openvino
 }
