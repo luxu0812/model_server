@@ -1,0 +1,62 @@
+cmake_minimum_required(VERSION 3.20)
+project(model_server)
+
+message(STATUS "System: ${CMAKE_SYSTEM}")
+message(STATUS "System name: ${CMAKE_SYSTEM_NAME}")
+message(STATUS "System version: ${CMAKE_SYSTEM_VERSION}")
+message(STATUS "System processor: ${CMAKE_SYSTEM_PROCESSOR}")
+message(STATUS "C compiler ID: ${CMAKE_C_COMPILER_ID}")
+message(STATUS "CXX compiler ID: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "C compiler: ${CMAKE_C_COMPILER}")
+message(STATUS "CXX compiler: ${CMAKE_CXX_COMPILER}")
+
+# Set global GCC flags
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
+  set(CMAKE_BUILD_TYPE "release")
+else ()
+  string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+endif ()
+string(CONCAT CMAKE_CXX_FLAGS
+  "-Wall -Wno-unused-function -Wno-unused-variable "
+  "-Wno-aligned-new -Wno-switch -Wno-deprecated-declarations "
+  "-Wno-format -Wno-sign-compare"
+)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  string(CONCAT CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -fopenmp")
+endif ()
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "release")
+  string(CONCAT CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS} " -O3 -DNDEBUG")
+  message(STATUS "Building release version")
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "debug")
+  string(CONCAT CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS} " -g")
+  message(STATUS "Building debug version, not release version!!!")
+  set(CMAKE_VERBOSE_MAKEFILE on)
+elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "fastbuild")
+  message(STATUS "Building fastbuild version, not release version!!!")
+  set(CMAKE_VERBOSE_MAKEFILE on)
+endif ()
+
+# Initialize git submodules
+find_package(Git QUIET)
+if (GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+  # Update submodules as needed
+  option(GIT_SUBMODULE "Check submodules during build" ON)
+  if (GIT_SUBMODULE)
+    message(STATUS "Submodule update")
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      RESULT_VARIABLE GIT_SUBMOD_RESULT
+    )
+    if (NOT GIT_SUBMOD_RESULT EQUAL "0")
+      message(FATAL_ERROR
+        "git submodule update --init --recursive failed with \
+         ${GIT_SUBMOD_RESULT}, please checkout submodules"
+      )
+    endif ()
+  endif ()
+endif ()
+
+include(third_party.cmake)
+add_subdirectory(src)

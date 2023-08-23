@@ -41,5 +41,6 @@ bazel-*
 .DS_Store
 
 # Temporary files for building
-WORKSPACE
 .bazelrc
+WORKSPACE
+CMakelist.txt
