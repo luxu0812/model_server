@@ -28,13 +28,13 @@ function error_info() {
 }
 
 function setup() {
-  cp bazel/workspace_raw ./WORKSPACE
+  cp bazel/bazel_workspace ./WORKSPACE
   HOME_PATH=$(echo ~)
   sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
   uname=`uname`
   if [[ "${uname}" == "Linux" ]]; then
-    cp bazel/bazelrc_raw ./.bazelrc
+    cp bazel/bazel_rc ./.bazelrc
   fi
 }
 
@@ -69,7 +69,7 @@ function bazel_build() {
   bazelisk build                       \
     --jobs=10                          \
     --compilation_mode opt             \
-    --cxxopt='-std=c++20'              \
+    --cxxopt='-std=c++17'              \
     --cxxopt='-Wno-unused-parameter'   \
     --cxxopt='-fno-omit-frame-pointer' \
     --cxxopt='-fPIC'                   \
@@ -90,7 +90,7 @@ function bazel_test() {
     --dynamic_mode=off                 \
     --spawn_strategy=standalone        \
     --strategy=Genrule=standalone      \
-    --cxxopt='-std=c++20'              \
+    --cxxopt='-std=c++17'              \
     --cxxopt='-Wno-unused-parameter'   \
     --cxxopt='-fno-omit-frame-pointer' \
     --cxxopt='-fPIC'                   \
@@ -101,6 +101,10 @@ function bazel_test() {
 }
 
 function unit_test() {
+  bazel_test //src:test_util --define "malloc=jemalloc" 
+  if [[ $? -ne 0 ]]; then
+    return 1
+  fi
   bazel_test //src:test_tf_engine   --define "malloc=jemalloc"
   if [[ $? -ne 0 ]]; then
     return 1

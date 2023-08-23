@@ -19,3 +19,11 @@ filegroup(
   ],
   visibility = ["//visibility:public"],
 )
+
+filegroup(
+  name = "files",
+  srcs = [
+    "files/hello",
+  ],
+  visibility = ["//visibility:public"],
+)

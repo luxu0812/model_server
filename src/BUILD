@@ -250,6 +250,27 @@ cc_test(
 )
 
 cc_test(
+  name = "test_util",
+  srcs = ["unittest/util/test.cpp"],
+  deps = [
+    "@com_google_googletest//:gtest",
+    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
+    ":util_os",
+    ":util",
+  ],
+  data = [
+    "@//data:files",
+  ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
+  timeout = "short",
+)
+
+cc_test(
   name = "bm_flat_hash_map",
   srcs = [
     "benchmark/bm_flat_hash_map.cpp",
