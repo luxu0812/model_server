@@ -29,7 +29,8 @@ function setup_os() {
       graphite2 libxext snappy harfbuzz libxrender wget icu4c little-cms2 xorgproto isl lrzsz xz jpeg-turbo lz4   \
       zlib libcbor lzlib libevent lzo
   else
-    apt-get update && apt-get install -y apt-transport-https build-essential libcurl4-openssl-dev libcppunit-dev   \
+    apt-get update
+    apt-get install -y apt-transport-https build-essential libcurl4-openssl-dev libcppunit-dev   \
       libunwind-dev libevent-dev libsasl2-dev libzstd-dev libssl-dev libbz2-dev liblz4-dev zlib1g-dev binutils-dev \
       ant g++ gcc autoconf libtool automake pkg-config vim wget curl gnupg tree psmisc net-tools nethogs sysstat   \
       iputils-ping htop iotop iftop oprofile libgoogle-perftools-dev llvm clang git libsqlite3-dev liblzma-dev     \
@@ -99,6 +100,17 @@ function setup_cmake() {
   source ${shell_config}
   popd
   popd
+}
+
+function setup_cpplint() {
+  if [[ -f ${HOME}/.local/bin/cpplint.py ]]; then
+    echo "cpplint already installed"
+    return
+  fi
+
+  mkdir -p ${HOME}/.local/bin
+  wget https://raw.githubusercontent.com/cpplint/cpplint/master/cpplint.py -O ${HOME}/.local/bin/cpplint.py
+  chmod +x ${HOME}/.local/bin/cpplint.py
 }
 
 function setup_gflags() {
@@ -410,9 +422,25 @@ function setup_deps() {
   fi
 
   mkdir -p ${HOME}/.local/build
-  setup_os && setup_python && setup_bazel && setup_cmake && setup_gflags && setup_glog && setup_googletest &&\
-  setup_google_benchmark && setup_tensorflow && setup_zlib && setup_protobuf && setup_abseil && setup_nlohmann_json &&\
-  setup_bshoshany_thread_pool && setup_jemalloc && setup_tcmalloc && setup_onnx && setup_onnx_mkl &&\
-  setup_onnx_dnnl && setup_onnx_openvino
-  rm -rf ${HOME}/.local/build
+  setup_os
+  setup_python
+  setup_bazel
+  setup_cmake
+  setup_cpplint
+  setup_gflags
+  setup_glog
+  setup_googletest
+  setup_google_benchmark
+  setup_tensorflow
+  setup_zlib
+  setup_protobuf
+  setup_abseil
+  setup_nlohmann_json
+  setup_bshoshany_thread_pool
+  setup_jemalloc
+  setup_tcmalloc
+  setup_onnx
+  setup_onnx_mkl
+  setup_onnx_dnnl
+  setup_onnx_openvino
 }
