@@ -248,7 +248,8 @@ function setup_abseil() {
   cp -r tensorflow/bazel-tensorflow/external/com_google_absl ./com_google_absl
   pushd com_google_absl
   mkdir build
-  cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -S . -B build
+  # cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -S . -B build
+  cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -S . -B build
   cmake --build build -j10
   cmake --build build --target install
   popd
