@@ -70,6 +70,8 @@ function setup_bazel() {
   if [[ "${uname}" == "Darwin" ]]; then
     url="https://github.com/bazelbuild/bazelisk/releases/download/v1.17.0/bazelisk-darwin-arm64"
   fi
+
+  mkdir -p ${HOME}/.local/bin
   wget ${url} -O ${HOME}/.local/bin/bazelisk
 }
 
@@ -397,9 +399,7 @@ function setup_tcmalloc() {
 
 function setup_deps() {
   mkdir -p ${HOME}/.local/build
-    setup_os
-  fi
-
+  setup_os
   setup_python
   setup_bazel
   setup_cmake
