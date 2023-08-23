@@ -182,7 +182,7 @@ function setup_tensorflow() {
   git clone https://github.com/tensorflow/tensorflow.git
   pushd tensorflow
   git checkout tags/v2.13.0 -b v2.13.0
-  ./configure
+  yes '' | ./configure
   bazelisk clean --expunge
   bazelisk build --jobs=10 --compilation_mode=opt --config=mkl --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
   mkdir -p ~/.local/lib/libtensorflow
