@@ -13,6 +13,11 @@ function get_shell_config() {
 }
 
 function setup_os() {
+  if [[ ${SETUP_OS} = false && ${DEFULAT_SETUP_OS} = false ]]; then
+    echo "setup os skipped"
+    return
+  fi
+
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -392,7 +397,6 @@ function setup_tcmalloc() {
 
 function setup_deps() {
   mkdir -p ${HOME}/.local/build
-  if [[ ${SETUP_OS} = true || ${DEFULAT_SETUP_OS} = true ]]; then
     setup_os
   fi
 
