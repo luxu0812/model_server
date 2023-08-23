@@ -96,6 +96,10 @@ function setup_cmake() {
   pushd cmake-3.27.0-rc4
   ./bootstrap --prefix=~/.local/cmake
   make -j10 && make install
+  if [[ $? -ne 0 ]]; then
+    echo "build cmake failed"
+    exit 1
+  fi
   echo 'export PATH="${HOME}/.local/cmake/bin:${PATH}"' >> ${shell_config}
   source ${shell_config}
   popd
@@ -126,6 +130,10 @@ function setup_gflags() {
   mkdir build
   cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/gflags -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-fPIC" -S . -B build
   cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build gflags failed"
+    exit 1
+  fi
   cmake --build build --target install
   popd
 }
@@ -143,6 +151,10 @@ function setup_glog() {
   mkdir build
   cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/glog -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -S . -B build
   cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build glog failed"
+    exit 1
+  fi
   cmake --build build --target install
   popd
   popd
@@ -161,6 +173,10 @@ function setup_googletest() {
   mkdir build
   cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/googletest -DCMAKE_BUILD_TYPE=Release -S . -B build
   cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build googletest failed"
+    exit 1
+  fi
   cmake --build build --target install
   popd
   popd
@@ -179,6 +195,10 @@ function setup_google_benchmark() {
   mkdir build
   cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/benchmark -DCMAKE_BUILD_TYPE=Release -DGOOGLETEST_PATH=../googletest -S . -B build
   cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build google benchmark failed"
+    exit 1
+  fi
   cmake --build build --target install
   popd
   popd
@@ -197,6 +217,10 @@ function setup_tensorflow() {
   yes '' | ./configure
   bazelisk clean --expunge
   bazelisk build --jobs=10 --compilation_mode=opt --config=mkl --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+  if [[ $? -ne 0 ]]; then
+    echo "build tensorflow failed"
+    exit 1
+  fi
   mkdir -p ~/.local/lib/libtensorflow
   tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
   cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
@@ -217,6 +241,10 @@ function setup_zlib() {
   pushd zlib
   ./configure --prefix=~/.local/lib/zlib
   make -j10 && make install
+  if [[ $? -ne 0 ]]; then
+    echo "build zlib failed"
+    exit 1
+  fi
   popd
   popd
 }
@@ -233,6 +261,10 @@ function setup_protobuf() {
   mkdir build
   cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/protobuf -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -S . -B build
   cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build protobuf failed"
+    exit 1
+  fi
   cmake --build build --target install
   popd
   popd
@@ -248,9 +280,12 @@ function setup_abseil() {
   cp -r tensorflow/bazel-tensorflow/external/com_google_absl ./com_google_absl
   pushd com_google_absl
   mkdir build
-  # cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -S . -B build
-  cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -S . -B build
+  cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/absl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=20 -S . -B build
   cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build absl failed"
+    exit 1
+  fi
   cmake --build build --target install
   popd
   popd
@@ -279,6 +314,10 @@ function setup_onnx() {
       --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds" \
       --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds"
   fi
+  if [[ $? -ne 0 ]]; then
+    echo "build onnxruntime failed"
+    exit 1
+  fi
   pushd build/Linux/Release && make install && popd
   popd
   popd
@@ -302,6 +341,10 @@ function setup_onnx_mkl() {
     --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime-mkl                   \
     --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=uninitialized -Wno-error=array-bounds -Wno-error=unused-variable -Wno-error=unknown-pragmas -Wno-error=unused-command-line-argument -DEIGEN_USE_MKL_ALL -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_sequential -lmkl_core -lstdc++ -lpthread -lm -lrt -ldl -lgomp" \
     --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=uninitialized -Wno-error=array-bounds -Wno-error=unused-variable -Wno-error=unknown-pragmas -Wno-error=unused-command-line-argument -DEIGEN_USE_MKL_ALL -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_sequential -lmkl_core -lstdc++ -lpthread -lm -lrt -ldl -lgomp"
+  if [[ $? -ne 0 ]]; then
+    echo "build onnxruntime-mkl failed"
+    exit 1
+  fi
 
   pushd build/Linux/Release && make install && popd
   popd
@@ -326,6 +369,10 @@ function setup_onnx_dnnl() {
     --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_dnnl                  \
     --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds" \
     --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds"
+  if [[ $? -ne 0 ]]; then
+    echo "build onnxruntime_dnnl failed"
+    exit 1
+  fi
   pushd build/Linux/Release && make install && popd
   popd
   popd
@@ -349,6 +396,10 @@ function setup_onnx_openvino() {
     --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_openvino              \
     --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds" \
     --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds"
+  if [[ $? -ne 0 ]]; then
+    echo "build onnxruntime_openvino failed"
+    exit 1
+  fi
   pushd build/Linux/Release && make install && popd
   popd
   popd
@@ -366,6 +417,10 @@ function setup_nlohmann_json() {
   git checkout tags/v3.11.2 -b v3.11.2
   cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/nlohmann_json -DCMAKE_BUILD_TYPE=Release -S . -B build
   cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build nlohmann_json failed"
+    exit 1
+  fi
   cmake --build build --target install
   popd
   popd
@@ -400,6 +455,10 @@ function setup_jemalloc() {
   ./autogen.sh
   ./configure --prefix=${HOME}/.local/lib/jemalloc
   make -j10 && make install
+  if [[ $? -ne 0 ]]; then
+    echo "build jemalloc failed"
+    exit 1
+  fi
   popd
   popd
 }
