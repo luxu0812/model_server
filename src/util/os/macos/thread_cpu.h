@@ -1,7 +1,7 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#ifndef UTIL_OS_MACOS_THREAD_CPU_H_
-#define UTIL_OS_MACOS_THREAD_CPU_H_
+#ifndef MODEL_SERVER_SRC_UTIL_OS_MACOS_THREAD_CPU_H_
+#define MODEL_SERVER_SRC_UTIL_OS_MACOS_THREAD_CPU_H_
 
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -60,4 +60,4 @@ bool set_thread_cpu(int64_t cpu_id) {
   return true;
 }
 
-#endif  // UTIL_OS_MACOS_THREAD_CPU_H_
+#endif  // MODEL_SERVER_SRC_UTIL_OS_MACOS_THREAD_CPU_H_

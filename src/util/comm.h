@@ -1,11 +1,11 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#ifndef UTIL_COMM_H_
-#define UTIL_COMM_H_
+#ifndef MODEL_SERVER_SRC_UTIL_COMM_H_
+#define MODEL_SERVER_SRC_UTIL_COMM_H_
 
 #include <string>
 
-namespace WORKSPACE::util::comm {
+namespace model_server {
 
 bool execute(const std::string& cmd);
 
@@ -27,6 +27,6 @@ bool execute_vfork(
   int32_t buffer_size = 0
 ); // NOLINT
 
-}  // namespace WORKSPACE::util::comm
+}  // namespace model_server
 
-#endif  // UTIL_COMM_H_
+#endif  // MODEL_SERVER_SRC_UTIL_COMM_H_

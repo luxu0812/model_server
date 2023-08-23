@@ -1,7 +1,7 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#ifndef UTIL_OS_LINUX_NETWORK_H_
-#define UTIL_OS_LINUX_NETWORK_H_
+#ifndef MODEL_SERVER_SRC_UTIL_OS_LINUX_NETWORK_H_
+#define MODEL_SERVER_SRC_UTIL_OS_LINUX_NETWORK_H_
 
 #include <unistd.h>      // gethostname
 #include <netdb.h>       // gethostbyname
@@ -31,4 +31,4 @@ bool get_host_ip(std::string *ip) {
   return true;
 }
 
-#endif  // UTIL_OS_LINUX_NETWORK_H_
+#endif  // MODEL_SERVER_SRC_UTIL_OS_LINUX_NETWORK_H_

@@ -1,7 +1,7 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#ifndef UTIL_OS_MACOS_SEMAPHORE_H_
-#define UTIL_OS_MACOS_SEMAPHORE_H_
+#ifndef MODEL_SERVER_SRC_UTIL_OS_MACOS_SEMAPHORE_H_
+#define MODEL_SERVER_SRC_UTIL_OS_MACOS_SEMAPHORE_H_
 
 #include <stdio.h>
 #include <semaphore.h>
@@ -98,4 +98,4 @@ class Semaphore {
 //   std::condition_variable cv;
 // };
 
-#endif  // UTIL_OS_MACOS_SEMAPHORE_H_
+#endif  // MODEL_SERVER_SRC_UTIL_OS_MACOS_SEMAPHORE_H_

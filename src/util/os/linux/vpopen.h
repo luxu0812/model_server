@@ -1,7 +1,7 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#ifndef UTIL_OS_LINUX_VPOPEN_H_
-#define UTIL_OS_LINUX_VPOPEN_H_
+#ifndef MODEL_SERVER_SRC_UTIL_OS_LINUX_VPOPEN_H_
+#define MODEL_SERVER_SRC_UTIL_OS_LINUX_VPOPEN_H_
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -142,4 +142,4 @@ int32_t vpclose(FILE *fp) {
   return stat; /* return child's termination status */
 }
 
-#endif  // UTIL_OS_LINUX_VPOPEN_H_
+#endif  // MODEL_SERVER_SRC_UTIL_OS_LINUX_VPOPEN_H_

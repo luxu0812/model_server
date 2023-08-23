@@ -1,14 +1,14 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#ifndef UTIL_PROCESS_STATUS_H_
-#define UTIL_PROCESS_STATUS_H_
+#ifndef MODEL_SERVER_SRC_UTIL_PROCESS_PROCESS_STATUS_H_
+#define MODEL_SERVER_SRC_UTIL_PROCESS_PROCESS_STATUS_H_
 
 #include <atomic>
 #include <future> // NOLINT
 #include <thread> // NOLINT
 #include "util/os/resource_used.h"
 
-namespace WORKSPACE::util::process {
+namespace model_server {
 
 class Status {
  public:
@@ -37,6 +37,6 @@ class Status {
   std::thread update_thread_;
 };  // class Status
 
-}  // namespace WORKSPACE::util::process
+}  // namespace model_server
 
-#endif  // UTIL_PROCESS_STATUS_H_
+#endif  // MODEL_SERVER_SRC_UTIL_PROCESS_PROCESS_STATUS_H_

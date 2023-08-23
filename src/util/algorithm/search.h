@@ -1,11 +1,11 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#ifndef UTIL_ALGORITHM_H_
-#define UTIL_ALGORITHM_H_
+#ifndef MODEL_SERVER_SRC_UTIL_ALGORITHM_SEARCH_H_
+#define MODEL_SERVER_SRC_UTIL_ALGORITHM_SEARCH_H_
 
 #include <vector>
 
-namespace WORKSPACE::util::algorithm {
+namespace model_server {
 
 template <typename T, typename Judge>
 void binary_search(
@@ -27,6 +27,6 @@ void binary_search(
   }
 }
 
-}  // namespace WORKSPACE::util::algorithm
+}  // namespace model_server
 
-#endif  // UTIL_ALGORITHM_H_
+#endif  // MODEL_SERVER_SRC_UTIL_ALGORITHM_SEARCH_H_
