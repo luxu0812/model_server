@@ -399,24 +399,8 @@ function setup_tcmalloc() {
 
 function setup_deps() {
   mkdir -p ${HOME}/.local/build
-  setup_os
-  setup_python
-  setup_bazel
-  setup_cmake
-  setup_gflags
-  setup_glog
-  setup_googletest
-  setup_google_benchmark
-  setup_tensorflow
-  setup_zlib
-  setup_protobuf
-  setup_abseil
-  setup_nlohmann_json
-  setup_bshoshany_thread_pool
-  setup_jemalloc
-  setup_tcmalloc
-  setup_onnx
-  setup_onnx_mkl
-  setup_onnx_dnnl
-  setup_onnx_openvino
+  setup_os && setup_python && setup_bazel && setup_cmake && setup_gflags && setup_glog && setup_googletest &&\
+  setup_google_benchmark && setup_tensorflow && setup_zlib && setup_protobuf && setup_abseil && setup_nlohmann_json &&\
+  setup_bshoshany_thread_pool && setup_jemalloc && setup_tcmalloc && setup_onnx && setup_onnx_mkl &&\
+  setup_onnx_dnnl && setup_onnx_openvino
 }
