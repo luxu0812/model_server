@@ -101,7 +101,7 @@ TEST(UTIL_COMM, EXECUTE_SPAWN) {
 }
 
 TEST(UTIL_PROCESS, STATUS) {
-  model_server::Status status;
+  model_server::ProcessStatus process_status;
   absl::SleepFor(absl::Seconds(10));
 }
 

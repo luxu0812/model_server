@@ -10,13 +10,13 @@
 
 namespace model_server {
 
-class Status {
+class ProcessStatus {
  public:
-  Status();
-  ~Status();
+  ProcessStatus();
+  ~ProcessStatus();
 
-  Status& operator=(const Status&) = delete;
-  Status(const Status&) = delete;
+  ProcessStatus& operator=(const ProcessStatus&) = delete;
+  ProcessStatus(const ProcessStatus&) = delete;
 
   double get_cpu_used() {
     return cpu_used_.load();
@@ -35,7 +35,7 @@ class Status {
 
   std::promise<bool> finish_;
   std::thread update_thread_;
-};  // class Status
+};  // class ProcessStatus
 
 }  // namespace model_server
 

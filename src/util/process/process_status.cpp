@@ -8,23 +8,23 @@
 
 namespace model_server {
 
-Status::Status() :
+ProcessStatus::ProcessStatus() :
   cpu_used_(0.0),
   mem_used_(0.0),
   cpustamp_(0.0),
   timestamp_(0),
   finish_(),
-  update_thread_(&Status::update, this) {
+  update_thread_(&ProcessStatus::update, this) {
 }
 
-Status::~Status() {
+ProcessStatus::~ProcessStatus() {
   finish_.set_value(true);
   if (update_thread_.joinable()) {
     update_thread_.join();
   }
 }
 
-void Status::update() {
+void ProcessStatus::update() {
   struct ResourceUsed used;
   auto handle = finish_.get_future();
   while (handle.wait_for(std::chrono::seconds(2)) == std::future_status::timeout) {
