@@ -1,12 +1,12 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#include "util/process/process_status.h"
+#include "model_server/src/util/process/process_status.h"
 #include <atomic>
 #include <future> // NOLINT
 #include <thread> // NOLINT
-#include "util/os/resource_used.h"
+#include "model_server/src/util/os/resource_used.h"
 
-namespace WORKSPACE::util::process {
+namespace model_server {
 
 Status::Status() :
   cpu_used_(0.0),
@@ -50,4 +50,4 @@ void Status::update() {
   }
 }
 
-}  // namespace WORKSPACE::util::process
+}  // namespace model_server

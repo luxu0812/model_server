@@ -6,7 +6,7 @@
 #include <atomic>
 #include <future> // NOLINT
 #include <thread> // NOLINT
-#include "util/os/resource_used.h"
+#include "model_server/src/util/os/resource_used.h"
 
 namespace model_server {
 

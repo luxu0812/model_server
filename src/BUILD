@@ -9,20 +9,65 @@ config_setting(
 )
 
 cc_library(
+  name = "util_os",
+  hdrs = select({
+    "@bazel_tools//src/conditions:darwin_x86_64": glob([
+      "util/os/macos/macros.h",
+      "util/os/macos/thread_cpu.h",
+      "util/os/macos/vpopen.h",
+      "util/os/macos/network.h",
+      "util/os/macos/resource_used.h",
+      "util/os/macos/semaphore.h",
+    ]),
+    "@bazel_tools//src/conditions:darwin": glob([
+      "util/os/macos/macros.h",
+      "util/os/macos/thread_cpu.h",
+      "util/os/macos/vpopen.h",
+      "util/os/macos/network.h",
+      "util/os/macos/resource_used.h",
+      "util/os/macos/semaphore.h",
+    ]),
+    "//conditions:default": glob([
+      "util/os/linux/macros.h",
+      "util/os/linux/thread_cpu.h",
+      "util/os/linux/vpopen.h",
+      "util/os/linux/network.h",
+      "util/os/linux/resource_used.h",
+      "util/os/linux/semaphore.h",
+    ]),
+  }),
+  strip_include_prefix = select({
+    "@bazel_tools//src/conditions:darwin_x86_64": "util/os/macos",
+    "@bazel_tools//src/conditions:darwin": "util/os/macos",
+    "//conditions:default": "util/os/linux",
+  }),
+  include_prefix = "model_server/src/util/os",
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
   name = "util",
   hdrs = [
+    "util/comm.h",
+    "util/io.h",
+    "util/algorithm/search.h",
     "util/functional/return_status.h",
     "util/functional/scope_exit_task.h",
     "util/functional/random.h",
     "util/functional/timer.h",
-    "util/process/process_initiator.h"
+    "util/process/process_initiator.h",
+    "util/process/process_status.h",
   ],
   srcs = [
+    "util/comm.cpp",
+    "util/io.cpp",
     "util/functional/return_status.cpp",
+    "util/process/process_status.cpp",
   ],
   deps = [
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
+    ":util_os",
   ],
   strip_include_prefix = "util",
   include_prefix = "model_server/src/util",

@@ -1,6 +1,6 @@
 // Copyright 2022 zh.luxu1986@gmail.com
 
-#include "util/comm.h"
+#include "model_server/src/util/comm.h"
 
 #include <spawn.h>
 #include <unistd.h>
@@ -9,14 +9,14 @@
 #include <string>
 #include "glog/logging.h"
 #include "absl/strings/str_format.h"
-#include "util/os/vpopen.h"
-#include "util/io.h"
+#include "model_server/src/util/os/vpopen.h"
+#include "model_server/src/util/io.h"
 
 using std::string;
 using std::mutex;
 using std::lock_guard;
 
-namespace WORKSPACE::util::comm {
+namespace model_server {
 
 static char kShell[] = "sh";
 static char kShellFlags[] = "-c";
@@ -97,7 +97,7 @@ bool execute(const string& cmd, string *stdo, bool include_stderr) {
       }
     }
 
-    if (!WORKSPACE::util::io::read_file(cout_pipe[0], stdo)) {
+    if (!read_file(cout_pipe[0], stdo)) {
       ret = false;
       break;
     }
@@ -179,11 +179,11 @@ bool execute(const string& cmd, string *stdo, string *stde) {
       }
     }
 
-    if (!WORKSPACE::util::io::read_file(cout_pipe[0], stdo)) {
+    if (!read_file(cout_pipe[0], stdo)) {
       ret = false;
       break;
     }
-    if (!WORKSPACE::util::io::read_file(cerr_pipe[0], stde)) {
+    if (!read_file(cerr_pipe[0], stde)) {
       ret = false;
       break;
     }
@@ -237,7 +237,7 @@ bool execute_vfork(const string& cmd, string *res, int32_t buffer_size) {
       }
     }
 
-    ret = WORKSPACE::util::io::read_file(fp, res);
+    ret = read_file(fp, res);
     if (nullptr != buffer) {
       free(buffer);
     }
@@ -252,4 +252,4 @@ bool execute_vfork(const string& cmd, string *res, int32_t buffer_size) {
   return ret;
 }
 
-}  // namespace WORKSPACE::util::comm
+}  // namespace model_server

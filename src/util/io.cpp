@@ -1,18 +1,18 @@
 // Copyright 2021 zh.luxu1986@gmail.com
 
-#include "util/io.h"
+#include "model_server/src/util/io.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <string>
 #include <string_view>
 #include "glog/logging.h"
-#include "util/comm.h"
+#include "model_server/src/util/comm.h"
 
 using std::string;
 using std::string_view;
 
-namespace WORKSPACE::util::io {
+namespace model_server {
 
 static const int32_t kBufferSize = 32768;
 
@@ -112,7 +112,7 @@ bool curl(const string& url, string *body) {
     return false;
   }
 
-  return WORKSPACE::util::comm::execute(string("curl ") + url, body);
+  return execute(string("curl ") + url, body);
 }
 
 
@@ -168,4 +168,4 @@ bool reverse_file_line(string_view input, string_view output) {
   return succ;
 }
 
-}  // namespace WORKSPACE::util::io
+}  // namespace model_server
