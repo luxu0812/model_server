@@ -6,6 +6,19 @@ cc_library(
   includes = [
     "include",
   ],
-  srcs = ["lib/libtensorflow.so.2", "lib/libtensorflow_framework.so.2"],
+  srcs = select({
+    "@bazel_tools//src/conditions:darwin_x86_64": glob([
+      "lib/libtensorflow.so.2",
+      "lib/libtensorflow_framework.so.2"
+    ]),
+    "@bazel_tools//src/conditions:darwin": glob([
+      "lib/libtensorflow.2.dylib",
+      "lib/libtensorflow_framework.2.dylib"
+    ]),
+    "//conditions:default": glob([
+      "lib/libtensorflow.so.2",
+      "lib/libtensorflow_framework.so.2"
+    ]),
+  }),
   visibility = ["//visibility:public"],
 )
