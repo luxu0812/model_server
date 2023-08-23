@@ -2,7 +2,7 @@ DEFAULT_CLEAN=false
 DEFAULT_STATIC_CODE_CHECK=true
 DEFAULT_UNIT_TEST=false
 DEFAULT_BENCHMARK_TEST=false
-DEFAULT_PERF_DEMO_GRAPH=true
+DEFAULT_PERF_DEMO_GRAPH=false
 
 export MKL_NUM_THREADS=1
 export OMP_NUM_THREADS=1
@@ -141,7 +141,7 @@ function check() {
       return 1
     fi
   else
-    log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted."
+    log ${SCRIPT_NAME} ${LINENO} "static analysis is omitted, use STATIC_CODE_CHECK=ture to enable it."
   fi
   
   if [[ "${UNIT_TEST}" = true || "${DEFAULT_UNIT_TEST}" = true ]]; then
@@ -152,7 +152,7 @@ function check() {
       return 1
     fi
   else
-    log ${SCRIPT_NAME} ${LINENO} "unit test is omitted."
+    log ${SCRIPT_NAME} ${LINENO} "unit test is omitted, use UNIT_TEST=true to enable it."
   fi
   
   if [[ "${BENCHMARK_TEST}" = true || "${DEFAULT_BENCHMARK_TEST}" = true ]]; then
@@ -163,7 +163,7 @@ function check() {
       return 1
     fi
   else
-    log ${SCRIPT_NAME} ${LINENO} "benchmark test is omitted."
+    log ${SCRIPT_NAME} ${LINENO} "benchmark test is omitted, use BENCHMARK_TEST=true to enable it."
   fi
 }
 
@@ -172,13 +172,13 @@ function clean() {
     log ${SCRIPT_NAME} ${LINENO} "bazel cleaning ..."
     bazelisk clean --expunge
   else
-    log ${SCRIPT_NAME} ${LINENO} "bazel cleaning is omitted."
+    log ${SCRIPT_NAME} ${LINENO} "bazel cleaning is omitted, use CLEAN=true to enable it."
   fi
 }
 
 function perf_demo_graph() {
   if [[ "${PERF_DEMO_GRAPH}" = false && "${DEFAULT_PERF_DEMO_GRAPH}" = false ]]; then
-    log ${SCRIPT_NAME} ${LINENO} "perf demo graph is omitted."
+    log ${SCRIPT_NAME} ${LINENO} "perf demo graph is omitted, use PERF_DEMO_GRAPH=true to enable it."
   fi
 
   bazel_build //src:perf_graph --define "malloc=jemalloc"
