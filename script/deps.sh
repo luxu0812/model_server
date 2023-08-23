@@ -216,7 +216,12 @@ function setup_tensorflow() {
   git checkout tags/v2.13.0 -b v2.13.0
   yes '' | ./configure
   bazelisk clean --expunge
-  bazelisk build --jobs=10 --compilation_mode=opt --config=mkl --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
+    bazelisk build --jobs=10 --compilation_mode=opt --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+  else
+    bazelisk build --jobs=10 --compilation_mode=opt --config=mkl --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+  fi
   if [[ $? -ne 0 ]]; then
     echo "build tensorflow failed"
     exit 1
