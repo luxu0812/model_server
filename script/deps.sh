@@ -13,7 +13,7 @@ function get_shell_config() {
 }
 
 function setup_os() {
-  if [[ ${SETUP_OS} = false && ${DEFULAT_SETUP_OS} = false ]]; then
+  if ! [[ ${SETUP_OS} = true || ${DEFULAT_SETUP_OS} = true ]]; then
     echo "setup os skipped"
     return
   fi
@@ -36,7 +36,7 @@ function setup_os() {
 }
 
 function setup_python() {
-  if [[ ${SETUP_PYTHON} = false && ${DEFAULT_SETUP_PYTHON} = false ]]; then
+  if ! [[ ${SETUP_PYTHON} = true || ${DEFAULT_SETUP_PYTHON} = true ]]; then
     echo "setup python skipped"
     return
   fi
@@ -266,7 +266,7 @@ function setup_onnx() {
 }
 
 function setup_onnx_mkl() {
-  if [[ ${SETUP_ONNX_MKL} = false && ${DEFAULT_SETUP_ONNX_MKL} = false ]]; then
+  if ! [[ ${SETUP_ONNX_MKL} = true || ${DEFAULT_SETUP_ONNX_MKL} = true ]]; then
     echo "setup onnxruntime_mkl skipped"
     return
   fi
@@ -290,7 +290,7 @@ function setup_onnx_mkl() {
 }
 
 function setup_onnx_dnnl() {
-  if [[ ${SETUP_ONNX_DNNL} = false && ${DEFAULT_SETUP_ONNX_DNNL} = false ]]; then
+  if ! [[ ${SETUP_ONNX_DNNL} = true && ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
     echo "setup onnxruntime_dnnl skipped"
     return
   fi
@@ -313,7 +313,7 @@ function setup_onnx_dnnl() {
 }
 
 function setup_onnx_openvino() {
-  if [[ ${SETUP_ONNX_OPENVINO} = false && ${DEFAULT_SETUP_ONNX_OPENVINO} = false ]]; then
+  if ! [[ ${SETUP_ONNX_OPENVINO} = true || ${DEFAULT_SETUP_ONNX_OPENVINO} = true ]]; then
     echo "setup onnxruntime_openvino skipped"
     return
   fi
