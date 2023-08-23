@@ -1,3 +1,4 @@
+DEFAULT_SETUP_DEPS=true
 DEFAULT_SETUP_PYTHON=false
 DEFAULT_SETUP_OS=false
 DEFAULT_SETUP_ONNX_MKL=false
@@ -14,7 +15,7 @@ function get_shell_config() {
 
 function setup_os() {
   if ! [[ ${SETUP_OS} = true || ${DEFULAT_SETUP_OS} = true ]]; then
-    echo "setup os skipped"
+    echo "setup os skipped, use SETUP_OS=true to enable"
     return
   fi
 
@@ -37,7 +38,7 @@ function setup_os() {
 
 function setup_python() {
   if ! [[ ${SETUP_PYTHON} = true || ${DEFAULT_SETUP_PYTHON} = true ]]; then
-    echo "setup python skipped"
+    echo "setup python skipped, use SETUP_PYTHON=true to enable"
     return
   fi
 
@@ -73,6 +74,9 @@ function setup_bazel() {
 
   mkdir -p ${HOME}/.local/bin
   wget ${url} -O ${HOME}/.local/bin/bazelisk
+
+  shell_config=$(get_shell_config)
+  echo 'export PATH="${HOME}/.local/bin:${PATH}"' >> ${shell_config}
 }
 
 function setup_cmake() {
@@ -267,7 +271,7 @@ function setup_onnx() {
 
 function setup_onnx_mkl() {
   if ! [[ ${SETUP_ONNX_MKL} = true || ${DEFAULT_SETUP_ONNX_MKL} = true ]]; then
-    echo "setup onnxruntime_mkl skipped"
+    echo "setup onnxruntime_mkl skipped, use SETUP_ONNX_MKL=true to enable"
     return
   fi
   if [[ -d ${HOME}/.local/lib/onnxruntime-mkl ]]; then
@@ -291,7 +295,7 @@ function setup_onnx_mkl() {
 
 function setup_onnx_dnnl() {
   if ! [[ ${SETUP_ONNX_DNNL} = true && ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
-    echo "setup onnxruntime_dnnl skipped"
+    echo "setup onnxruntime_dnnl skipped, use SETUP_ONNX_DNNL=true to enable"
     return
   fi
   if [[ -d ${HOME}/.local/lib/onnxruntime_dnnl ]]; then
@@ -314,7 +318,7 @@ function setup_onnx_dnnl() {
 
 function setup_onnx_openvino() {
   if ! [[ ${SETUP_ONNX_OPENVINO} = true || ${DEFAULT_SETUP_ONNX_OPENVINO} = true ]]; then
-    echo "setup onnxruntime_openvino skipped"
+    echo "setup onnxruntime_openvino skipped, use SETUP_ONNX_OPENVINO=true to enable"
     return
   fi
   if [[ -d ${HOME}/.local/lib/onnxruntime_openvino ]]; then
@@ -398,9 +402,15 @@ function setup_tcmalloc() {
 }
 
 function setup_deps() {
+  if ! [[ ${SETUP_DEPS} = true || ${DEFAULT_SETUP_DEPS} = true ]]; then
+    echo "setup deps skipped, use SETUP_DEPS=true to enable"
+    return
+  fi
+
   mkdir -p ${HOME}/.local/build
   setup_os && setup_python && setup_bazel && setup_cmake && setup_gflags && setup_glog && setup_googletest &&\
   setup_google_benchmark && setup_tensorflow && setup_zlib && setup_protobuf && setup_abseil && setup_nlohmann_json &&\
   setup_bshoshany_thread_pool && setup_jemalloc && setup_tcmalloc && setup_onnx && setup_onnx_mkl &&\
   setup_onnx_dnnl && setup_onnx_openvino
+  rm -rf ${HOME}/.local/build
 }
