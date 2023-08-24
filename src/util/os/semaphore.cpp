@@ -104,12 +104,12 @@ bool Semaphore::try_wait() {
 template <typename FUNC, typename... ARGS>
 static auto ignore_signal_call(
   FUNC func, ARGS &&... args
-) -> std::invoke_result_t<FUNC, ARGS...> {
+) -> decltype(func(args...)) {
     for (;;) {
-        auto err = std::invoke(func, args...);
+        auto err = func(args...);
 
         if (err < 0 && errno == EINTR) {
-            fprintf(stderr, "Signal is caught. Ignored.");
+            std::cout << "Signal is caught. Ignored." << std::endl;
             continue;
         }
 
