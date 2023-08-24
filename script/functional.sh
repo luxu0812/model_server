@@ -30,11 +30,17 @@ function error_info() {
 function setup() {
   cp bazel/bazel_workspace ./WORKSPACE
   HOME_PATH=$(echo ~)
-  sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
 
   uname=`uname`
-  if [[ "${uname}" == "Linux" ]]; then
+  if [[ "${uname}" == "Darwin" ]]; then
+    HOME_PATH=$(echo ~)
+    sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
+  elif [[ "${uname}" == "Linux" ]]; then
     cp bazel/bazel_rc ./.bazelrc
+    sed -i "s|\${HOME}|${HOME}|g" WORKSPACE
+  else
+    log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
+    exit 1
   fi
 }
 
