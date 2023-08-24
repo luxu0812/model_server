@@ -2,6 +2,8 @@
 
 #include "model_server/src/util/comm.h"
 
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <spawn.h>
 #include <unistd.h>
 #include <stdlib.h>
