@@ -75,7 +75,7 @@ function bazel_build() {
   bazelisk build                       \
     --jobs=10                          \
     --compilation_mode opt             \
-    --cxxopt='-std=c++20'              \
+    --cxxopt='-std=c++2a'              \
     --cxxopt='-Wno-unused-parameter'   \
     --cxxopt='-fno-omit-frame-pointer' \
     --cxxopt='-fPIC'                   \
@@ -96,7 +96,7 @@ function bazel_test() {
     --dynamic_mode=off                 \
     --spawn_strategy=standalone        \
     --strategy=Genrule=standalone      \
-    --cxxopt='-std=c++20'              \
+    --cxxopt='-std=c++2a'              \
     --cxxopt='-Wno-unused-parameter'   \
     --cxxopt='-fno-omit-frame-pointer' \
     --cxxopt='-fPIC'                   \
