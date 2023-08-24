@@ -109,7 +109,7 @@ static auto ignore_signal_call(
         auto err = func(args...);
 
         if (err < 0 && errno == EINTR) {
-            std::cout << "Signal is caught. Ignored." << std::endl;
+            fprintf(stderr, "Signal is caught. Ignored.");
             continue;
         }
 
