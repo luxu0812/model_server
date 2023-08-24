@@ -8,39 +8,61 @@ config_setting(
   values = {"define": "malloc=tcmalloc"},
 )
 
+# cc_library(
+#   name = "util_os",
+#   hdrs = select({
+#     "@bazel_tools//src/conditions:darwin_x86_64": glob([
+#       "util/os/macos/macros.h",
+#       "util/os/macos/thread_cpu.h",
+#       "util/os/macos/vpopen.h",
+#       "util/os/macos/network.h",
+#       "util/os/macos/resource_used.h",
+#       "util/os/macos/semaphore.h",
+#     ]),
+#     "@bazel_tools//src/conditions:darwin": glob([
+#       "util/os/macos/macros.h",
+#       "util/os/macos/thread_cpu.h",
+#       "util/os/macos/vpopen.h",
+#       "util/os/macos/network.h",
+#       "util/os/macos/resource_used.h",
+#       "util/os/macos/semaphore.h",
+#     ]),
+#     "//conditions:default": glob([
+#       "util/os/linux/macros.h",
+#       "util/os/linux/thread_cpu.h",
+#       "util/os/linux/vpopen.h",
+#       "util/os/linux/network.h",
+#       "util/os/linux/resource_used.h",
+#       "util/os/linux/semaphore.h",
+#     ]),
+#   }),
+#   strip_include_prefix = select({
+#     "@bazel_tools//src/conditions:darwin_x86_64": "util/os/macos",
+#     "@bazel_tools//src/conditions:darwin": "util/os/macos",
+#     "//conditions:default": "util/os/linux",
+#   }),
+#   include_prefix = "model_server/src/util/os",
+#   visibility = ["//visibility:public"],
+# )
+
 cc_library(
   name = "util_os",
-  hdrs = select({
-    "@bazel_tools//src/conditions:darwin_x86_64": glob([
-      "util/os/macos/macros.h",
-      "util/os/macos/thread_cpu.h",
-      "util/os/macos/vpopen.h",
-      "util/os/macos/network.h",
-      "util/os/macos/resource_used.h",
-      "util/os/macos/semaphore.h",
-    ]),
-    "@bazel_tools//src/conditions:darwin": glob([
-      "util/os/macos/macros.h",
-      "util/os/macos/thread_cpu.h",
-      "util/os/macos/vpopen.h",
-      "util/os/macos/network.h",
-      "util/os/macos/resource_used.h",
-      "util/os/macos/semaphore.h",
-    ]),
-    "//conditions:default": glob([
-      "util/os/linux/macros.h",
-      "util/os/linux/thread_cpu.h",
-      "util/os/linux/vpopen.h",
-      "util/os/linux/network.h",
-      "util/os/linux/resource_used.h",
-      "util/os/linux/semaphore.h",
-    ]),
-  }),
-  strip_include_prefix = select({
-    "@bazel_tools//src/conditions:darwin_x86_64": "util/os/macos",
-    "@bazel_tools//src/conditions:darwin": "util/os/macos",
-    "//conditions:default": "util/os/linux",
-  }),
+  hdrs = [
+    "util/os/macros.h",
+    "util/os/thread_cpu.h",
+    "util/os/vpopen.h",
+    "util/os/network.h",
+    "util/os/resource_used.h",
+    "util/os/semaphore.h",
+  ],
+  srcs = [
+    "util/os/thread_cpu.cpp",
+    "util/os/vpopen.cpp",
+    "util/os/network.cpp",
+    "util/os/resource_used.cpp",
+    "util/os/semaphore.cpp",
+  ],
+  strip_include_prefix = "util/os",
   include_prefix = "model_server/src/util/os",
   visibility = ["//visibility:public"],
 )
