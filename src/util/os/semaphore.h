@@ -19,7 +19,11 @@ class Semaphore {
   bool try_wait();
 
  private:
+#ifdef __APPLE__
   sem_t *sem_;
+#elif __linux__
+  sem_t sem_;
+#endif
 };
 
 #endif  // MODEL_SERVER_SRC_UTIL_OS_SEMAPHORE_H_
