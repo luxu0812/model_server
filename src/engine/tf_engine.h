@@ -14,6 +14,8 @@
 
 namespace model_server {
 
+const char kGlobalInterOpThreadPool[] = "GlobalTensorFlowInterOpThreadPool";
+
 struct TFTensorMeta {
   TF_Output           *output = nullptr;
   std::string          operation_name;
@@ -117,6 +119,7 @@ class TFEngine : public Engine {
   TF_Graph          *graph_;
   TF_SessionOptions *session_opts_;
   TF_Session        *session_;
+  TF_Buffer         *_default_run_option_buf;
 };
 
 }  // namespace model_server
