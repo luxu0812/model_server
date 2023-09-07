@@ -327,7 +327,7 @@ void TFEngine::set_session_options() {
   tensorflow::ConfigProto tf_session_conf;
   tf_session_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
   tf_session_conf.set_intra_op_parallelism_threads(conf_.intra_op_parallelism_threads);
-  // tf_session_conf.set_inter_op_parallelism_threads(conf_.inter_op_parallelism_threads);
+  tf_session_conf.set_inter_op_parallelism_threads(conf_.inter_op_parallelism_threads);
   LOG(INFO) << "[" << conf_.brief() << "] Session config:\n" << tf_session_conf.DebugString();
 
   tensorflow::ThreadPoolOptionProto *thread_pool_opt = tf_session_conf.mutable_session_inter_op_thread_pool()->Add();
