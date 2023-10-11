@@ -4,6 +4,7 @@ DEFAULT_SETUP_OS=false
 DEFAULT_SETUP_ONNX_MKL=false
 DEFAULT_SETUP_ONNX_DNNL=false
 DEFAULT_SETUP_ONNX_OPENVINO=false
+DEFAULT_SETUP_GPU=false
 
 function get_shell_config() {
   shell_name=$(basename "${SHELL}")
@@ -309,7 +310,7 @@ function setup_google_benchmark() {
   popd
 }
 
-function setup_tensorflow() {
+function setup_tensorflow_cpu() {
   if [[ -d ${HOME}/.local/lib/libtensorflow ]]; then
     echo "tensorflow already installed"
     return
@@ -323,9 +324,11 @@ function setup_tensorflow() {
   bazelisk clean --expunge
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
-    bazelisk build --jobs=10 --compilation_mode=opt --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+    # bazelisk build --jobs=60 --compilation_mode=opt --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+    bazelisk build --jobs=60 --compilation_mode=opt -spawn_strategy=sandboxed --config=monolithic tensorflow/tools/lib_package:libtensorflow
   else
-    bazelisk build --jobs=10 --compilation_mode=opt --config=mkl --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+    # bazelisk build --jobs=60 --compilation_mode=opt --config=mkl --spawn_strategy=sandboxed tensorflow/tools/lib_package:libtensorflow
+    bazelisk build --jobs=60 --compilation_mode=opt -spawn_strategy=sandboxed --config=monolithic tensorflow/tools/lib_package:libtensorflow
   fi
   if [[ $? -ne 0 ]]; then
     echo "build tensorflow failed"
@@ -338,6 +341,52 @@ function setup_tensorflow() {
   cp -r bazel-bin/tensorflow/tsl ~/.local/lib/libtensorflow/include/tensorflow
   popd
   popd
+}
+
+function setup_tensorflow_gpu() {
+  if [[ -d ${HOME}/.local/lib/libtensorflow ]]; then
+    echo "tensorflow already installed"
+    return
+  fi
+
+  export CUDA_TOOLKIT_PATH="/usr/local/cuda-11.8"
+  export CUDNN_INSTALL_PATH="${HOME}/.local/lib/cudnn"
+  pushd ${HOME}/.local/build
+  # git clone https://github.com/tensorflow/tensorflow.git
+  pushd tensorflow
+  # git checkout tags/v2.13.0 -b v2.13.0
+  ./configure
+  bazelisk clean --expunge
+  uname=`uname`
+  bazelisk build --jobs=60 --config=monolithic --compilation_mode=opt --config=mkl tensorflow/tools/lib_package:libtensorflow
+  if [[ $? -ne 0 ]]; then
+    echo "build tensorflow failed"
+    exit 1
+  fi
+  mkdir -p ~/.local/lib/libtensorflow
+  tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
+  cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
+  cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow/include/tensorflow/core
+  cp -r bazel-bin/tensorflow/tsl ~/.local/lib/libtensorflow/include/tensorflow
+  popd
+  popd
+}
+
+function setup_tensorflow() {
+  # Check if a GPU device is available
+  if nvidia-smi &> /dev/null; then
+    echo "GPU device found. Building TensorFlow with GPU support..."
+    DEFAULT_SETUP_GPU=true
+  else
+    echo "No GPU device found. Building TensorFlow for CPU..."
+    DEFAULT_SETUP_GPU=false
+  fi
+
+  if ! [[ ${SETUP_GPU} = true || ${DEFAULT_SETUP_GPU} = true ]]; then
+    setup_tensorflow_cpu
+  else
+    setup_tensorflow_gpu
+  fi
 }
 
 function setup_zlib() {
@@ -462,7 +511,7 @@ function setup_onnx_mkl() {
 }
 
 function setup_onnx_dnnl() {
-  if ! [[ ${SETUP_ONNX_DNNL} = true && ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
+  if ! [[ ${SETUP_ONNX_DNNL} = true || ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
     echo "setup onnxruntime_dnnl skipped, use SETUP_ONNX_DNNL=true to enable"
     return
   fi

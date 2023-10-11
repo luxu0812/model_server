@@ -165,6 +165,20 @@ cc_library(
 )
 
 cc_library(
+  name = "stresstest",
+  hdrs = [
+    "stresstest/stress_framework.h",
+  ],
+  deps = [
+    "@com_github_google_glog//:glog",
+    "@bs_thread_pool//:bs_thread_pool",
+  ],
+  strip_include_prefix = "stresstest",
+  include_prefix = "model_server/src/stresstest",
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
   name = "embedding",
   hdrs = [
     "embedding/embedding.h",
@@ -175,20 +189,38 @@ cc_library(
 )
 
 cc_library(
+  name = "population_data",
+  hdrs = [
+    "population/model_spec.h",
+    "population/sample_gen.h"
+  ],
+  srcs = [
+    "population/model_spec.cpp",
+    "population/sample_gen.cpp"
+  ],
+  deps = [
+    ":util",
+    ":sample",
+    "@com_google_absl//:absl",
+    "@nlohmann_json//:nlohmann_json",
+    "@bs_thread_pool//:bs_thread_pool",
+  ],
+  strip_include_prefix = "population",
+  include_prefix = "model_server/src/population",
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
   name = "population",
   hdrs = [
     "population/population.h",
     "population/lifecycle.h",
     "population/roster.h",
-    "population/model_spec.h",
-    "population/sample_gen.h"
   ],
   srcs = [
     "population/population.cpp",
     "population/lifecycle.cpp",
     "population/roster.cpp",
-    "population/model_spec.cpp",
-    "population/sample_gen.cpp"
   ],
   deps = [
     ":util",
@@ -197,6 +229,7 @@ cc_library(
     ":engine_base",
     ":tf_engine",
     ":onnx_engine",
+    ":population_data",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@bs_thread_pool//:bs_thread_pool",
@@ -208,21 +241,45 @@ cc_library(
 )
 
 cc_binary(
-  name = "perf_graph",
+  name = "perf_tf",
   srcs = [
-    "bin/perf_graph.cpp",
+    "bin/perf_tf.cpp",
   ],
   deps = [
     ":util",
     ":sample",
     ":tf_engine",
-    ":onnx_engine",
-    ":population",
+    ":stresstest",
+    ":population_data",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",
-    "@bs_thread_pool//:bs_thread_pool",
   ],
-  # linkopts = ["-Wl,-rpath,$ORIGIN/../lib"],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
+)
+
+cc_binary(
+  name = "perf_onnx",
+  srcs = [
+    "bin/perf_onnx.cpp",
+  ],
+  deps = [
+    ":util",
+    ":sample",
+    ":onnx_engine",
+    ":stresstest",
+    ":population_data",
+    "@com_github_google_glog//:glog",
+    "@com_github_gflags_gflags//:gflags",
+  ],
+  malloc = select({
+    ":use_tcmalloc": "@tcmalloc//:tcmalloc",
+    ":use_jemalloc": "@jemalloc//:jemalloc",
+    "//conditions:default": "@bazel_tools//tools/cpp:malloc",
+  }),
 )
 
 cc_test(

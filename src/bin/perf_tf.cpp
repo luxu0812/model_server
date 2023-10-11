@@ -13,9 +13,9 @@
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/engine/tf_engine.h"
-#include "model_server/src/engine/onnx_engine.h"
 #include "model_server/src/population/model_spec.h"
 #include "model_server/src/population/sample_gen.h"
+#include "model_server/src/stresstest/stress_framework.h"
 
 DEFINE_uint32(concurrency, 1, "Number of concurrent workers");
 DEFINE_uint32(batch_size, 128, "Batch size");
@@ -24,7 +24,6 @@ DEFINE_int32(opt_level, 0, "Optimization level");
 DEFINE_int32(jit_level, 0, "JIT level");
 DEFINE_int32(inter_op_parallelism_threads, 1, "Inter op parallelism threads");
 DEFINE_int32(intra_op_parallelism_threads, 1, "Intra op parallelism threads");
-DEFINE_string(engine_brand, "TensorFlow", "Engine brand");
 
 model_server::Engine *create_engine();
 std::vector<model_server::Sample> *create_samples();
@@ -35,27 +34,9 @@ int main(int argc, char **argv) {
   try {
     std::unique_ptr<model_server::Engine> engine(create_engine());
     std::unique_ptr<std::vector<model_server::Sample>> samples(create_samples());
-    std::vector<double> cost_ms(samples->size());
 
-    // warmup
-    for (int32_t i = 0; i < samples->size(); ++i) {
-      infer(engine.get(), &(samples->at(i)), &(cost_ms[i]));
-    }
-
-    BS::thread_pool works(FLAGS_concurrency);
-    model_server::Timer timer;
-    for (int32_t i = 0; i < samples->size(); ++i) {
-      works.push_task(infer, engine.get(), &(samples->at(i)), &(cost_ms[i]));
-    }
-    works.wait_for_tasks();
-    double total_cost_sec = timer.f64_elapsed_sec();
-
-    std::sort(cost_ms.begin(), cost_ms.end());
-    double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
-    double cost_p99 = cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)];
-    LOG(INFO) << "Total cost: " << total_cost_sec << " sec, throughput: "
-              << static_cast<float>(FLAGS_test_data_size * FLAGS_batch_size) / total_cost_sec
-              << ", avg cost: " << cost_avg << " ms, p99 cost: " << cost_p99 << " ms";
+    StressFramework stress_framework(engine.get());
+    stress_framework.run(samples.get(), FLAGS_concurrency);
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
   } catch (...) {
@@ -77,17 +58,8 @@ model_server::Engine *create_engine() {
     .intra_op_parallelism_threads = FLAGS_intra_op_parallelism_threads
   };
 
-  if (FLAGS_engine_brand == "TensorFlow") {
-    engine_conf.graph_file_loc = "data/models/model_2/1/graph.pb";
-    return new model_server::TFEngine(engine_conf);
-  } else if (FLAGS_engine_brand == "ONNX") {
-    engine_conf.graph_file_loc = "data/models/model_2/1/graph.onnx";
-    return new model_server::ONNXEngine(engine_conf);
-  } else {
-    throw std::runtime_error("Unknown engine brand");
-  }
-
-  return nullptr;
+  engine_conf.graph_file_loc = "data/models/model_2/1/graph.pb";
+  return new model_server::TFEngine(engine_conf);
 }
 
 std::vector<model_server::Sample> *create_samples() {
@@ -99,19 +71,4 @@ std::vector<model_server::Sample> *create_samples() {
   model_server::random_sample_gen(model_meta, samples, FLAGS_test_data_size, FLAGS_batch_size);
 
   return samples;
-}
-
-void infer(model_server::Engine *engine, model_server::Sample *sample, double *cost_ms) {
-  model_server::Timer timer;
-  model_server::ScopeExitTask scope_exit_task([&]() {
-    *cost_ms = timer.f64_elapsed_ms();
-  });
-
-  try {
-    engine->infer(&sample->instance, &sample->score);
-  } catch (const std::exception& e) {
-    LOG(ERROR) << e.what();
-  } catch (...) {
-    LOG(ERROR) << "Unknown exception";
-  }
 }
