@@ -344,7 +344,7 @@ function setup_tensorflow_cpu() {
 }
 
 function setup_tensorflow_gpu() {
-  if [[ -d ${HOME}/.local/lib/libtensorflow ]]; then
+  if [[ -d ${HOME}/.local/lib/libtensorflow_gpu ]]; then
     echo "tensorflow already installed"
     return
   fi
@@ -352,9 +352,9 @@ function setup_tensorflow_gpu() {
   export CUDA_TOOLKIT_PATH="/usr/local/cuda-11.8"
   export CUDNN_INSTALL_PATH="${HOME}/.local/lib/cudnn"
   pushd ${HOME}/.local/build
-  # git clone https://github.com/tensorflow/tensorflow.git
+  git clone https://github.com/tensorflow/tensorflow.git
   pushd tensorflow
-  # git checkout tags/v2.13.0 -b v2.13.0
+  git checkout tags/v2.13.0 -b v2.13.0
   ./configure
   bazelisk clean --expunge
   uname=`uname`
@@ -363,11 +363,11 @@ function setup_tensorflow_gpu() {
     echo "build tensorflow failed"
     exit 1
   fi
-  mkdir -p ~/.local/lib/libtensorflow
-  tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
-  cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
-  cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow/include/tensorflow/core
-  cp -r bazel-bin/tensorflow/tsl ~/.local/lib/libtensorflow/include/tensorflow
+  mkdir -p ~/.local/lib/libtensorflow_gpu
+  tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow_gpu
+  cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow_gpu/include/tensorflow/core
+  cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow_gpu/include/tensorflow/core
+  cp -r bazel-bin/tensorflow/tsl ~/.local/lib/libtensorflow_gpu/include/tensorflow
   popd
   popd
 }
@@ -382,9 +382,8 @@ function setup_tensorflow() {
     DEFAULT_SETUP_GPU=false
   fi
 
-  if ! [[ ${SETUP_GPU} = true || ${DEFAULT_SETUP_GPU} = true ]]; then
-    setup_tensorflow_cpu
-  else
+  setup_tensorflow_cpu
+  if [[ ${SETUP_GPU} = true || ${DEFAULT_SETUP_GPU} = true ]]; then
     setup_tensorflow_gpu
   fi
 }

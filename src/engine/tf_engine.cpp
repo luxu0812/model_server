@@ -300,6 +300,7 @@ void TFEngine::build() {
 }
 
 void TFEngine::set_session_options() {
+  // refer to: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/protobuf/config.proto
   TF_Status *tf_status = TF_NewStatus();
   ScopeExitTask delete_tf_status([&tf_status] {
      TF_DeleteStatus(tf_status);
