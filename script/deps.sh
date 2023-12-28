@@ -125,6 +125,7 @@ function setup_skylib() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf bazel-skylib
   git clone https://github.com/bazelbuild/bazel-skylib.git
   pushd bazel-skylib
   git checkout tags/1.4.2 -b 1.4.2
@@ -140,6 +141,7 @@ function setup_rules_pkg() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf rules_pkg
   git clone https://github.com/bazelbuild/rules_pkg.git
   pushd rules_pkg
   git checkout tags/0.9.1 -b 0.9.1
@@ -155,6 +157,7 @@ function setup_rules_foreign_cc() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf rules_foreign_cc
   git clone https://github.com/bazelbuild/rules_foreign_cc.git
   pushd rules_foreign_cc
   git checkout tags/0.9.0 -b 0.9.0
@@ -170,6 +173,7 @@ function setup_rules_perl() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf rules_perl
   git clone https://github.com/bazelbuild/rules_perl.git
   pushd rules_perl
   git checkout tags/0.1.0 -b 0.1.0
@@ -185,6 +189,7 @@ function setup_rules_python() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf rules_python
   git clone https://github.com/bazelbuild/rules_python.git
   pushd rules_python
   git checkout tags/0.25.0 -b 0.25.0
@@ -200,6 +205,7 @@ function setup_rules_apple() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf rules_apple
   git clone https://github.com/bazelbuild/rules_apple.git
   pushd rules_apple
   git checkout tags/0.32.0 -b 0.32.0
@@ -215,6 +221,7 @@ function setup_rules_fuzzing() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf rules_fuzzing
   git clone https://github.com/bazelbuild/rules_fuzzing.git
   pushd rules_fuzzing
   git checkout tags/0.3.2 -b 0.3.2
@@ -230,6 +237,7 @@ function setup_gflags() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf gflags
   git clone https://github.com/gflags/gflags.git
   pushd gflags
   git checkout tags/v2.2.2 -b v2.2.2
@@ -251,6 +259,7 @@ function setup_glog() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf glog
   git clone https://github.com/google/glog.git
   pushd glog
   git checkout tags/v-1.6.0 -b v0.6.0
@@ -273,6 +282,7 @@ function setup_googletest() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf googletest
   git clone https://github.com/google/googletest.git
   pushd googletest
   git checkout tags/v1.13.0 -b v1.13.0
@@ -295,6 +305,7 @@ function setup_google_benchmark() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf benchmark
   git clone https://github.com/google/benchmark.git
   pushd benchmark
   git checkout tags/v1.8.2 -b v1.8.2
@@ -317,6 +328,7 @@ function setup_tensorflow_cpu() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf tensorflow
   git clone https://github.com/tensorflow/tensorflow.git
   pushd tensorflow
   git checkout tags/v2.13.0 -b v2.13.0
@@ -352,6 +364,7 @@ function setup_tensorflow_gpu() {
   export CUDA_TOOLKIT_PATH="/usr/local/cuda-11.8"
   export CUDNN_INSTALL_PATH="${HOME}/.local/lib/cudnn"
   pushd ${HOME}/.local/build
+  rm -rf tensorflow
   git clone https://github.com/tensorflow/tensorflow.git
   pushd tensorflow
   git checkout tags/v2.13.0 -b v2.13.0
@@ -567,6 +580,7 @@ function setup_nlohmann_json() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf json
   git clone https://github.com/nlohmann/json.git
   pushd json
   git checkout tags/v3.11.2 -b v3.11.2
@@ -588,6 +602,7 @@ function setup_bshoshany_thread_pool() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf thread-pool
   git clone https://github.com/bshoshany/thread-pool.git
   pushd thread-pool
   git checkout tags/v3.5.0 -b v3.5.0
@@ -604,6 +619,7 @@ function setup_jemalloc() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf jemalloc
   git clone https://github.com/jemalloc/jemalloc.git
   pushd jemalloc
   git checkout tags/5.3.0 -b 5.3.0
@@ -625,6 +641,7 @@ function setup_tcmalloc() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf tcmalloc
   git clone https://github.com/google/tcmalloc.git
   mv tcmalloc ~/.local/lib/tcmalloc
   popd
