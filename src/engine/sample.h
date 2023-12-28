@@ -11,11 +11,11 @@ namespace model_server {
 
 struct Tensor {
   std::string name;
+  int64_t batch_size;
   std::vector<float> data;
 };
 
 struct Instance {
-  int64_t batch_size;
   std::vector<Tensor> features;
 };
 
