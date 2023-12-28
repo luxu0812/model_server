@@ -73,7 +73,7 @@ class StressFramework {
                 << ", cpu used: " <<
                  ((resource_curr.user_time - resource_base.user_time) +
                   (resource_curr.system_time - resource_base.system_time)) / total_cost_sec
-                << ", mem used: " << resource_curr.resident_mb;
+                << " cc, mem used: " << resource_curr.resident_mb << " MB";
     } catch (const std::exception& e) {
       LOG(ERROR) << e.what();
     } catch (...) {
