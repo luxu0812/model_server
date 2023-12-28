@@ -28,25 +28,6 @@ struct Sample {
   Score score;
 };
 
-struct OptInstance {
-    std::vector<char *> shared_features;
-    std::vector<char *> unique_features;
-
-    std::vector<std::vector<float>> shared_features_data;
-    std::vector<std::vector<float>> unique_features_data;
-};
-
-struct OptScore {
-  std::vector<char *> targets;
-  std::vector<std::vector<float>> targets_data;
-};
-
-struct OptSample {
-  int64_t batch_size;
-  OptInstance instance;
-  OptScore score;
-};
-
 }  // namespace model_server
 
 #endif  // MODEL_SERVER_SRC_ENGINE_SAMPLE_H_
