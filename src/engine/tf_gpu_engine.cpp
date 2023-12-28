@@ -24,7 +24,7 @@ std::string TFGPUEngine::brand() noexcept {
 //        ::tf_graph::GPUOptions gpu;
 //        gpu.set_per_process_gpu_memory_fraction(0.0);
 //        gpu.set_allow_growth(true);
-// 
+//
 //        conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(optimizer);
 //        conf.mutable_gpu_options()->CopyFrom(gpu);
 
