@@ -77,11 +77,11 @@ local_path_override(
 )
 
 #------------------------------ tcmalloc ------------------------------#
-bazel_dep(name = "tcmalloc")
-local_path_override(
-    module_name = "tcmalloc",
-    path = "${HOME}/.local/lib/tcmalloc",
-)
+# bazel_dep(name = "tcmalloc")
+# local_path_override(
+#     module_name = "tcmalloc",
+#     path = "${HOME}/.local/lib/tcmalloc",
+# )
 
 #------------------------------ jemalloc ------------------------------#
 bazel_dep(name = "jemalloc")

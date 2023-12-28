@@ -55,65 +55,70 @@ function setup_bazel_module() {
     exit 1
   fi
 
+  if [[ -d "${HOME}/.local/lib/absl" ]]; then
+    cp bazel/absl.WORKSPACE ${HOME}/.local/lib/absl/WORKSPACE
+    cp bazel/absl.BUILD ${HOME}/.local/lib/absl/BUILD
+    cp bazel/absl.MODULE ${HOME}/.local/lib/absl/MODULE.bazel
+  fi
   if [[ -d "${HOME}/.local/lib/benchmark" ]]; then
     cp bazel/benchmark.WORKSPACE ${HOME}/.local/lib/benchmark/WORKSPACE
     cp bazel/benchmark.BUILD ${HOME}/.local/lib/benchmark/BUILD
-    touch ${HOME}/.local/lib/benchmark/MODULE.bazel
+    cp bazel/benchmark.MODULE ${HOME}/.local/lib/benchmark/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/bs_thread_pool" ]]; then
     cp bazel/bs_thread_pool.WORKSPACE ${HOME}/.local/lib/bs_thread_pool/WORKSPACE
     cp bazel/bs_thread_pool.BUILD ${HOME}/.local/lib/bs_thread_pool/BUILD
-    touch ${HOME}/.local/lib/bs_thread_pool/MODULE.bazel
+    cp bazel/bs_thread_pool.MODULE ${HOME}/.local/lib/bs_thread_pool/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/gflags" ]]; then
     cp bazel/gflags.WORKSPACE ${HOME}/.local/lib/gflags/WORKSPACE
     cp bazel/gflags.BUILD ${HOME}/.local/lib/gflags/BUILD
-    touch ${HOME}/.local/lib/gflags/MODULE.bazel
+    cp bazel/gflags.MODULE ${HOME}/.local/lib/gflags/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/glog" ]]; then
     cp bazel/glog.WORKSPACE ${HOME}/.local/lib/glog/WORKSPACE
     cp bazel/glog.BUILD ${HOME}/.local/lib/glog/BUILD
-    touch ${HOME}/.local/lib/glog/MODULE.bazel
+    cp bazel/glog.MODULE ${HOME}/.local/lib/glog/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/googletest" ]]; then
     cp bazel/googletest.WORKSPACE ${HOME}/.local/lib/googletest/WORKSPACE
     cp bazel/googletest.BUILD ${HOME}/.local/lib/googletest/BUILD
-    touch ${HOME}/.local/lib/googletest/MODULE.bazel
+    cp bazel/googletest.MODULE ${HOME}/.local/lib/googletest/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/jemalloc" ]]; then
     cp bazel/jemalloc.WORKSPACE ${HOME}/.local/lib/jemalloc/WORKSPACE
     cp bazel/jemalloc.BUILD ${HOME}/.local/lib/jemalloc/BUILD
-    touch ${HOME}/.local/lib/jemalloc/MODULE.bazel
+    cp bazel/jemalloc.MODULE ${HOME}/.local/lib/jemalloc/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/libtensorflow" ]]; then
     cp bazel/libtensorflow.WORKSPACE ${HOME}/.local/lib/libtensorflow/WORKSPACE
     cp bazel/libtensorflow.BUILD ${HOME}/.local/lib/libtensorflow/BUILD
-    touch ${HOME}/.local/lib/libtensorflow/MODULE.bazel
+    cp bazel/libtensorflow.MODULE ${HOME}/.local/lib/libtensorflow/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/nlohmann_json" ]]; then
     cp bazel/nlohmann_json.WORKSPACE ${HOME}/.local/lib/nlohmann_json/WORKSPACE
     cp bazel/nlohmann_json.BUILD ${HOME}/.local/lib/nlohmann_json/BUILD
-    touch ${HOME}/.local/lib/nlohmann_json/MODULE.bazel
+    cp bazel/nlohmann_json.MODULE ${HOME}/.local/lib/nlohmann_json/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/onnxruntime_dnnl" ]]; then
     cp bazel/onnxruntime_dnnl.WORKSPACE ${HOME}/.local/lib/onnxruntime_dnnl/WORKSPACE
     cp bazel/onnxruntime_dnnl.BUILD ${HOME}/.local/lib/onnxruntime_dnnl/BUILD
-    touch ${HOME}/.local/lib/onnxruntime_dnnl/MODULE.bazel
+    cp bazel/onnxruntime_dnnl.MODULE ${HOME}/.local/lib/onnxruntime_dnnl/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/onnxruntime" ]]; then
     cp bazel/onnxruntime.WORKSPACE ${HOME}/.local/lib/onnxruntime/WORKSPACE
     cp bazel/onnxruntime.BUILD ${HOME}/.local/lib/onnxruntime/BUILD
-    touch ${HOME}/.local/lib/onnxruntime/MODULE.bazel
+    cp bazel/onnxruntime.MODULE ${HOME}/.local/lib/onnxruntime/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/protobuf" ]]; then
     cp bazel/protobuf.WORKSPACE ${HOME}/.local/lib/protobuf/WORKSPACE
     cp bazel/protobuf.BUILD ${HOME}/.local/lib/protobuf/BUILD
-    touch ${HOME}/.local/lib/protobuf/MODULE.bazel
+    cp bazel/protobuf.MODULE ${HOME}/.local/lib/protobuf/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/zlib" ]]; then
     cp bazel/zlib.WORKSPACE ${HOME}/.local/lib/zlib/WORKSPACE
     cp bazel/zlib.BUILD ${HOME}/.local/lib/zlib/BUILD
-    touch ${HOME}/.local/lib/zlib/MODULE.bazel
+    cp bazel/zlib.MODULE ${HOME}/.local/lib/zlib/MODULE.bazel
   fi
 }
 
