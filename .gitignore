@@ -42,4 +42,5 @@ bazel-*
 
 # Temporary files for building
 .bazelrc
+MODULE.bazel
 MODULE.bazel.lock
