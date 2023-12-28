@@ -54,7 +54,6 @@ class StressFramework {
       BS::thread_pool works(concurrency);
 
       struct ResourceUsed resource_base, resource_curr;
-      ResourceUsed resource_base, resource_curr;
       get_process_resource_used(&resource_base);
       model_server::Timer timer;
       for (int32_t i = 0; i < samples->size(); ++i) {
