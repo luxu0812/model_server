@@ -169,6 +169,15 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
   score_from_tensor(batch_size, output_tensors, score);
 }
 
+void TFEngine::infer(OptInstance *instance, OptScore *score) noexcept(false) {
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
+}
+
 void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
   std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
@@ -223,6 +232,15 @@ void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
   std::ofstream ofs("trace_data_" + std::to_string(trace_data_index.load()) + ".pb");
   ofs << trace_data_str;
   ofs.close();
+}
+
+void TFEngine::trace(OptInstance *instance, OptScore *score) noexcept(false) {
+  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
 }
 
 void TFEngine::run_session(

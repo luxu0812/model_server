@@ -56,9 +56,11 @@ class Engine {
 
   // Perform inference
   virtual void infer(Instance *instance, Score *score) noexcept(false) = 0;
+  virtual void infer(OptInstance *instance, OptScore *score) noexcept(false) = 0;
 
   // Perform inference with trace
   virtual void trace(Instance *instance, Score *score) noexcept(false) = 0;
+  virtual void trace(OptInstance *instance, OptScore *score) noexcept(false) = 0;
 
  protected:
   // Initialize engine
