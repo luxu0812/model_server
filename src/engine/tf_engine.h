@@ -55,11 +55,9 @@ class TFEngine : public Engine {
 
   // Perform inference using the TF runtime
   void infer(Instance *instance, Score *score) noexcept(false) override;
-  void infer(OptInstance *instance, OptScore *score) noexcept(false) override;
 
   // Perform inference with trace using the TF runtime
   void trace(Instance *instance, Score *score) noexcept(false) override;
-  void trace(OptInstance *instance, OptScore *score) noexcept(false) override;
 
  protected:
   // Load the TensorFlow graph from the .pb file
