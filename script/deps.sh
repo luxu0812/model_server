@@ -474,14 +474,22 @@ function setup_onnx() {
   pushd onnxruntime
   git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
 
-  ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error \
-    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime              \
-    --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
+    ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync \
+      --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime                                    \
+      --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 &&                                                      \
+    pushd build/MacOS/Release && make install && popd
+  else
+    ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error \
+      --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime              \
+      --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 &&                               \
+    pushd build/Linux/Release && make install && popd
+  fi
   if [[ $? -ne 0 ]]; then
     echo "build onnxruntime failed"
     exit 1
   fi
-  pushd build/Linux/Release && make install && popd
   popd
   popd
 }

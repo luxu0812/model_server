@@ -4,11 +4,6 @@ DEFAULT_UNIT_TEST=false
 DEFAULT_BENCHMARK_TEST=false
 DEFAULT_PERF_DEMO_GRAPH=false
 
-export MKL_NUM_THREADS=1
-export OMP_NUM_THREADS=1
-export MKL_DYNAMIC="FALSE"
-export OMP_DYNAMIC="FALSE"
-
 function log() {
   echo "$(date +"%Y/%m/%d %H:%M:%S")][$1:$2][INFO] $3"
 }
@@ -27,7 +22,7 @@ function error_info() {
   exit $3
 }
 
-function setup() {
+function setup_bazel() {
   cp bazel/bazel_workspace ./WORKSPACE
   HOME_PATH=$(echo ~)
 
@@ -41,6 +36,98 @@ function setup() {
   else
     log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
     exit 1
+  fi
+}
+
+function setup_bazel_module() {
+  cp bazel/bazel_module ./MODULE.bazel
+  HOME_PATH=$(echo ~)
+
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
+    HOME_PATH=$(echo ~)
+    sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
+  elif [[ "${uname}" == "Linux" ]]; then
+    cp bazel/bazel_rc ./.bazelrc
+    sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
+  else
+    log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
+    exit 1
+  fi
+
+  if [[ -d "${HOME}/.local/lib/benchmark" ]]; then
+    cp bazel/benchmark.WORKSPACE ${HOME}/.local/lib/benchmark/WORKSPACE
+    cp bazel/benchmark.BUILD ${HOME}/.local/lib/benchmark/BUILD
+    touch ${HOME}/.local/lib/benchmark/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/bs_thread_pool" ]]; then
+    cp bazel/bs_thread_pool.WORKSPACE ${HOME}/.local/lib/bs_thread_pool/WORKSPACE
+    cp bazel/bs_thread_pool.BUILD ${HOME}/.local/lib/bs_thread_pool/BUILD
+    touch ${HOME}/.local/lib/bs_thread_pool/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/gflags" ]]; then
+    cp bazel/gflags.WORKSPACE ${HOME}/.local/lib/gflags/WORKSPACE
+    cp bazel/gflags.BUILD ${HOME}/.local/lib/gflags/BUILD
+    touch ${HOME}/.local/lib/gflags/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/glog" ]]; then
+    cp bazel/glog.WORKSPACE ${HOME}/.local/lib/glog/WORKSPACE
+    cp bazel/glog.BUILD ${HOME}/.local/lib/glog/BUILD
+    touch ${HOME}/.local/lib/glog/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/googletest" ]]; then
+    cp bazel/googletest.WORKSPACE ${HOME}/.local/lib/googletest/WORKSPACE
+    cp bazel/googletest.BUILD ${HOME}/.local/lib/googletest/BUILD
+    touch ${HOME}/.local/lib/googletest/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/jemalloc" ]]; then
+    cp bazel/jemalloc.WORKSPACE ${HOME}/.local/lib/jemalloc/WORKSPACE
+    cp bazel/jemalloc.BUILD ${HOME}/.local/lib/jemalloc/BUILD
+    touch ${HOME}/.local/lib/jemalloc/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/libtensorflow" ]]; then
+    cp bazel/libtensorflow.WORKSPACE ${HOME}/.local/lib/libtensorflow/WORKSPACE
+    cp bazel/libtensorflow.BUILD ${HOME}/.local/lib/libtensorflow/BUILD
+    touch ${HOME}/.local/lib/libtensorflow/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/nlohmann_json" ]]; then
+    cp bazel/nlohmann_json.WORKSPACE ${HOME}/.local/lib/nlohmann_json/WORKSPACE
+    cp bazel/nlohmann_json.BUILD ${HOME}/.local/lib/nlohmann_json/BUILD
+    touch ${HOME}/.local/lib/nlohmann_json/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/onnxruntime_dnnl" ]]; then
+    cp bazel/onnxruntime_dnnl.WORKSPACE ${HOME}/.local/lib/onnxruntime_dnnl/WORKSPACE
+    cp bazel/onnxruntime_dnnl.BUILD ${HOME}/.local/lib/onnxruntime_dnnl/BUILD
+    touch ${HOME}/.local/lib/onnxruntime_dnnl/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/onnxruntime" ]]; then
+    cp bazel/onnxruntime.WORKSPACE ${HOME}/.local/lib/onnxruntime/WORKSPACE
+    cp bazel/onnxruntime.BUILD ${HOME}/.local/lib/onnxruntime/BUILD
+    touch ${HOME}/.local/lib/onnxruntime/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/protobuf" ]]; then
+    cp bazel/protobuf.WORKSPACE ${HOME}/.local/lib/protobuf/WORKSPACE
+    cp bazel/protobuf.BUILD ${HOME}/.local/lib/protobuf/BUILD
+    touch ${HOME}/.local/lib/protobuf/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/zlib" ]]; then
+    cp bazel/zlib.WORKSPACE ${HOME}/.local/lib/zlib/WORKSPACE
+    cp bazel/zlib.BUILD ${HOME}/.local/lib/zlib/BUILD
+    touch ${HOME}/.local/lib/zlib/MODULE.bazel
+  fi
+}
+
+function setup() {
+  bazel_version=$(cat .bazelversion)
+
+  # Extract major version
+  major_version=$(echo "$bazel_version" | cut -d. -f1)
+
+  # Check if major version is smaller than or equal to 6
+  if [[ $major_version -le 6 ]]; then
+    setup_bazel
+  else
+    setup_bazel_module
   fi
 }
 
@@ -206,11 +293,6 @@ function perf_demo_graph() {
           --intra_op_parallelism_threads=6
       done
     else
-      export MKL_NUM_THREADS=1
-      export OMP_NUM_THREADS=1
-      export MKL_DYNAMIC="FALSE"
-      export OMP_DYNAMIC="FALSE"
-
       for engine_brand in ${engine_brands[@]}; do
         numactl --cpunodebind=0 --membind=0                \
           ${SCRIPT_DIR}/bazel-bin/src/perf_${engine_brand} \
