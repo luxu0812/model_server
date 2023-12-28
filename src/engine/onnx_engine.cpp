@@ -66,15 +66,6 @@ void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
   run_session(instance, score, session_);
 }
 
-void ONNXEngine::infer(OptInstance *instance, OptScore *score) noexcept(false) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  if (!inited_) {
-    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + conf_.brief() + "] " + "Engine not initialized";
-    throw std::runtime_error(err_msg);
-  }
-}
-
 void ONNXEngine::run_session(Instance *instance, Score *score, Ort::Session *session) noexcept(false) {
   const auto& batch_size = instance->batch_size;
 
@@ -154,15 +145,6 @@ void ONNXEngine::trace(Instance *instance, Score *score) noexcept(false) {
   auto profile_file = session->EndProfilingAllocated(allocator);
   if (std::string(profile_file.get()) != std::string()) {
       LOG(INFO) << "ONNX profiling file has dump to " << std::string(profile_file.get());
-  }
-}
-
-void ONNXEngine::trace(OptInstance *instance, OptScore *score) noexcept(false) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  if (!inited_) {
-    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + conf_.brief() + "] " + "Engine not initialized";
-    throw std::runtime_error(err_msg);
   }
 }
 
