@@ -456,6 +456,7 @@ function setup_onnx() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf onnxruntime
   git clone https://github.com/microsoft/onnxruntime.git # or (https://github.com/intel/onnxruntime.git)
   pushd onnxruntime
   git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
@@ -483,6 +484,7 @@ function setup_onnx_mkl() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf onnxruntime
   git clone https://github.com/microsoft/onnxruntime.git # or (https://github.com/intel/onnxruntime.git)
   pushd onnxruntime
   git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
@@ -511,6 +513,7 @@ function setup_onnx_dnnl() {
   fi
 
   pushd ${HOME}/.local/build
+  rm -rf onnxruntime
   git clone https://github.com/microsoft/onnxruntime.git # or (https://github.com/intel/onnxruntime.git)
   pushd onnxruntime
   git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
