@@ -24,11 +24,9 @@ function error_info() {
 
 function setup_bazel() {
   cp bazel/bazel_workspace ./WORKSPACE
-  HOME_PATH=$(echo ~)
 
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
-    HOME_PATH=$(echo ~)
     sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
   elif [[ "${uname}" == "Linux" ]]; then
     cp bazel/bazel_rc ./.bazelrc
@@ -41,11 +39,9 @@ function setup_bazel() {
 
 function setup_bazel_module() {
   cp bazel/bazel_module ./MODULE.bazel
-  HOME_PATH=$(echo ~)
 
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
-    HOME_PATH=$(echo ~)
     sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
   elif [[ "${uname}" == "Linux" ]]; then
     cp bazel/bazel_rc ./.bazelrc
