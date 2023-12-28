@@ -1,6 +1,10 @@
+# Toolchain clang
 # build --action_env=CC=/usr/bin/clang
 # build --action_env=CXX=/usr/bin/clang++
 # build --action_env=LD=/usr/bin/clang
 # build --action_env=AR=/usr/bin/llvm-ar
 # build --action_env=NM=/usr/bin/llvm-nm
 # build --action_env=STRIP=/usr/bin/llvm-strip
+
+# Enable Bzlmod for every Bazel command
+# common --enable_bzlmod

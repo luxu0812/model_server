@@ -31,6 +31,12 @@ void init(
   google::AllowCommandLineReparsing();
   google::ParseCommandLineFlags(&argc, &argv, true);
 
+  setenv("TF_XLA_FLAGS", "--tf_xla_cpu_global_jit", 1);
+  setenv("MKL_NUM_THREADS", "1", 1);
+  setenv("OMP_NUM_THREADS", "1", 1);
+  setenv("MKL_DYNAMIC", "FALSE", 1);
+  setenv("OMP_DYNAMIC", "FALSE", 1);
+
   FLAGS_logbufsecs = 0;
   FLAGS_max_log_size = 1024;
   FLAGS_minloglevel = google::INFO;

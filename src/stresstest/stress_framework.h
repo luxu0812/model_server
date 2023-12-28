@@ -14,6 +14,7 @@
 #include "BShoshany/BS_thread_pool.hpp"
 
 #include "model_server/src/util/functional/timer.h"
+#include "model_server/src/util/os/resource_used.h"
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
 
@@ -51,12 +52,16 @@ class StressFramework {
       }
 
       BS::thread_pool works(concurrency);
+
+      struct ResourceUsed resource_base, resource_curr;
+      get_process_resource_used(&resource_base);
       model_server::Timer timer;
       for (int32_t i = 0; i < samples->size(); ++i) {
         works.push_task(infer, engine_, &(samples->at(i)), &(cost_ms[i]));
       }
       works.wait_for_tasks();
       double total_cost_sec = timer.f64_elapsed_sec();
+      get_process_resource_used(&resource_curr);
 
       std::sort(cost_ms.begin(), cost_ms.end());
       double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
@@ -64,7 +69,11 @@ class StressFramework {
       LOG(INFO) << "Total cost: " << total_cost_sec << " sec, throughput: "
                 << static_cast<double>(samples->size()) * static_cast<double>(samples->at(0).instance.batch_size)
                  / total_cost_sec
-                << ", avg cost: " << cost_avg << " ms, p99 cost: " << cost_p99 << " ms";
+                << ", avg cost: " << cost_avg << " ms, p99 cost: " << cost_p99 << " ms"
+                << ", cpu used: " <<
+                 ((resource_curr.user_time - resource_base.user_time) +
+                  (resource_curr.system_time - resource_base.system_time)) / total_cost_sec
+                << " cc, mem used: " << resource_curr.resident_mb << " MB";
     } catch (const std::exception& e) {
       LOG(ERROR) << e.what();
     } catch (...) {
