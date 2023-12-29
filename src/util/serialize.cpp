@@ -8,22 +8,27 @@
 
 namespace model_server {
 
-bool pb_to_json(const google::protobuf::Message& pb_msg, std::string *json_msg) {
-  if (nullptr == json_msg) {
-    return false;
-  }
-
+std::string pb_to_json(const google::protobuf::Message& pb_msg) {
   google::protobuf::util::JsonPrintOptions options;
   options.add_whitespace = true;
   options.always_print_primitive_fields = true;
   options.preserve_proto_field_names = true;
 
-  return google::protobuf::util::MessageToJsonString(pb_msg, json_msg, options).ok();
+  std::string json_msg;
+  auto ret = google::protobuf::util::MessageToJsonString(pb_msg, &json_msg, options);
+  if (!ret.ok()) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "] "
+      + std::string(ret.message());
+    throw std::runtime_error(err_msg);
+  }
+  return json_msg;
 }
 
-bool json_to_pb(const std::string& json_msg, google::protobuf::Message *pb_msg) {
+void json_to_pb(const std::string& json_msg, google::protobuf::Message *pb_msg) {
   if (nullptr == pb_msg) {
-    return false;
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "] "
+      + "pb_msg is nullptr";
+    throw std::runtime_error(err_msg);
   }
 
   google::protobuf::util::JsonParseOptions options;
@@ -31,10 +36,12 @@ bool json_to_pb(const std::string& json_msg, google::protobuf::Message *pb_msg) 
 
   auto ret = google::protobuf::util::JsonStringToMessage(json_msg, pb_msg, options);
   if (!ret.ok()) {
-    LOG(ERROR) << "json to pb failed, json: " << json_msg << ", error: " << ret.message();
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "] "
+      + std::string(ret.message());
+    throw std::runtime_error(err_msg);
   }
 
-  return ret.ok();
+  return;
 }
 
 }  // namespace model_server
