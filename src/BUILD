@@ -72,6 +72,7 @@ cc_library(
   hdrs = [
     "util/comm.h",
     "util/io.h",
+    "util/serialize.h",
     "util/algorithm/search.h",
     "util/functional/return_status.h",
     "util/functional/scope_exit_task.h",
@@ -83,12 +84,15 @@ cc_library(
   srcs = [
     "util/comm.cpp",
     "util/io.cpp",
+    "util/serialize.cpp",
     "util/functional/return_status.cpp",
     "util/process/process_status.cpp",
   ],
   deps = [
     "@com_github_google_glog//:glog",
+    "@com_google_protobuf//:protobuf",
     "@com_google_absl//:absl",
+
     ":util_os",
   ],
   strip_include_prefix = "util",
