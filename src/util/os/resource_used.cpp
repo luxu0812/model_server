@@ -1,4 +1,4 @@
-// Copyright 2021 zh.luxu1986@gmail.com
+// Copyright (C) 2021 zh.luxu1986@gmail.com
 
 #include "model_server/src/util/os/resource_used.h"
 

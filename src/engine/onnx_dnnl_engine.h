@@ -1,4 +1,4 @@
-// Copyright 2023 zh.luxu1986@gmail.com
+// Copyright (C) 2023 zh.luxu1986@gmail.com
 
 #ifndef MODEL_SERVER_SRC_ENGINE_ONNX_DNNL_ENGINE_H_
 #define MODEL_SERVER_SRC_ENGINE_ONNX_DNNL_ENGINE_H_

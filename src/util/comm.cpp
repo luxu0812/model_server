@@ -1,4 +1,4 @@
-// Copyright 2022 zh.luxu1986@gmail.com
+// Copyright (C) 2022 zh.luxu1986@gmail.com
 
 #include "model_server/src/util/comm.h"
 

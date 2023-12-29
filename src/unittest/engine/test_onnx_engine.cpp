@@ -1,4 +1,4 @@
-// Copyright 2023 zh.luxu1986@gmail.com
+// Copyright (C) 2023 zh.luxu1986@gmail.com
 
 #include "glog/logging.h"
 #include "gtest/gtest.h"

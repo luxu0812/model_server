@@ -1,4 +1,4 @@
-// Copyright 2021 zh.luxu1986@gmail.com
+// Copyright (C) 2021 zh.luxu1986@gmail.com
 
 #include <string>
 #include "gtest/gtest.h"

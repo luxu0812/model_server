@@ -1,4 +1,4 @@
-// Copyright 2023 zh.luxu1986@gmail.com
+// Copyright (C) 2023 zh.luxu1986@gmail.com
 
 #include "model_server/src/engine/tf_gpu_engine.h"
 
