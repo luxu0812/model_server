@@ -12,7 +12,7 @@ namespace model_server {
 
 ONNXEngine::ONNXEngine(const EngineConf& engine_conf) noexcept(false) :
   Engine(engine_conf),
-  engine_mtx_(),
+  // engine_mtx_(),
   inited_(false),
   env_(nullptr),
   session_opts_(nullptr),
@@ -23,7 +23,7 @@ ONNXEngine::ONNXEngine(const EngineConf& engine_conf) noexcept(false) :
 
 ONNXEngine::~ONNXEngine() {
   try {
-    std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
+    // std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
     inited_ = false;
 
     if (nullptr != session_) {
@@ -56,7 +56,7 @@ std::string ONNXEngine::brand() noexcept {
 
   // Perform inference using the ONNX runtime
 void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + conf_.brief() + "] " + "Engine not initialized";
@@ -67,8 +67,6 @@ void ONNXEngine::infer(Instance *instance, Score *score) noexcept(false) {
 }
 
 void ONNXEngine::run_session(Instance *instance, Score *score, Ort::Session *session) noexcept(false) {
-  const auto& batch_size = instance->batch_size;
-
   // Create memory info
   Ort::MemoryInfo info = Ort::MemoryInfo::CreateCpu(
     OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault
@@ -84,7 +82,7 @@ void ONNXEngine::run_session(Instance *instance, Score *score, Ort::Session *ses
     const auto it = onnx_model_meta_.input_metas.find(feature_name);
     if (onnx_model_meta_.input_metas.end() != it) {
       std::vector<int64_t> tensor_shape = it->second.shape;
-      tensor_shape[0] = batch_size;
+      tensor_shape[0] = feature.batch_size;
       input_tensors.push_back(Ort::Value::CreateTensor<float>(
         info, feature.data.data(), feature.data.size(), tensor_shape.data(), tensor_shape.size()
       ));  // NOLINT
@@ -97,12 +95,17 @@ void ONNXEngine::run_session(Instance *instance, Score *score, Ort::Session *ses
   std::vector<Ort::Value> output_tensors;
 
   // Set output data to the output tensors
+  if (score->targets.size() != onnx_model_meta_.output_metas.size()) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Output size mismatch";
+    throw std::runtime_error(err_msg);
+  }
   int i = 0;
   for (const auto& [name, meta] : onnx_model_meta_.output_metas) {
     std::vector<int64_t> tensor_shape = meta.shape;
-    tensor_shape[0] = batch_size;
+    tensor_shape[0] = score->targets[i].batch_size;
     score->targets[i].name = name;
-    score->targets[i].data.resize(meta.instance_size * batch_size);
+    score->targets[i].data.resize(meta.instance_size * score->targets[i].batch_size);
     output_tensors.push_back(Ort::Value::CreateTensor<float>(
       info, score->targets[i].data.data(), score->targets[i].data.size(), tensor_shape.data(), tensor_shape.size()
     ));  // NOLINT
@@ -120,7 +123,7 @@ void ONNXEngine::run_session(Instance *instance, Score *score, Ort::Session *ses
 }
 
 void ONNXEngine::trace(Instance *instance, Score *score) noexcept(false) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + conf_.brief() + "] " + "Engine not initialized";

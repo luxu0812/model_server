@@ -103,14 +103,15 @@ class TFEngine : public Engine {
   // void print_graph_info();
 
   void instance_to_tensor(
-    const int32_t& batch_size, Instance *instance, std::vector<TF_Tensor*> *input_tensors
+    Instance *instance, std::vector<TF_Tensor*> *input_tensors
   ) noexcept(false);  // NOLINT
   void score_from_tensor(
-    const int32_t& batch_size, const std::vector<TF_Tensor*>& output_tensors, Score *score
+    const std::vector<TF_Tensor*>& output_tensors, Score *score
   ) noexcept(false);  // NOLINT
 
  private:
-  std::shared_mutex engine_mtx_;
+  // Preventing from distructing during inference, should be gurranteed by caller
+  // std::shared_mutex engine_mtx_;
   bool inited_;
 
   TFModelMeta tf_model_meta_;

@@ -25,12 +25,11 @@ void random_sample_gen(
   BS::thread_pool works(16);
   for (auto& sample : *samples) {
     works.push_task([&](){
-      sample.instance.batch_size = batch_size;
-
       sample.instance.features.resize(model_meta.input_shapes.size());
       int32_t i = 0;
       for (auto& input : model_meta.input_shapes) {
         auto& feature = sample.instance.features[i++];
+        feature.batch_size = batch_size;
         int64_t data_size = batch_size;
         for (auto& dim : input.second) {
           data_size *= dim;
@@ -45,6 +44,9 @@ void random_sample_gen(
       }
 
       sample.score.targets.resize(model_meta.output_shapes.size());
+      for (auto& target : sample.score.targets) {
+        target.batch_size = batch_size;
+      }
     });
   }
   works.wait_for_tasks();

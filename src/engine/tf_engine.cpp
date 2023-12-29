@@ -17,7 +17,7 @@ namespace model_server {
 
 TFEngine::TFEngine(const EngineConf& engine_conf) noexcept(false) :
   Engine(engine_conf),
-  engine_mtx_(),
+  // engine_mtx_(),
   inited_(false),
   graph_buffer_(nullptr),
   graph_(nullptr),
@@ -29,7 +29,7 @@ TFEngine::TFEngine(const EngineConf& engine_conf) noexcept(false) :
 
 TFEngine::~TFEngine() {
   try {
-    std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
+    // std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
     inited_ = false;
 
     if (nullptr != session_) {
@@ -83,7 +83,7 @@ std::string TFEngine::brand() noexcept {
 }
 
 void TFEngine::instance_to_tensor(
-  const int32_t& batch_size, Instance *instance, std::vector<TF_Tensor*> *input_tensors
+  Instance *instance, std::vector<TF_Tensor*> *input_tensors
 ) {
   for (auto& feature : instance->features) {
     const std::string& feature_name = feature.name;
@@ -92,9 +92,9 @@ void TFEngine::instance_to_tensor(
       const auto& tensor_num_dims  = it->second.num_dims;
       const auto& tensor_data_type = it->second.data_type;
 
-      size_t tensor_data_size = it->second.instance_size * static_cast<size_t>(batch_size);
+      size_t tensor_data_size = it->second.instance_size * static_cast<size_t>(feature.batch_size);
       DLOG(INFO) << "index: " << it->second.index << ", tensor_data_size: " << tensor_data_size
-                 << ", batch_size: " << batch_size
+                 << ", batch_size: " << feature.batch_size
                  << ", tensor_num_dims: " << tensor_num_dims
                  << ", feature_data_size: " << feature.data.size() * sizeof(feature.data[0]);
       if (feature.data.size() * sizeof(feature.data[0]) != tensor_data_size) {
@@ -103,7 +103,7 @@ void TFEngine::instance_to_tensor(
         throw std::runtime_error(err_msg);
       }
       std::vector<int64_t> tensor_shape = it->second.shape;
-      tensor_shape[0] = batch_size;
+      tensor_shape[0] = feature.batch_size;
       void *feature_value = static_cast<void *>(feature.data.data());
 
       TF_Tensor *tf_tensor = TF_NewTensor(
@@ -118,13 +118,20 @@ void TFEngine::instance_to_tensor(
 }
 
 void TFEngine::score_from_tensor(
-  const int32_t& batch_size, const std::vector<TF_Tensor*>& output_tensors, Score *score
+  const std::vector<TF_Tensor*>& output_tensors, Score *score
 ) {
   // Convert TF_Output and TF_Tensor to BatchScore
-  score->targets.resize(tf_model_meta_.output_specs.size());
+  // score->targets.resize(tf_model_meta_.output_specs.size());
+  if (score->targets.size() != tf_model_meta_.output_specs.size()) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + absl::StrFormat(
+        "Score target size mismatch: %d != %d", score->targets.size(), tf_model_meta_.output_specs.size()
+    );  // NOLINT
+    throw std::runtime_error(err_msg);
+  }
   for (const auto& output_meta : tf_model_meta_.output_metas) {
     auto& target = score->targets[output_meta.second.index];
-    const size_t data_size = output_meta.second.instance_size * batch_size;
+    const size_t data_size = output_meta.second.instance_size * target.batch_size;
     char *data = static_cast<char*>(TF_TensorData(output_tensors[output_meta.second.index]));
 
     target.name = output_meta.first;
@@ -134,14 +141,12 @@ void TFEngine::score_from_tensor(
 }
 
 void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
-
-  const auto& batch_size = instance->batch_size;
 
   // Convert BatchInstance to TF_Output and TF_Tensor
   std::vector<TF_Tensor*> input_tensors;
@@ -164,13 +169,13 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
     }
   });
 
-  instance_to_tensor(batch_size, instance, &input_tensors);
+  instance_to_tensor(instance, &input_tensors);
   run_session(&input_tensors, &output_tensors, _default_run_option_buf);
-  score_from_tensor(batch_size, output_tensors, score);
+  score_from_tensor(output_tensors, score);
 }
 
 void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
-  std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
       + conf_.brief() + "] " + "Engine not initialized";
@@ -188,8 +193,6 @@ void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
 
   TF_Buffer *tf_metadata = TF_NewBuffer();
   ScopeExitTask delete_tf_metadata([&tf_metadata]() { TF_DeleteBuffer(tf_metadata); });
-
-  const auto& batch_size = instance->batch_size;
 
   std::vector<TF_Tensor*> input_tensors;
   input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
@@ -211,9 +214,9 @@ void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
     }
   });
 
-  instance_to_tensor(batch_size, instance, &input_tensors);
+  instance_to_tensor(instance, &input_tensors);
   run_session(&input_tensors, &output_tensors, tf_run_opts_data, tf_metadata);
-  score_from_tensor(batch_size, output_tensors, score);
+  score_from_tensor(output_tensors, score);
 
   static std::mutex trace_data_mtx;
   static std::atomic<int> trace_data_index = 0;

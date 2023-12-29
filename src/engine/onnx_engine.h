@@ -66,7 +66,8 @@ class ONNXEngine : public Engine {
   void run_session(Instance *instance, Score *score, Ort::Session *session) noexcept(false);
 
  private:
-  std::shared_mutex engine_mtx_;
+  // Preventing from distructing during inference, should be gurranteed by caller
+  // std::shared_mutex engine_mtx_;
   bool inited_;
 
   Ort::Env            *env_;
