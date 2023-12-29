@@ -15,8 +15,8 @@ import tf2onnx
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('tf_model_dir', None, '')
-flags.DEFINE_string('tf_model_ver', None, '')
+flags.DEFINE_string('model_dir', None, '')
+flags.DEFINE_string('model_ver', None, '')
 flags.DEFINE_string('onnx_file', None, '')
 
 def get_input_output_names(model_conf_file):
