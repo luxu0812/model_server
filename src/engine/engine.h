@@ -181,7 +181,7 @@ class Engine {
           target.name = output.first;
           target.batch_size = batch_size;
         }
-      }(&sample));
+      }, &sample);
     }
     works.wait_for_tasks();
     return samples;
