@@ -87,7 +87,7 @@ class Engine {
       });
 
       try {
-        engine->infer(&sample->instance, &sample->score);
+        engine->infer(&(sample->instance), &(sample->score));
       } catch (const std::exception& e) {
         LOG(ERROR) << e.what();
       } catch (...) {
@@ -96,22 +96,21 @@ class Engine {
     };
 
     try {
-      std::unique_ptr<std::vector<Sample>> samples(
-        random_sample_gen(sample_count, batch_size)
-      );  // NOLINT
+      std::vector<Sample> samples;
+      random_sample_gen(&samples, sample_count, batch_size);
 
-      std::vector<double> cost_ms(samples->size());
-      for (int32_t i = 0; i < samples->size(); ++i) {
-        infer_with_timer(this, &(samples->at(i)), &(cost_ms[i]));
+      std::vector<double> cost_ms(samples.size());
+      for (int32_t i = 0; i < samples.size(); ++i) {
+        infer_with_timer(this, &(samples.at(i)), &(cost_ms[i]));
       }
 
-      BS::thread_pool works(concurrency);
 
+      BS::thread_pool works(concurrency);
       struct ResourceUsed resource_base, resource_curr;
       get_process_resource_used(&resource_base);
       Timer timer;
-      for (int32_t i = 0; i < samples->size(); ++i) {
-        works.push_task(infer_with_timer, this, &(samples->at(i)), &(cost_ms[i]));
+      for (int32_t i = 0; i < samples.size(); ++i) {
+        works.push_task(infer_with_timer, this, &(samples.at(i)), &(cost_ms[i]));
       }
       works.wait_for_tasks();
       double total_cost_sec = timer.f64_elapsed_sec();
@@ -121,7 +120,7 @@ class Engine {
       double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
       double cost_p99 = cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)];
       LOG(INFO) << "Total cost: " << total_cost_sec << " sec, throughput: "
-                << static_cast<double>(samples->size()) / total_cost_sec
+                << static_cast<double>(samples.size()) / total_cost_sec
                 << ", avg cost: " << cost_avg << " ms, p99 cost: " << cost_p99 << " ms"
                 << ", cpu used: " << ((resource_curr.user_time - resource_base.user_time) +
                   (resource_curr.system_time - resource_base.system_time)) / total_cost_sec
@@ -133,16 +132,7 @@ class Engine {
     }
   }
 
-  std::vector<Sample> *random_sample_gen(int32_t sample_count, int32_t batch_size) noexcept(false) {
-    std::vector<Sample> *samples = nullptr;
-    samples = new std::vector<Sample>();
-    ScopeExitTask scope_exit([&](){
-      if (samples != nullptr) {
-        delete samples;
-        samples = nullptr;
-      }
-    });
-
+  void random_sample_gen(std::vector<Sample> *samples, int32_t sample_count, int32_t batch_size) noexcept(false) {
     absl::flat_hash_map<std::string, std::vector<int64_t>> input_shapes;
     get_input_name_and_shape(&input_shapes);
     absl::flat_hash_map<std::string, std::vector<int64_t>> output_shapes;
@@ -153,11 +143,11 @@ class Engine {
     std::mt19937 gen(rd());
     BS::thread_pool works(16);
     for (auto& sample : *samples) {
-      works.push_task([&](Sample *s) {
-        s->instance.features.resize(input_shapes.size());
+      works.push_task([&]() {
+        sample.instance.features.resize(input_shapes.size());
         int32_t i = 0;
         for (const auto& input : input_shapes) {
-          auto& feature = s->instance.features[i++];
+          auto& feature = sample.instance.features[i++];
           feature.batch_size = batch_size;
           int64_t data_size = batch_size;
           for (auto& dim : input.second) {
@@ -174,17 +164,16 @@ class Engine {
           }
         }
 
-        s->score.targets.resize(output_shapes.size());
+        sample.score.targets.resize(output_shapes.size());
         int32_t j = 0;
         for (const auto& output : output_shapes) {
-          auto& target = s->score.targets[j++];
+          auto& target = sample.score.targets[j++];
           target.name = output.first;
           target.batch_size = batch_size;
         }
-      }, &sample);
+      });
     }
     works.wait_for_tasks();
-    return samples;
   }
 
  protected:
