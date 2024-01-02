@@ -171,20 +171,6 @@ cc_library(
 )
 
 cc_library(
-  name = "stresstest",
-  hdrs = [
-    "stresstest/stress_framework.h",
-  ],
-  deps = [
-    "@com_github_google_glog//:glog",
-    "@bs_thread_pool//:bs_thread_pool",
-  ],
-  strip_include_prefix = "stresstest",
-  include_prefix = "model_server/src/stresstest",
-  visibility = ["//visibility:public"],
-)
-
-cc_library(
   name = "embedding",
   hdrs = [
     "embedding/embedding.h",
@@ -252,7 +238,6 @@ cc_binary(
     ":util",
     ":sample",
     ":tf_engine",
-    ":stresstest",
     ":population_data",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",
@@ -273,7 +258,6 @@ cc_binary(
     ":util",
     ":sample",
     ":onnx_engine",
-    ":stresstest",
     ":population_data",
     "@com_github_google_glog//:glog",
     "@com_github_gflags_gflags//:gflags",

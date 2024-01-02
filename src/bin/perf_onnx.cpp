@@ -30,12 +30,7 @@ int main(int argc, char **argv) {
   model_server::init(argc, argv);
   try {
     std::unique_ptr<model_server::Engine> engine(create_engine());
-    std::unique_ptr<std::vector<model_server::Sample>> samples(
-      engine->random_sample_gen(FLAGS_test_data_size, FLAGS_batch_size)
-    );  // NOLINT
-
-    StressFramework stress_framework(engine.get());
-    stress_framework.run(samples.get(), FLAGS_concurrency);
+    engine->perf(FLAGS_concurrency, FLAGS.test_data_size, FLAGS.batch_size);
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
   } catch (...) {
