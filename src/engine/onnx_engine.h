@@ -50,12 +50,12 @@ class ONNXEngine : public Engine {
   // Get input name and shape
   virtual void get_input_name_and_shape(
     absl::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
-  ) override noexcept(false);
+  ) noexcept(false) override;
 
   // Get output name and shape
   virtual void get_output_name_and_shape(
     absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
-  ) override noexcept(false);
+  ) noexcept(false) override;
 
  protected:
   // Load the TensorFlow graph from the .pb file
