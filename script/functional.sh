@@ -46,6 +46,30 @@ function setup_bazel_module() {
     cp -f bazel/bazel_module_linux ./MODULE.bazel
     cp -f bazel/bazel_rc ./.bazelrc
     sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
+    echo "
+cc_library(
+  name = "onnx_dnnl_engine",
+  hdrs = [
+    "engine/onnx_engine.h",
+    "engine/onnx_dnnl_engine.h",
+  ],
+  srcs = [
+    "engine/onnx_engine.cpp",
+    "engine/onnx_dnnl_engine.cpp",
+  ],
+  deps = [
+    ":util",
+    ":sample",
+    ":engine_base",
+    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
+    "@onnxruntime_dnnl//:onnxruntime",
+  ],
+  strip_include_prefix = "engine",
+  include_prefix = "model_server/src/engine",
+  visibility = ["//visibility:public"],
+)
+" >> src/BUILD
   else
     log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
     exit 1

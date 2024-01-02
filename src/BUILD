@@ -188,29 +188,6 @@ cc_library(
 )
 
 cc_library(
-  name = "onnx_dnnl_engine",
-  hdrs = [
-    "engine/onnx_engine.h",
-    "engine/onnx_dnnl_engine.h",
-  ],
-  srcs = [
-    "engine/onnx_engine.cpp",
-    "engine/onnx_dnnl_engine.cpp",
-  ],
-  deps = [
-    ":util",
-    ":sample",
-    ":engine_base",
-    "@com_github_google_glog//:glog",
-    "@com_google_absl//:absl",
-    "@onnxruntime_dnnl//:onnxruntime",
-  ],
-  strip_include_prefix = "engine",
-  include_prefix = "model_server/src/engine",
-  visibility = ["//visibility:public"],
-)
-
-cc_library(
   name = "embedding",
   hdrs = [
     "embedding/embedding.h",
