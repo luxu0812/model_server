@@ -4,6 +4,7 @@
 #define MODEL_SERVER_SRC_ENGINE_ENGINE_H_
 
 #include <stdint.h>
+#include <memory>
 #include <vector>
 #include <string>
 #include <random>
