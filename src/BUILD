@@ -119,6 +119,7 @@ cc_library(
   ],
   deps = [
     ":sample",
+    "@com_google_absl//:absl",
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",

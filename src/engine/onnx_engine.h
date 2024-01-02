@@ -49,12 +49,12 @@ class ONNXEngine : public Engine {
 
   // Get input name and shape
   virtual void get_input_name_and_shape(
-    std::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
+    absl::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
   ) noexcept(false) = 0;
 
   // Get output name and shape
   virtual void get_output_name_and_shape(
-    std::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
+    absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
   ) noexcept(false) = 0;
 
  protected:

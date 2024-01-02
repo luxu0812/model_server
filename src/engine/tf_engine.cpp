@@ -495,7 +495,7 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
 }
 
 void TFEngine::get_input_name_and_shape(
-  std::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
+  absl::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
 ) {
   if (nullptr == input_shapes) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
@@ -509,7 +509,7 @@ void TFEngine::get_input_name_and_shape(
 }
 
 void TFEngine::get_output_name_and_shape(
-  std::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
+  absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
 ) {
   if (nullptr == output_shapes) {
     std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
