@@ -707,6 +707,7 @@ function setup_deps() {
   setup_bshoshany_thread_pool
   setup_jemalloc
   setup_tcmalloc
+  setup_dnnl
   setup_onnx
   setup_onnx_mkl
   setup_onnx_dnnl
