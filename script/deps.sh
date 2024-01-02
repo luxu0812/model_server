@@ -547,7 +547,6 @@ function setup_dnnl() {
     exit 1
   fi
   make install
-  pushd build/Linux/Release && make install && popd
   popd
   popd
 }
