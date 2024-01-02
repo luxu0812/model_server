@@ -535,7 +535,7 @@ function setup_dnnl() {
   fi
 
   pushd ${HOME}/.local/build
-  rm -rf dnnl
+  rm -rf mkl-dnn
   git clone https://github.com/intel/mkl-dnn.git
   pushd mkl-dnn
   # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
@@ -546,7 +546,7 @@ function setup_dnnl() {
     echo "build dnnl failed"
     exit 1
   fi
-  make install
+  cmake --build build --target install
   popd
   popd
 }

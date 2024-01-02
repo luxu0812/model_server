@@ -38,12 +38,12 @@ function setup_bazel() {
 }
 
 function setup_bazel_module() {
-  cp bazel/bazel_module ./MODULE.bazel
-
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
+    cp bazel/bazel_module_macos ./MODULE.bazel
     sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
   elif [[ "${uname}" == "Linux" ]]; then
+    cp bazel/bazel_module_linux ./MODULE.bazel
     cp bazel/bazel_rc ./.bazelrc
     sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
   else
@@ -95,6 +95,11 @@ function setup_bazel_module() {
     cp bazel/nlohmann_json.WORKSPACE ${HOME}/.local/lib/nlohmann_json/WORKSPACE
     cp bazel/nlohmann_json.BUILD ${HOME}/.local/lib/nlohmann_json/BUILD
     cp bazel/nlohmann_json.MODULE ${HOME}/.local/lib/nlohmann_json/MODULE.bazel
+  fi
+  if [[ -d "${HOME}/.local/lib/dnnl" ]]; then
+    cp bazel/dnnl.WORKSPACE ${HOME}/.local/lib/dnnl/WORKSPACE
+    cp bazel/dnnl.BUILD ${HOME}/.local/lib/dnnl/BUILD
+    cp bazel/dnnl.MODULE ${HOME}/.local/lib/dnnl/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/onnxruntime_dnnl" ]]; then
     cp bazel/onnxruntime_dnnl.WORKSPACE ${HOME}/.local/lib/onnxruntime_dnnl/WORKSPACE
