@@ -81,6 +81,13 @@ local_path_override(
     path = "${HOME}/.local/lib/onnxruntime",
 )
 
+#-------------------------- onnxruntime_dnnl --------------------------#
+bazel_dep(name = "onnxruntime_dnnl")
+local_path_override(
+    module_name = "onnxruntime_dnnl",
+    path = "${HOME}/.local/lib/onnxruntime_dnnl",
+)
+
 #------------------------------ tcmalloc ------------------------------#
 # bazel_dep(name = "tcmalloc")
 # local_path_override(
