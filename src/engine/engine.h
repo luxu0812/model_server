@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "absl/container/flat_hash_map.h"
 #include "BShoshany/BS_thread_pool.hpp"
+#include "model_server/src/util/functional/scope_exit_task.h"
 #include "model_server/src/engine/sample.h"
 
 namespace model_server {
@@ -75,17 +76,25 @@ class Engine {
   ) noexcept(false) = 0;  // NOLINT
 
   std::vector<Sample> *random_sample_gen(int32_t sample_count, int32_t batch_size) noexcept(false) {
-    std::vector<Sample> samples;
+    std::vector<Sample> *samples = nullptr;
+    samples = new std::vector<model_server::Sample>();
+    ScopeExitTask scope_exit([&](){
+      if (samples != nullptr) {
+        delete samples;
+        samples = nullptr;
+      }
+    });
+
     absl::flat_hash_map<std::string, std::vector<int64_t>> input_shapes;
     get_input_name_and_shape(&input_shapes);
     absl::flat_hash_map<std::string, std::vector<int64_t>> output_shapes;
     get_output_name_and_shape(&output_shapes);
 
-    samples.resize(sample_count);
+    samples->resize(sample_count);
     std::random_device rd;
     std::mt19937 gen(rd());
     BS::thread_pool works(16);
-    for (auto& sample : samples) {
+    for (auto& sample : *samples) {
       works.push_task([&](){
         sample.instance.features.resize(input_shapes.size());
         int32_t i = 0;
@@ -117,6 +126,7 @@ class Engine {
       });
     }
     works.wait_for_tasks();
+    return samples;
   }
 
  protected:
