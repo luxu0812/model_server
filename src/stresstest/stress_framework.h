@@ -25,11 +25,6 @@ static void infer(model_server::Engine *engine, model_server::Sample *sample, do
   });
 
   try {
-    // log sample->score.targets' name and batch_size
-    LOG(INFO) << "targets: " << sample->score.targets.size();
-    for (auto& target : sample->score.targets) {
-      LOG(INFO) << "  name: " << target.name << ", batch_size: " << target.batch_size;
-    }
     engine->infer(&sample->instance, &sample->score);
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
