@@ -25,7 +25,7 @@ void ONNXDNNLEngine::set_session_options() {
   };
 
   // Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Dnnl(session_opts_, enable_cpu_mem_arena));
-  Ort::ThrowOnError(session_opts_->AppendExecutionProvider_Dnnl(dnnl_options));
+  session_opts_->AppendExecutionProvider_Dnnl(dnnl_options);
   session_opts_->SetExecutionMode(ExecutionMode::ORT_PARALLEL);
 
   LOG(INFO) << "[" << conf_.brief() << "] Session options set";
