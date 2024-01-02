@@ -537,7 +537,7 @@ function setup_dnnl() {
   pushd ${HOME}/.local/build
   rm -rf dnnl
   git clone https://github.com/intel/mkl-dnn.git
-  pushd dnnl
+  pushd mkl-dnn
   # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
   git checkout tags/v3.3.3 -b v3.3.3
   cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/dnnl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-fPIC" -S . -B build
