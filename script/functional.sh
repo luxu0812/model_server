@@ -40,11 +40,11 @@ function setup_bazel() {
 function setup_bazel_module() {
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
-    cp bazel/bazel_module_macos ./MODULE.bazel
+    cp -f bazel/bazel_module_macos ./MODULE.bazel
     sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
   elif [[ "${uname}" == "Linux" ]]; then
-    cp bazel/bazel_module_linux ./MODULE.bazel
-    cp bazel/bazel_rc ./.bazelrc
+    cp -f bazel/bazel_module_linux ./MODULE.bazel
+    cp -f bazel/bazel_rc ./.bazelrc
     sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
   else
     log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
@@ -52,74 +52,74 @@ function setup_bazel_module() {
   fi
 
   if [[ -d "${HOME}/.local/lib/absl" ]]; then
-    cp bazel/absl.WORKSPACE ${HOME}/.local/lib/absl/WORKSPACE
-    cp bazel/absl.BUILD ${HOME}/.local/lib/absl/BUILD
-    cp bazel/absl.MODULE ${HOME}/.local/lib/absl/MODULE.bazel
+    cp -f bazel/absl.WORKSPACE ${HOME}/.local/lib/absl/WORKSPACE
+    cp -f bazel/absl.BUILD ${HOME}/.local/lib/absl/BUILD
+    cp -f bazel/absl.MODULE ${HOME}/.local/lib/absl/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/benchmark" ]]; then
-    cp bazel/benchmark.WORKSPACE ${HOME}/.local/lib/benchmark/WORKSPACE
-    cp bazel/benchmark.BUILD ${HOME}/.local/lib/benchmark/BUILD
-    cp bazel/benchmark.MODULE ${HOME}/.local/lib/benchmark/MODULE.bazel
+    cp -f bazel/benchmark.WORKSPACE ${HOME}/.local/lib/benchmark/WORKSPACE
+    cp -f bazel/benchmark.BUILD ${HOME}/.local/lib/benchmark/BUILD
+    cp -f bazel/benchmark.MODULE ${HOME}/.local/lib/benchmark/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/bs_thread_pool" ]]; then
-    cp bazel/bs_thread_pool.WORKSPACE ${HOME}/.local/lib/bs_thread_pool/WORKSPACE
-    cp bazel/bs_thread_pool.BUILD ${HOME}/.local/lib/bs_thread_pool/BUILD
-    cp bazel/bs_thread_pool.MODULE ${HOME}/.local/lib/bs_thread_pool/MODULE.bazel
+    cp -f bazel/bs_thread_pool.WORKSPACE ${HOME}/.local/lib/bs_thread_pool/WORKSPACE
+    cp -f bazel/bs_thread_pool.BUILD ${HOME}/.local/lib/bs_thread_pool/BUILD
+    cp -f bazel/bs_thread_pool.MODULE ${HOME}/.local/lib/bs_thread_pool/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/gflags" ]]; then
-    cp bazel/gflags.WORKSPACE ${HOME}/.local/lib/gflags/WORKSPACE
-    cp bazel/gflags.BUILD ${HOME}/.local/lib/gflags/BUILD
-    cp bazel/gflags.MODULE ${HOME}/.local/lib/gflags/MODULE.bazel
+    cp -f bazel/gflags.WORKSPACE ${HOME}/.local/lib/gflags/WORKSPACE
+    cp -f bazel/gflags.BUILD ${HOME}/.local/lib/gflags/BUILD
+    cp -f bazel/gflags.MODULE ${HOME}/.local/lib/gflags/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/glog" ]]; then
-    cp bazel/glog.WORKSPACE ${HOME}/.local/lib/glog/WORKSPACE
-    cp bazel/glog.BUILD ${HOME}/.local/lib/glog/BUILD
-    cp bazel/glog.MODULE ${HOME}/.local/lib/glog/MODULE.bazel
+    cp -f bazel/glog.WORKSPACE ${HOME}/.local/lib/glog/WORKSPACE
+    cp -f bazel/glog.BUILD ${HOME}/.local/lib/glog/BUILD
+    cp -f bazel/glog.MODULE ${HOME}/.local/lib/glog/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/googletest" ]]; then
-    cp bazel/googletest.WORKSPACE ${HOME}/.local/lib/googletest/WORKSPACE
-    cp bazel/googletest.BUILD ${HOME}/.local/lib/googletest/BUILD
-    cp bazel/googletest.MODULE ${HOME}/.local/lib/googletest/MODULE.bazel
+    cp -f bazel/googletest.WORKSPACE ${HOME}/.local/lib/googletest/WORKSPACE
+    cp -f bazel/googletest.BUILD ${HOME}/.local/lib/googletest/BUILD
+    cp -f bazel/googletest.MODULE ${HOME}/.local/lib/googletest/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/jemalloc" ]]; then
-    cp bazel/jemalloc.WORKSPACE ${HOME}/.local/lib/jemalloc/WORKSPACE
-    cp bazel/jemalloc.BUILD ${HOME}/.local/lib/jemalloc/BUILD
-    cp bazel/jemalloc.MODULE ${HOME}/.local/lib/jemalloc/MODULE.bazel
+    cp -f bazel/jemalloc.WORKSPACE ${HOME}/.local/lib/jemalloc/WORKSPACE
+    cp -f bazel/jemalloc.BUILD ${HOME}/.local/lib/jemalloc/BUILD
+    cp -f bazel/jemalloc.MODULE ${HOME}/.local/lib/jemalloc/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/libtensorflow" ]]; then
-    cp bazel/libtensorflow.WORKSPACE ${HOME}/.local/lib/libtensorflow/WORKSPACE
-    cp bazel/libtensorflow.BUILD ${HOME}/.local/lib/libtensorflow/BUILD
-    cp bazel/libtensorflow.MODULE ${HOME}/.local/lib/libtensorflow/MODULE.bazel
+    cp -f bazel/libtensorflow.WORKSPACE ${HOME}/.local/lib/libtensorflow/WORKSPACE
+    cp -f bazel/libtensorflow.BUILD ${HOME}/.local/lib/libtensorflow/BUILD
+    cp -f bazel/libtensorflow.MODULE ${HOME}/.local/lib/libtensorflow/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/nlohmann_json" ]]; then
-    cp bazel/nlohmann_json.WORKSPACE ${HOME}/.local/lib/nlohmann_json/WORKSPACE
-    cp bazel/nlohmann_json.BUILD ${HOME}/.local/lib/nlohmann_json/BUILD
-    cp bazel/nlohmann_json.MODULE ${HOME}/.local/lib/nlohmann_json/MODULE.bazel
+    cp -f bazel/nlohmann_json.WORKSPACE ${HOME}/.local/lib/nlohmann_json/WORKSPACE
+    cp -f bazel/nlohmann_json.BUILD ${HOME}/.local/lib/nlohmann_json/BUILD
+    cp -f bazel/nlohmann_json.MODULE ${HOME}/.local/lib/nlohmann_json/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/dnnl" ]]; then
-    cp bazel/dnnl.WORKSPACE ${HOME}/.local/lib/dnnl/WORKSPACE
-    cp bazel/dnnl.BUILD ${HOME}/.local/lib/dnnl/BUILD
-    cp bazel/dnnl.MODULE ${HOME}/.local/lib/dnnl/MODULE.bazel
+    cp -f bazel/dnnl.WORKSPACE ${HOME}/.local/lib/dnnl/WORKSPACE
+    cp -f bazel/dnnl.BUILD ${HOME}/.local/lib/dnnl/BUILD
+    cp -f bazel/dnnl.MODULE ${HOME}/.local/lib/dnnl/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/onnxruntime_dnnl" ]]; then
-    cp bazel/onnxruntime_dnnl.WORKSPACE ${HOME}/.local/lib/onnxruntime_dnnl/WORKSPACE
-    cp bazel/onnxruntime_dnnl.BUILD ${HOME}/.local/lib/onnxruntime_dnnl/BUILD
-    cp bazel/onnxruntime_dnnl.MODULE ${HOME}/.local/lib/onnxruntime_dnnl/MODULE.bazel
+    cp -f bazel/onnxruntime_dnnl.WORKSPACE ${HOME}/.local/lib/onnxruntime_dnnl/WORKSPACE
+    cp -f bazel/onnxruntime_dnnl.BUILD ${HOME}/.local/lib/onnxruntime_dnnl/BUILD
+    cp -f bazel/onnxruntime_dnnl.MODULE ${HOME}/.local/lib/onnxruntime_dnnl/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/onnxruntime" ]]; then
-    cp bazel/onnxruntime.WORKSPACE ${HOME}/.local/lib/onnxruntime/WORKSPACE
-    cp bazel/onnxruntime.BUILD ${HOME}/.local/lib/onnxruntime/BUILD
-    cp bazel/onnxruntime.MODULE ${HOME}/.local/lib/onnxruntime/MODULE.bazel
+    cp -f bazel/onnxruntime.WORKSPACE ${HOME}/.local/lib/onnxruntime/WORKSPACE
+    cp -f bazel/onnxruntime.BUILD ${HOME}/.local/lib/onnxruntime/BUILD
+    cp -f bazel/onnxruntime.MODULE ${HOME}/.local/lib/onnxruntime/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/protobuf" ]]; then
-    cp bazel/protobuf.WORKSPACE ${HOME}/.local/lib/protobuf/WORKSPACE
-    cp bazel/protobuf.BUILD ${HOME}/.local/lib/protobuf/BUILD
-    cp bazel/protobuf.MODULE ${HOME}/.local/lib/protobuf/MODULE.bazel
+    cp -f bazel/protobuf.WORKSPACE ${HOME}/.local/lib/protobuf/WORKSPACE
+    cp -f bazel/protobuf.BUILD ${HOME}/.local/lib/protobuf/BUILD
+    cp -f bazel/protobuf.MODULE ${HOME}/.local/lib/protobuf/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/zlib" ]]; then
-    cp bazel/zlib.WORKSPACE ${HOME}/.local/lib/zlib/WORKSPACE
-    cp bazel/zlib.BUILD ${HOME}/.local/lib/zlib/BUILD
-    cp bazel/zlib.MODULE ${HOME}/.local/lib/zlib/MODULE.bazel
+    cp -f bazel/zlib.WORKSPACE ${HOME}/.local/lib/zlib/WORKSPACE
+    cp -f bazel/zlib.BUILD ${HOME}/.local/lib/zlib/BUILD
+    cp -f bazel/zlib.MODULE ${HOME}/.local/lib/zlib/MODULE.bazel
   fi
 }
 
