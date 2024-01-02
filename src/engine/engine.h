@@ -153,7 +153,7 @@ class Engine {
     std::mt19937 gen(rd());
     BS::thread_pool works(16);
     for (auto& sample : *samples) {
-      works.push_task([](Sample *sample){
+      works.push_task([](Sample *sample) {
         sample->instance.features.resize(input_shapes.size());
         int32_t i = 0;
         for (const auto& input : input_shapes) {
