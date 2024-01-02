@@ -138,9 +138,9 @@ void TFEngine::score_from_tensor(
       // throw std::runtime_error(err_msg);
     }
     // assert(it->second.data_size == sizeof(*target.data.data())
-    const size_t data_size = it->second.instance_size * target.batch_size / it->second.data_size;
+    const size_t data_size = it->second.instance_size * target.batch_size;
     char *data = static_cast<char*>(TF_TensorData(output_tensors[it->second.index]));
-    target.data.resize(data_size);
+    target.data.resize(data_size / it->second.data_size);
     memcpy(target.data.data(), data, data_size);
   }
 }
