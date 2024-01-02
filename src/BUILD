@@ -120,6 +120,7 @@ cc_library(
   deps = [
     ":sample",
     "@com_google_absl//:absl",
+    "@bs_thread_pool//:bs_thread_pool",
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
@@ -197,18 +198,15 @@ cc_library(
   name = "population_data",
   hdrs = [
     "population/model_spec.h",
-    "population/sample_gen.h"
   ],
   srcs = [
     "population/model_spec.cpp",
-    "population/sample_gen.cpp"
   ],
   deps = [
     ":util",
     ":sample",
     "@com_google_absl//:absl",
     "@nlohmann_json//:nlohmann_json",
-    "@bs_thread_pool//:bs_thread_pool",
   ],
   strip_include_prefix = "population",
   include_prefix = "model_server/src/population",

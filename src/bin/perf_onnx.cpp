@@ -26,13 +26,14 @@ DEFINE_int32(inter_op_parallelism_threads, 1, "Inter op parallelism threads");
 DEFINE_int32(intra_op_parallelism_threads, 1, "Intra op parallelism threads");
 
 model_server::Engine *create_engine();
-std::vector<model_server::Sample> *create_samples();
 
 int main(int argc, char **argv) {
   model_server::init(argc, argv);
   try {
     std::unique_ptr<model_server::Engine> engine(create_engine());
-    std::unique_ptr<std::vector<model_server::Sample>> samples(create_samples());
+    std::unique_ptr<std::vector<model_server::Sample>> samples(
+      engine->random_sample_gen(FLAGS_test_data_size, FLAGS_batch_size)
+    );  // NOLINT
 
     StressFramework stress_framework(engine.get());
     stress_framework.run(samples.get(), FLAGS_concurrency);
@@ -59,15 +60,4 @@ model_server::Engine *create_engine() {
 
   engine_conf.graph_file_loc = "data/models/model_2/1/graph.onnx";
   return new model_server::ONNXEngine(engine_conf);
-}
-
-std::vector<model_server::Sample> *create_samples() {
-  std::string meta_file = "data/models/model_2/model_conf.json";
-  model_server::ModelMeta model_meta;
-  model_meta.load(meta_file);
-
-  std::vector<model_server::Sample> *samples = new std::vector<model_server::Sample>();
-  model_server::random_sample_gen(model_meta, samples, FLAGS_test_data_size, FLAGS_batch_size);
-
-  return samples;
 }
