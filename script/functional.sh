@@ -46,7 +46,7 @@ function setup_bazel_module() {
     cp -f bazel/bazel_module_linux ./MODULE.bazel
     cp -f bazel/bazel_rc ./.bazelrc
     sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
-    echo "
+    echo '
 cc_library(
   name = "onnx_dnnl_engine",
   hdrs = [
@@ -69,7 +69,7 @@ cc_library(
   include_prefix = "model_server/src/engine",
   visibility = ["//visibility:public"],
 )
-" >> src/BUILD
+' >> src/BUILD
   else
     log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
     exit 1
