@@ -9,6 +9,7 @@
 #include <string>
 #include <random>
 #include <algorithm>
+#include "glog/logging.h"
 #include "absl/container/flat_hash_map.h"
 #include "BShoshany/BS_thread_pool.hpp"
 #include "model_server/src/util/functional/scope_exit_task.h"
