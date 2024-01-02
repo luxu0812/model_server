@@ -81,8 +81,8 @@ class Engine {
 
   void perf(int32_t concurrency, int32_t sample_count, int32_t batch_size) noexcept(false) {
     auto infer_with_timer = [](Engine *engine, Sample *sample, double *cost_ms) {
-      model_server::Timer timer;
-      model_server::ScopeExitTask scope_exit_task([&]() {
+      Timer timer;
+      ScopeExitTask scope_exit_task([&]() {
         *cost_ms = timer.f64_elapsed_ms();
       });
 
@@ -96,7 +96,7 @@ class Engine {
     };
 
     try {
-      std::unique_ptr<std::vector<model_server::Sample>> samples(
+      std::unique_ptr<std::vector<Sample>> samples(
         random_sample_gen(sample_count, batch_size)
       );  // NOLINT
 
@@ -109,7 +109,7 @@ class Engine {
 
       struct ResourceUsed resource_base, resource_curr;
       get_process_resource_used(&resource_base);
-      model_server::Timer timer;
+      Timer timer;
       for (int32_t i = 0; i < samples->size(); ++i) {
         works.push_task(infer_with_timer, this, &(samples->at(i)), &(cost_ms[i]));
       }
@@ -135,7 +135,7 @@ class Engine {
 
   std::vector<Sample> *random_sample_gen(int32_t sample_count, int32_t batch_size) noexcept(false) {
     std::vector<Sample> *samples = nullptr;
-    samples = new std::vector<model_server::Sample>();
+    samples = new std::vector<Sample>();
     ScopeExitTask scope_exit([&](){
       if (samples != nullptr) {
         delete samples;
@@ -153,11 +153,11 @@ class Engine {
     std::mt19937 gen(rd());
     BS::thread_pool works(16);
     for (auto& sample : *samples) {
-      works.push_task([&](){
-        sample.instance.features.resize(input_shapes.size());
+      works.push_task([](Sample *sample){
+        sample->instance.features.resize(input_shapes.size());
         int32_t i = 0;
         for (const auto& input : input_shapes) {
-          auto& feature = sample.instance.features[i++];
+          auto& feature = sample->instance.features[i++];
           feature.batch_size = batch_size;
           int64_t data_size = batch_size;
           for (auto& dim : input.second) {
@@ -174,14 +174,14 @@ class Engine {
           }
         }
 
-        sample.score.targets.resize(output_shapes.size());
+        sample->score.targets.resize(output_shapes.size());
         int32_t j = 0;
         for (const auto& output : output_shapes) {
-          auto& target = sample.score.targets[j++];
+          auto& target = sample->score.targets[j++];
           target.name = output.first;
           target.batch_size = batch_size;
         }
-      });
+      }(&sample));
     }
     works.wait_for_tasks();
     return samples;
