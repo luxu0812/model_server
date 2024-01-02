@@ -9,7 +9,6 @@
 #include <string>
 #include <random>
 #include <algorithm>
-#include "glog/logging.h"
 #include "absl/container/flat_hash_map.h"
 #include "BShoshany/BS_thread_pool.hpp"
 #include "model_server/src/util/functional/scope_exit_task.h"
@@ -85,51 +84,38 @@ class Engine {
       ScopeExitTask scope_exit_task([&]() {
         *cost_ms = timer.f64_elapsed_ms();
       });
-
-      try {
-        engine->infer(&(sample->instance), &(sample->score));
-      } catch (const std::exception& e) {
-        LOG(ERROR) << e.what();
-      } catch (...) {
-        LOG(ERROR) << "Unknown exception";
-      }
+      engine->infer(&(sample->instance), &(sample->score));
     };
 
-    try {
-      std::vector<Sample> samples;
-      random_sample_gen(&samples, sample_count, batch_size);
+    std::vector<Sample> samples;
+    random_sample_gen(&samples, sample_count, batch_size);
 
-      std::vector<double> cost_ms(samples.size());
-      for (int32_t i = 0; i < samples.size(); ++i) {
-        infer_with_timer(this, &(samples.at(i)), &(cost_ms[i]));
-      }
-
-
-      BS::thread_pool works(concurrency);
-      struct ResourceUsed resource_base, resource_curr;
-      get_process_resource_used(&resource_base);
-      Timer timer;
-      for (int32_t i = 0; i < samples.size(); ++i) {
-        works.push_task(infer_with_timer, this, &(samples.at(i)), &(cost_ms[i]));
-      }
-      works.wait_for_tasks();
-      double total_cost_sec = timer.f64_elapsed_sec();
-      get_process_resource_used(&resource_curr);
-
-      std::sort(cost_ms.begin(), cost_ms.end());
-      double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
-      double cost_p99 = cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)];
-      LOG(INFO) << "Total cost: " << total_cost_sec << " sec, throughput: "
-                << static_cast<double>(samples.size()) / total_cost_sec
-                << ", avg cost: " << cost_avg << " ms, p99 cost: " << cost_p99 << " ms"
-                << ", cpu used: " << ((resource_curr.user_time - resource_base.user_time) +
-                  (resource_curr.system_time - resource_base.system_time)) / total_cost_sec
-                << " cc, mem used: " << resource_curr.resident_mb << " MB";
-    } catch (const std::exception& e) {
-      LOG(ERROR) << e.what();
-    } catch (...) {
-      LOG(ERROR) << "Unknown exception";
+    std::vector<double> cost_ms(samples.size());
+    for (int32_t i = 0; i < samples.size(); ++i) {
+      infer_with_timer(this, &(samples.at(i)), &(cost_ms[i]));
     }
+
+
+    BS::thread_pool works(concurrency);
+    struct ResourceUsed resource_base, resource_curr;
+    get_process_resource_used(&resource_base);
+    Timer timer;
+    for (int32_t i = 0; i < samples.size(); ++i) {
+      works.push_task(infer_with_timer, this, &(samples.at(i)), &(cost_ms[i]));
+    }
+    works.wait_for_tasks();
+    double total_cost_sec = timer.f64_elapsed_sec();
+    get_process_resource_used(&resource_curr);
+
+    std::sort(cost_ms.begin(), cost_ms.end());
+    double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
+    double cost_p99 = cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)];
+    // LOG(INFO) << "Total cost: " << total_cost_sec << " sec, throughput: "
+    //           << static_cast<double>(samples.size()) / total_cost_sec
+    //           << ", avg cost: " << cost_avg << " ms, p99 cost: " << cost_p99 << " ms"
+    //           << ", cpu used: " << ((resource_curr.user_time - resource_base.user_time) +
+    //             (resource_curr.system_time - resource_base.system_time)) / total_cost_sec
+    //           << " cc, mem used: " << resource_curr.resident_mb << " MB";
   }
 
   void random_sample_gen(std::vector<Sample> *samples, int32_t sample_count, int32_t batch_size) noexcept(false) {
