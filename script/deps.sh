@@ -524,6 +524,35 @@ function setup_onnx_mkl() {
   popd
 }
 
+function setup_dnnl() {
+  if ! [[ ${SETUP_ONNX_DNNL} = true || ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
+    echo "setup dnnl skipped, use SETUP_ONNX_DNNL=true to enable"
+    return
+  fi
+  if [[ -d ${HOME}/.local/lib/dnnl ]]; then
+    echo "dnnl already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  rm -rf dnnl
+  git clone https://github.com/intel/mkl-dnn.git
+  pushd dnnl
+  # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+  git checkout tags/v3.3.3 -b v3.3.3
+  cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/dnnl -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-fPIC" -S . -B build
+  cmake --build build -j10
+  if [[ $? -ne 0 ]]; then
+    echo "build dnnl failed"
+    exit 1
+  fi
+  make install
+  pushd build/Linux/Release && make install && popd
+  popd
+  popd
+}
+}
+
 function setup_onnx_dnnl() {
   if ! [[ ${SETUP_ONNX_DNNL} = true || ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
     echo "setup onnxruntime_dnnl skipped, use SETUP_ONNX_DNNL=true to enable"
