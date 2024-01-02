@@ -129,12 +129,16 @@ void TFEngine::score_from_tensor(
     );  // NOLINT
     throw std::runtime_error(err_msg);
   }
-  for (const auto& output_meta : tf_model_meta_.output_metas) {
-    auto& target = score->targets[output_meta.second.index];
-    const size_t data_size = output_meta.second.instance_size * target.batch_size;
-    char *data = static_cast<char*>(TF_TensorData(output_tensors[output_meta.second.index]));
-
-    target.name = output_meta.first;
+  for (auto& target : score->targets) {
+    auto it = tf_model_meta_.output_metas.find(target.name);
+    if (tf_model_meta_.output_metas.end() == it) {
+      continue;
+      // const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      //   + conf_.brief() + "] " + "Output not found: " + target.name;
+      // throw std::runtime_error(err_msg);
+    }
+    const size_t data_size = it->second.instance_size * target.batch_size;
+    char *data = static_cast<char*>(TF_TensorData(output_tensors[it->second.index]));
     target.data.resize(data_size);
     memcpy(target.data.data(), data, data_size);
   }

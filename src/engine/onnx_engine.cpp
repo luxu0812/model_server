@@ -100,17 +100,23 @@ void ONNXEngine::run_session(Instance *instance, Score *score, Ort::Session *ses
       + conf_.brief() + "] " + "Output size mismatch";
     throw std::runtime_error(err_msg);
   }
-  int i = 0;
-  for (const auto& [name, meta] : onnx_model_meta_.output_metas) {
-    std::vector<int64_t> tensor_shape = meta.shape;
-    tensor_shape[0] = score->targets[i].batch_size;
-    score->targets[i].name = name;
-    score->targets[i].data.resize(meta.instance_size * score->targets[i].batch_size);
+  for (auto& target : score->targets) {
+    const std::string& target_name = target.name + ":0";
+    const auto it = onnx_model_meta_.output_metas.find(target_name);
+    if (onnx_model_meta_.output_metas.end() == it) {
+      // std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      //   + conf_.brief() + "] " + "Output name not found: " + target_name;
+      // throw std::runtime_error(err_msg);
+      continue;
+    }
+
+    std::vector<int64_t> tensor_shape = it->second.shape;
+    tensor_shape[0] = target.batch_size;
+    target.data.resize(it->second.instance_size * target.batch_size);
     output_tensors.push_back(Ort::Value::CreateTensor<float>(
-      info, score->targets[i].data.data(), score->targets[i].data.size(), tensor_shape.data(), tensor_shape.size()
+      info, target.data.data(), target.data.size(), tensor_shape.data(), tensor_shape.size()
     ));  // NOLINT
-    output_names.push_back(name.c_str());
-    ++i;
+    output_names.push_back(it->second.name.c_str());
   }
 
   // Run inference using the ONNX runtime
