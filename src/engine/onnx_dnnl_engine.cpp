@@ -19,7 +19,7 @@ std::string ONNXDNNLEngine::brand() noexcept {
 void ONNXDNNLEngine::set_session_options() {
   ONNXEngine::set_session_options();
 
-  Ort::OrtDnnlProviderOptions dnnl_options = {
+  OrtDnnlProviderOptions dnnl_options = {
     .use_arena = true,
     .threadpool_args = nullptr
   };
