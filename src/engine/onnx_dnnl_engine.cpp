@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "glog/logging.h"
-#include "onnxruntime_c_api.h"
+#include "onnxruntime/onnxruntime_c_api.h"
 #include "model_server/src/engine/onnx_dnnl_engine.h"
 
 namespace model_server {
