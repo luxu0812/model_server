@@ -494,6 +494,34 @@ void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, T
   }
 }
 
+void TFEngine::get_input_name_and_shape(
+  std::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
+) {
+  if (nullptr == input_shapes) {
+    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Input shapes is nullptr";
+    throw std::runtime_error(err_msg);
+  }
+
+  for (const auto& tensor_info : tf_model_meta_.input_metas) {
+    (*input_shapes)[tensor_info.first] = tensor_info.second.shape;
+  }
+}
+
+void TFEngine::get_output_name_and_shape(
+  std::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
+) {
+  if (nullptr == output_shapes) {
+    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Output shapes is nullptr";
+    throw std::runtime_error(err_msg);
+  }
+
+  for (const auto& tensor_info : tf_model_meta_.output_metas) {
+    (*output_shapes)[tensor_info.first] = tensor_info.second.shape;
+  }
+}
+
 std::string TFTensorMeta::to_string() {
   std::string message;
   absl::StrAppendFormat(&message,

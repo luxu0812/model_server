@@ -54,10 +54,20 @@ class TFEngine : public Engine {
   std::string brand() noexcept override;
 
   // Perform inference using the TF runtime
-  void infer(Instance *instance, Score *score) noexcept(false) override;
+  virtual void infer(Instance *instance, Score *score) noexcept(false) override;
 
   // Perform inference with trace using the TF runtime
-  void trace(Instance *instance, Score *score) noexcept(false) override;
+  virtual void trace(Instance *instance, Score *score) noexcept(false) override;
+
+  // Get input name and shape
+  virtual void get_input_name_and_shape(
+    std::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
+  ) override;
+
+  // Get output name and shape
+  virtual void get_output_name_and_shape(
+    std::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
+  ) override;
 
  protected:
   // Load the TensorFlow graph from the .pb file
