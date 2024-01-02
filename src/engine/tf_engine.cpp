@@ -137,7 +137,8 @@ void TFEngine::score_from_tensor(
       //   + conf_.brief() + "] " + "Output not found: " + target.name;
       // throw std::runtime_error(err_msg);
     }
-    const size_t data_size = it->second.instance_size * target.batch_size;
+    // assert(it->second.data_size == sizeof(*target.data.data())
+    const size_t data_size = it->second.instance_size * target.batch_size / it->second.data_size;
     char *data = static_cast<char*>(TF_TensorData(output_tensors[it->second.index]));
     target.data.resize(data_size);
     memcpy(target.data.data(), data, data_size);
