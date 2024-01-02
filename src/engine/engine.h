@@ -15,6 +15,7 @@
 #include "model_server/src/util/functional/timer.h"
 #include "model_server/src/util/os/resource_used.h"
 #include "model_server/src/engine/sample.h"
+#include "src/proto/perf.pb.h"
 
 namespace model_server {
 
@@ -78,7 +79,7 @@ class Engine {
     absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
   ) noexcept(false) = 0;  // NOLINT
 
-  void perf(int32_t concurrency, int32_t sample_count, int32_t batch_size) noexcept(false) {
+  void perf(int32_t concurrency, int32_t sample_count, int32_t batch_size, PerfIndex *perf_index) noexcept(false) {
     auto infer_with_timer = [](Engine *engine, Sample *sample, double *cost_ms) {
       Timer timer;
       ScopeExitTask scope_exit_task([&]() {
@@ -108,14 +109,14 @@ class Engine {
     get_process_resource_used(&resource_curr);
 
     std::sort(cost_ms.begin(), cost_ms.end());
-    double cost_avg = std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size();
-    double cost_p99 = cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)];
-    // LOG(INFO) << "Total cost: " << total_cost_sec << " sec, throughput: "
-    //           << static_cast<double>(samples.size()) / total_cost_sec
-    //           << ", avg cost: " << cost_avg << " ms, p99 cost: " << cost_p99 << " ms"
-    //           << ", cpu used: " << ((resource_curr.user_time - resource_base.user_time) +
-    //             (resource_curr.system_time - resource_base.system_time)) / total_cost_sec
-    //           << " cc, mem used: " << resource_curr.resident_mb << " MB";
+    perf_index->set_cpu_usage(
+      ((resource_curr.user_time - resource_base.user_time) +
+      (resource_curr.system_time - resource_base.system_time)) / total_cost_sec
+    );  // NOLINT
+    perf_index->set_mem_usage(resource_curr.resident_mb);
+    perf_index->set_cost_avg_ms(std::accumulate(cost_ms.begin(), cost_ms.end(), 0.0) / cost_ms.size());
+    perf_index->set_cost_p99_ms(cost_ms[static_cast<int32_t>(cost_ms.size() * 0.99)]);
+    perf_index->set_throughput(static_cast<double>(samples.size()) / total_cost_sec);
   }
 
   void random_sample_gen(std::vector<Sample> *samples, int32_t sample_count, int32_t batch_size) noexcept(false) {

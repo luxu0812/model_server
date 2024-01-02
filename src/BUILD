@@ -8,6 +8,23 @@ config_setting(
   values = {"define": "malloc=tcmalloc"},
 )
 
+proto_lang_toolchain(
+  name = "cc_toolchain", command_line = "--cpp_out=shared,immutable:$(OUT)",
+  # proto_compiler = "@protobuf//:protoc",
+  runtime = "@protobuf//:protobuf",
+)
+
+proto_library(
+  name = "perf",
+  srcs = ["proto/perf.proto"],
+)
+
+cc_proto_library(
+  name = "perf_cc",
+  deps = ["perf"],
+  visibility = ["//visibility:public"],
+)
+
 # cc_library(
 #   name = "util_os",
 #   hdrs = select({
@@ -90,7 +107,7 @@ cc_library(
   ],
   deps = [
     "@com_github_google_glog//:glog",
-    "@com_google_protobuf//:protobuf",
+    "@protobuf//:protobuf",
     "@com_google_absl//:absl",
 
     ":util_os",
@@ -118,6 +135,7 @@ cc_library(
     "engine/engine.h",
   ],
   deps = [
+    ":perf_cc",
     ":sample",
     "@com_google_absl//:absl",
     "@bs_thread_pool//:bs_thread_pool",
@@ -141,7 +159,7 @@ cc_library(
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
-    "@com_google_protobuf//:protobuf",
+    "@protobuf//:protobuf",
     "@tensorflow//:tensorflow",
   ],
   strip_include_prefix = "engine",

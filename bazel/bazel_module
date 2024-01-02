@@ -47,9 +47,9 @@ local_path_override(
 )
 
 #------------------------------ protobuf ------------------------------#
-bazel_dep(name = "com_google_protobuf")
+bazel_dep(name = "protobuf")
 local_path_override(
-    module_name = "com_google_protobuf",
+    module_name = "protobuf",
     path = "${HOME}/.local/lib/protobuf",
 )
 
