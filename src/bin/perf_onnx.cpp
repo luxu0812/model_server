@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   model_server::init(argc, argv);
   try {
     std::unique_ptr<model_server::Engine> engine(create_engine());
-    engine->perf(FLAGS_concurrency, FLAGS.test_data_size, FLAGS.batch_size);
+    engine->perf(FLAGS_concurrency, FLAGS_test_data_size, FLAGS_batch_size);
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
   } catch (...) {
