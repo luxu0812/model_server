@@ -153,11 +153,11 @@ class Engine {
     std::mt19937 gen(rd());
     BS::thread_pool works(16);
     for (auto& sample : *samples) {
-      works.push_task([](Sample *sample) {
-        sample->instance.features.resize(input_shapes.size());
+      works.push_task([&](Sample *s) {
+        s->instance.features.resize(input_shapes.size());
         int32_t i = 0;
         for (const auto& input : input_shapes) {
-          auto& feature = sample->instance.features[i++];
+          auto& feature = s->instance.features[i++];
           feature.batch_size = batch_size;
           int64_t data_size = batch_size;
           for (auto& dim : input.second) {
@@ -174,10 +174,10 @@ class Engine {
           }
         }
 
-        sample->score.targets.resize(output_shapes.size());
+        s->score.targets.resize(output_shapes.size());
         int32_t j = 0;
         for (const auto& output : output_shapes) {
-          auto& target = sample->score.targets[j++];
+          auto& target = s->score.targets[j++];
           target.name = output.first;
           target.batch_size = batch_size;
         }
