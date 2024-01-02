@@ -551,7 +551,6 @@ function setup_dnnl() {
   popd
   popd
 }
-}
 
 function setup_onnx_dnnl() {
   if ! [[ ${SETUP_ONNX_DNNL} = true || ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
