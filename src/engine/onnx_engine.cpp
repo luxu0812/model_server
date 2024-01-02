@@ -173,7 +173,7 @@ void ONNXEngine::set_session_options() {
   session_opts_->SetInterOpNumThreads(conf_.inter_op_parallelism_threads);
   // session_opts_->DisablePerSessionThreads();
   session_opts_->EnableCpuMemArena();
-  session_opts_->EnableOrtCustomOps();
+  // session_opts_->EnableOrtCustomOps();
   session_opts_->SetGraphOptimizationLevel(ORT_ENABLE_ALL);
 
   LOG(INFO) << "[" << conf_.brief() << "] Session options set";

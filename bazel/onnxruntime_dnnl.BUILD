@@ -8,7 +8,7 @@ cc_library(
   ],
   deps = [
     "@dnnl//:dnnl"
-  ]
+  ],
   srcs = [
     "lib/libonnxruntime_providers_dnnl.so",
     "lib/libonnxruntime_providers_shared.so",
