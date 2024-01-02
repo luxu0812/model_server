@@ -13,8 +13,6 @@
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/engine/tf_engine.h"
-#include "model_server/src/population/model_spec.h"
-#include "model_server/src/stresstest/stress_framework.h"
 
 DEFINE_uint32(concurrency, 1, "Number of concurrent workers");
 DEFINE_uint32(batch_size, 128, "Batch size");
