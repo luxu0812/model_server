@@ -19,7 +19,7 @@ class ONNXDNNLEngine : public ONNXEngine {
   ONNXDNNLEngine(const ONNXDNNLEngine&) = delete;
 
   // Get brand of engine
-  std::string brand() override;
+  std::string brand() noexcept override;
 
  protected:
   // Set session options

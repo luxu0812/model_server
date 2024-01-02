@@ -20,9 +20,9 @@ void ONNXDNNLEngine::set_session_options() {
 
   bool enable_cpu_mem_arena = true;
   Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Dnnl(session_opts_, enable_cpu_mem_arena));
-  session_opts_.SetExecutionMode(ExecutionMode::ORT_PARALLEL);
+  session_opts_->SetExecutionMode(ExecutionMode::ORT_PARALLEL);
 
-  LOG(INFO) << "[" << model_spec_.brief() << "] Session options set";
+  LOG(INFO) << "[" << conf_.brief() << "] Session options set";
 }
 
 }  // namespace model_server
