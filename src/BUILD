@@ -159,7 +159,6 @@ cc_library(
     ":engine_base",
     "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
-    "@protobuf//:protobuf",
     "@tensorflow//:tensorflow",
   ],
   strip_include_prefix = "engine",
