@@ -62,12 +62,12 @@ class TFEngine : public Engine {
   // Get input name and shape
   virtual void get_input_name_and_shape(
     absl::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
-  ) override;
+  ) override noexcept(false);
 
   // Get output name and shape
   virtual void get_output_name_and_shape(
     absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
-  ) override;
+  ) override noexcept(false);
 
  protected:
   // Load the TensorFlow graph from the .pb file
