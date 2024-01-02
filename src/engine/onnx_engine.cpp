@@ -247,7 +247,8 @@ void ONNXEngine::get_input_name_and_shape(
   }
 
   for (const auto& tensor_info : onnx_model_meta_.input_metas) {
-    (*input_shapes)[tensor_info.first] = tensor_info.second.shape;
+    std::string input_name = tensor_info.first.substr(0, tensor_info.first.find(":"));
+    (*input_shapes)[input_name] = tensor_info.second.shape;
   }
 }
 
@@ -261,7 +262,8 @@ void ONNXEngine::get_output_name_and_shape(
   }
 
   for (const auto& tensor_info : onnx_model_meta_.output_metas) {
-    (*output_shapes)[tensor_info.first] = tensor_info.second.shape;
+    std::string output_name = tensor_info.first.substr(0, tensor_info.first.find(":"));
+    (*output_shapes)[output_name] = tensor_info.second.shape;
   }
 }
 
