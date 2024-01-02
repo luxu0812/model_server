@@ -67,15 +67,15 @@ class Engine {
   // Get input name and shape
   virtual void get_input_name_and_shape(
     absl::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
-  ) noexcept(false) = 0;
+  ) noexcept(false) = 0;  // NOLINT
 
   // Get output name and shape
   virtual void get_output_name_and_shape(
     absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
-  ) noexcept(false) = 0;
+  ) noexcept(false) = 0;  // NOLINT
 
   std::vector<Sample> *random_sample_gen(int32_t sample_count, int32_t batch_size) noexcept(false) {
-    std::vector<Sample> samples, 
+    std::vector<Sample> samples;
     absl::flat_hash_map<std::string, std::vector<int64_t>> input_shapes;
     get_input_name_and_shape(&input_shapes);
     absl::flat_hash_map<std::string, std::vector<int64_t>> output_shapes;
