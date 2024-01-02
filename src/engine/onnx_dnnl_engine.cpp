@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "glog/logging.h"
+#include "onnxruntime_c_api.h"
 #include "model_server/src/engine/onnx_dnnl_engine.h"
 
 namespace model_server {
@@ -11,7 +12,7 @@ ONNXDNNLEngine::ONNXDNNLEngine(const EngineConf& engine_conf) noexcept(false) :
 
 ONNXDNNLEngine::~ONNXDNNLEngine() {}
 
-std::string ONNXDNNLEngine::brand() {
+std::string ONNXDNNLEngine::brand() noexcept {
   return kBrandONNXDNNL;
 }
 
