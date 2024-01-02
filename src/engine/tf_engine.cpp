@@ -333,6 +333,7 @@ void TFEngine::set_session_options() {
   }
 
   tensorflow::ConfigProto tf_session_conf;
+  (*tf_session_conf.mutable_device_count())["GPU"] = 0;
   tf_session_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
   tf_session_conf.mutable_experimental()->set_disable_thread_spinning(true);
   tf_session_conf.set_use_per_session_threads(false);
