@@ -118,7 +118,6 @@ class Engine {
     }
     works.wait_for_tasks();
   }
-);
 
  protected:
   // Initialize engine
