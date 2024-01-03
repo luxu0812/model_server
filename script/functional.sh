@@ -114,10 +114,10 @@ function setup_bazel_module() {
     sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
   elif [[ "${uname}" == "Linux" ]]; then
     git checkout MODULE.bazel
-    echo ${linux_only_repo} >> MODULE.bazel
+    echo -e ${linux_only_repo} >> MODULE.bazel
     sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
     git checkout src/BUILD
-    echo ${linux_only_target} >> src/BUILD
+    echo -e ${linux_only_target} >> src/BUILD
   else
     log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
     exit 1
