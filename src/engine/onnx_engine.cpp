@@ -175,6 +175,7 @@ void ONNXEngine::set_session_options() {
   session_opts_->EnableCpuMemArena();
   // session_opts_->EnableOrtCustomOps();
   session_opts_->SetGraphOptimizationLevel(ORT_ENABLE_ALL);
+  session_opts_->SetExecutionMode(ExecutionMode::ORT_PARALLEL);
 
   LOG(INFO) << "[" << conf_.brief() << "] Session options set";
 }

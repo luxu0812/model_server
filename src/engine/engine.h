@@ -23,6 +23,7 @@ const char kBrandTF[]       = "TensorFlow";
 const char kBrandTFGPU[]    = "TensorFlow-GPU";
 const char kBrandONNX[]     = "ONNX";
 const char kBrandONNXDNNL[] = "ONNX-DNNL";
+const char kBrandONNXTVM[]  = "ONNX-TVM";
 
 struct EngineConf {
   std::string name                      = "";

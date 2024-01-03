@@ -69,6 +69,29 @@ cc_library(
   include_prefix = "model_server/src/engine",
   visibility = ["//visibility:public"],
 )
+
+cc_library(
+  name = "onnx_tvm_engine",
+  hdrs = [
+    "engine/onnx_engine.h",
+    "engine/onnx_tvm_engine.h",
+  ],
+  srcs = [
+    "engine/onnx_engine.cpp",
+    "engine/onnx_tvm_engine.cpp",
+  ],
+  deps = [
+    ":util",
+    ":sample",
+    ":engine_base",
+    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
+    "@onnxruntime_tvm//:onnxruntime",
+  ],
+  strip_include_prefix = "engine",
+  include_prefix = "model_server/src/engine",
+  visibility = ["//visibility:public"],
+)
 ' >> src/BUILD
   else
     log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
@@ -120,6 +143,11 @@ cc_library(
     cp -f bazel/nlohmann_json.BUILD ${HOME}/.local/lib/nlohmann_json/BUILD
     cp -f bazel/nlohmann_json.MODULE ${HOME}/.local/lib/nlohmann_json/MODULE.bazel
   fi
+  if [[ -d "${HOME}/.local/lib/onnxruntime" ]]; then
+    cp -f bazel/onnxruntime.WORKSPACE ${HOME}/.local/lib/onnxruntime/WORKSPACE
+    cp -f bazel/onnxruntime.BUILD ${HOME}/.local/lib/onnxruntime/BUILD
+    cp -f bazel/onnxruntime.MODULE ${HOME}/.local/lib/onnxruntime/MODULE.bazel
+  fi
   if [[ -d "${HOME}/.local/lib/dnnl" ]]; then
     cp -f bazel/dnnl.WORKSPACE ${HOME}/.local/lib/dnnl/WORKSPACE
     cp -f bazel/dnnl.BUILD ${HOME}/.local/lib/dnnl/BUILD
@@ -130,10 +158,10 @@ cc_library(
     cp -f bazel/onnxruntime_dnnl.BUILD ${HOME}/.local/lib/onnxruntime_dnnl/BUILD
     cp -f bazel/onnxruntime_dnnl.MODULE ${HOME}/.local/lib/onnxruntime_dnnl/MODULE.bazel
   fi
-  if [[ -d "${HOME}/.local/lib/onnxruntime" ]]; then
-    cp -f bazel/onnxruntime.WORKSPACE ${HOME}/.local/lib/onnxruntime/WORKSPACE
-    cp -f bazel/onnxruntime.BUILD ${HOME}/.local/lib/onnxruntime/BUILD
-    cp -f bazel/onnxruntime.MODULE ${HOME}/.local/lib/onnxruntime/MODULE.bazel
+  if [[ -d "${HOME}/.local/lib/onnxruntime_tvm" ]]; then
+    cp -f bazel/onnxruntime_tvm.WORKSPACE ${HOME}/.local/lib/onnxruntime_tvm/WORKSPACE
+    cp -f bazel/onnxruntime_tvm.BUILD ${HOME}/.local/lib/onnxruntime_tvm/BUILD
+    cp -f bazel/onnxruntime_tvm.MODULE ${HOME}/.local/lib/onnxruntime_tvm/MODULE.bazel
   fi
   if [[ -d "${HOME}/.local/lib/protobuf" ]]; then
     cp -f bazel/protobuf.WORKSPACE ${HOME}/.local/lib/protobuf/WORKSPACE
