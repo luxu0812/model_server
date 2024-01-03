@@ -16,17 +16,4 @@ std::string ONNXTVMEngine::brand() noexcept {
   return kBrandONNXTVM;
 }
 
-void ONNXTVMEngine::set_session_options() {
-  ONNXEngine::set_session_options();
-
-  OrtDnnlProviderOptions dnnl_options = {
-    .use_arena = true,
-    .threadpool_args = nullptr
-  };
-
-  session_opts_->AppendExecutionProvider_Dnnl(dnnl_options);
-
-  LOG(INFO) << "[" << conf_.brief() << "] Session options set";
-}
-
 }  // namespace model_server

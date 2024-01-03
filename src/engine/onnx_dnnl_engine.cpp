@@ -18,17 +18,13 @@ std::string ONNXDNNLEngine::brand() noexcept {
 
 void ONNXDNNLEngine::set_session_options() {
   ONNXEngine::set_session_options();
+  session_opts_->SetExecutionMode(ExecutionMode::ORT_PARALLEL);
 
   OrtDnnlProviderOptions dnnl_options = {
     .use_arena = true,
     .threadpool_args = nullptr
   };
-
-  // Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Dnnl(session_opts_, enable_cpu_mem_arena));
   session_opts_->AppendExecutionProvider_Dnnl(dnnl_options);
-  session_opts_->SetExecutionMode(ExecutionMode::ORT_PARALLEL);
-
-  LOG(INFO) << "[" << conf_.brief() << "] Session options set";
 }
 
 }  // namespace model_server
