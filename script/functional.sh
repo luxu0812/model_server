@@ -22,74 +22,74 @@ function error_info() {
   exit $3
 }
 
-linux_only_repo='
-#-------------------------------- dnnl --------------------------------#
-bazel_dep(name = "dnnl")
-local_path_override(
-    module_name = "dnnl",
-    path = "${HOME}/.local/lib/dnnl",
-)
-
-#-------------------------- onnxruntime_dnnl --------------------------#
-bazel_dep(name = "onnxruntime_dnnl")
-local_path_override(
-    module_name = "onnxruntime_dnnl",
-    path = "${HOME}/.local/lib/onnxruntime_dnnl",
-)
-
-#-------------------------- onnxruntime_tvm ---------------------------#
-bazel_dep(name = "onnxruntime_tvm")
-local_path_override(
-    module_name = "onnxruntime_tvm",
-    path = "${HOME}/.local/lib/onnxruntime_tvm",
-)
+linux_only_repo='\n
+#-------------------------------- dnnl --------------------------------#\n
+bazel_dep(name = "dnnl")\n
+local_path_override(\n
+    module_name = "dnnl",\n
+    path = "${HOME}/.local/lib/dnnl",\n
+)\n
+\n
+#-------------------------- onnxruntime_dnnl --------------------------#\n
+bazel_dep(name = "onnxruntime_dnnl")\n
+local_path_override(\n
+    module_name = "onnxruntime_dnnl",\n
+    path = "${HOME}/.local/lib/onnxruntime_dnnl",\n
+)\n
+\n
+#-------------------------- onnxruntime_tvm ---------------------------#\n
+bazel_dep(name = "onnxruntime_tvm")\n
+local_path_override(\n
+    module_name = "onnxruntime_tvm",\n
+    path = "${HOME}/.local/lib/onnxruntime_tvm",\n
+)\n
 '
 
-linux_only_target='
-cc_library(
-  name = "onnx_dnnl_engine",
-  hdrs = [
-    "engine/onnx_engine.h",
-    "engine/onnx_dnnl_engine.h",
-  ],
-  srcs = [
-    "engine/onnx_engine.cpp",
-    "engine/onnx_dnnl_engine.cpp",
-  ],
-  deps = [
-    ":util",
-    ":sample",
-    ":engine_base",
-    "@com_github_google_glog//:glog",
-    "@com_google_absl//:absl",
-    "@onnxruntime_dnnl//:onnxruntime",
-  ],
-  strip_include_prefix = "engine",
-  include_prefix = "model_server/src/engine",
-  visibility = ["//visibility:public"],
-)
-cc_library(
-  name = "onnx_tvm_engine",
-  hdrs = [
-    "engine/onnx_engine.h",
-    "engine/onnx_tvm_engine.h",
-  ],
-  srcs = [
-    "engine/onnx_engine.cpp",
-    "engine/onnx_tvm_engine.cpp",
-  ],
-  deps = [
-    ":util",
-    ":sample",
-    ":engine_base",
-    "@com_github_google_glog//:glog",
-    "@com_google_absl//:absl",
-    "@onnxruntime_tvm//:onnxruntime",
-  ],
-  strip_include_prefix = "engine",
-  include_prefix = "model_server/src/engine",
-  visibility = ["//visibility:public"],
-)
+linux_only_target='\n
+cc_library(\n
+  name = "onnx_dnnl_engine",\n
+  hdrs = [\n
+    "engine/onnx_engine.h",\n
+    "engine/onnx_dnnl_engine.h",\n
+  ],\n
+  srcs = [\n
+    "engine/onnx_engine.cpp",\n
+    "engine/onnx_dnnl_engine.cpp",\n
+  ],\n
+  deps = [\n
+    ":util",\n
+    ":sample",\n
+    ":engine_base",\n
+    "@com_github_google_glog//:glog",\n
+    "@com_google_absl//:absl",\n
+    "@onnxruntime_dnnl//:onnxruntime",\n
+  ],\n
+  strip_include_prefix = "engine",\n
+  include_prefix = "model_server/src/engine",\n
+  visibility = ["//visibility:public"],\n
+)\n
+cc_library(\n
+  name = "onnx_tvm_engine",\n
+  hdrs = [\n
+    "engine/onnx_engine.h",\n
+    "engine/onnx_tvm_engine.h",\n
+  ],\n
+  srcs = [\n
+    "engine/onnx_engine.cpp",\n
+    "engine/onnx_tvm_engine.cpp",\n
+  ],\n
+  deps = [\n
+    ":util",\n
+    ":sample",\n
+    ":engine_base",\n
+    "@com_github_google_glog//:glog",\n
+    "@com_google_absl//:absl",\n
+    "@onnxruntime_tvm//:onnxruntime",\n
+  ],\n
+  strip_include_prefix = "engine",\n
+  include_prefix = "model_server/src/engine",\n
+  visibility = ["//visibility:public"],\n
+)\n
 '
 
 function setup_bazel() {
