@@ -22,27 +22,15 @@ function error_info() {
   exit $3
 }
 
-linux_only_repo='\n
-#-------------------------------- dnnl --------------------------------#\n
-bazel_dep(name = "dnnl")\n
-local_path_override(\n
+linux_only_repo='\nbazel_dep(name = "dnnl")\nlocal_path_override(\n
     module_name = "dnnl",\n
-    path = "${HOME}/.local/lib/dnnl",\n
-)\n
-\n
-#-------------------------- onnxruntime_dnnl --------------------------#\n
-bazel_dep(name = "onnxruntime_dnnl")\n
-local_path_override(\n
+    path = "${HOME}/.local/lib/dnnl",\n)\n
+\nbazel_dep(name = "onnxruntime_dnnl")\nlocal_path_override(\n
     module_name = "onnxruntime_dnnl",\n
-    path = "${HOME}/.local/lib/onnxruntime_dnnl",\n
-)\n
-\n
-#-------------------------- onnxruntime_tvm ---------------------------#\n
-bazel_dep(name = "onnxruntime_tvm")\n
-local_path_override(\n
+    path = "${HOME}/.local/lib/onnxruntime_dnnl",\n)
+\nbazel_dep(name = "onnxruntime_tvm")\nlocal_path_override(\n
     module_name = "onnxruntime_tvm",\n
-    path = "${HOME}/.local/lib/onnxruntime_tvm",\n
-)\n
+    path = "${HOME}/.local/lib/onnxruntime_tvm",\n)\n
 '
 
 linux_only_target='\ncc_library(\n
