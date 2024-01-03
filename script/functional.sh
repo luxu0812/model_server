@@ -45,8 +45,7 @@ local_path_override(\n
 )\n
 '
 
-linux_only_target='\n
-cc_library(\n
+linux_only_target='\ncc_library(\n
   name = "onnx_dnnl_engine",\n
   hdrs = [\n
     "engine/onnx_engine.h",\n
@@ -66,9 +65,7 @@ cc_library(\n
   ],\n
   strip_include_prefix = "engine",\n
   include_prefix = "model_server/src/engine",\n
-  visibility = ["//visibility:public"],\n
-)\n
-cc_library(\n
+  visibility = ["//visibility:public"],\n)\ncc_library(\n
   name = "onnx_tvm_engine",\n
   hdrs = [\n
     "engine/onnx_engine.h",\n
@@ -88,8 +85,7 @@ cc_library(\n
   ],\n
   strip_include_prefix = "engine",\n
   include_prefix = "model_server/src/engine",\n
-  visibility = ["//visibility:public"],\n
-)\n
+  visibility = ["//visibility:public"],\n)\n
 '
 
 function setup_bazel() {
