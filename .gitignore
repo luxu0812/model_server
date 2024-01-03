@@ -41,6 +41,4 @@ bazel-*
 .DS_Store
 
 # Temporary files for building
-.bazelrc
-MODULE.bazel
 MODULE.bazel.lock

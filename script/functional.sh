@@ -22,32 +22,30 @@ function error_info() {
   exit $3
 }
 
-function setup_bazel() {
-  cp bazel/bazel_workspace ./WORKSPACE
+linux_only_repo='
+#-------------------------------- dnnl --------------------------------#
+bazel_dep(name = "dnnl")
+local_path_override(
+    module_name = "dnnl",
+    path = "${HOME}/.local/lib/dnnl",
+)
 
-  uname=`uname`
-  if [[ "${uname}" == "Darwin" ]]; then
-    sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
-  elif [[ "${uname}" == "Linux" ]]; then
-    cp bazel/bazel_rc ./.bazelrc
-    sed -i "s|\${HOME}|${HOME}|g" WORKSPACE
-  else
-    log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
-    exit 1
-  fi
-}
+#-------------------------- onnxruntime_dnnl --------------------------#
+bazel_dep(name = "onnxruntime_dnnl")
+local_path_override(
+    module_name = "onnxruntime_dnnl",
+    path = "${HOME}/.local/lib/onnxruntime_dnnl",
+)
 
-function setup_bazel_module() {
-  uname=`uname`
-  if [[ "${uname}" == "Darwin" ]]; then
-    cp -f bazel/bazel_module_macos ./MODULE.bazel
-    sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
-  elif [[ "${uname}" == "Linux" ]]; then
-    cp -f bazel/bazel_module_linux ./MODULE.bazel
-    cp -f bazel/bazel_rc ./.bazelrc
-    sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
-    git checkout src/BUILD
-    echo '
+#-------------------------- onnxruntime_tvm ---------------------------#
+bazel_dep(name = "onnxruntime_tvm")
+local_path_override(
+    module_name = "onnxruntime_tvm",
+    path = "${HOME}/.local/lib/onnxruntime_tvm",
+)
+'
+
+linux_only_target='
 cc_library(
   name = "onnx_dnnl_engine",
   hdrs = [
@@ -92,7 +90,34 @@ cc_library(
   include_prefix = "model_server/src/engine",
   visibility = ["//visibility:public"],
 )
-' >> src/BUILD
+'
+
+function setup_bazel() {
+  cp bazel/bazel_workspace ./WORKSPACE
+
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
+    sed -i "" "s|\${HOME}|${HOME}|g" WORKSPACE
+  elif [[ "${uname}" == "Linux" ]]; then
+    cp bazel/bazel_rc ./.bazelrc
+    sed -i "s|\${HOME}|${HOME}|g" WORKSPACE
+  else
+    log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
+    exit 1
+  fi
+}
+
+function setup_bazel_module() {
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
+    cp -f bazel/bazel_module_macos ./MODULE.bazel
+    sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
+  elif [[ "${uname}" == "Linux" ]]; then
+    git checkout MODULE.bazel
+    echo ${linux_only_repo} >> MODULE.bazel
+    sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
+    git checkout src/BUILD
+    echo ${linux_only_target} >> src/BUILD
   else
     log ${SCRIPT_NAME} ${LINENO} "unknown operating system ${uname}"
     exit 1
