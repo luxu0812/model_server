@@ -3,6 +3,7 @@
 #include "model_server/src/engine/onnx_tvm_engine.h"
 #include <vector>
 #include "glog/logging.h"
+#include "onnxruntime/tvm_provider_factory.h"
 
 namespace model_server {
 
@@ -13,6 +14,13 @@ ONNXTVMEngine::~ONNXTVMEngine() {}
 
 std::string ONNXTVMEngine::brand() noexcept {
   return kBrandONNXTVM;
+}
+
+void ONNXTVMEngine::set_session_options() {
+  ONNXEngine::set_session_options();
+  // convert Ort::SessionOptions to OrtSessionOptions
+  OrtSessionOptions *session_opts = session_opts_.get();
+  Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Tvm(session_opts, ""));
 }
 
 }  // namespace model_server
