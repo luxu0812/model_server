@@ -4,23 +4,15 @@
 #include <exception>
 #include <vector>
 
-#include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "BShoshany/BS_thread_pool.hpp"
 
 #include "model_server/src/util/process/process_initiator.h"
 #include "model_server/src/util/functional/timer.h"
+#include "model_server/src/config/gflags.h"
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/engine/onnx_engine.h"
-
-DEFINE_uint32(concurrency, 1, "Number of concurrent workers");
-DEFINE_uint32(batch_size, 128, "Batch size");
-DEFINE_uint32(test_data_size, 1000, "Test data size");
-DEFINE_int32(opt_level, 0, "Optimization level");
-DEFINE_int32(jit_level, 0, "JIT level");
-DEFINE_int32(inter_op_parallelism_threads, 1, "Inter op parallelism threads");
-DEFINE_int32(intra_op_parallelism_threads, 1, "Intra op parallelism threads");
 
 model_server::Engine *create_engine();
 
@@ -29,7 +21,7 @@ int main(int argc, char **argv) {
   try {
     std::unique_ptr<model_server::Engine> engine(create_engine());
     model_server::PerfIndex perf_index;
-    engine->perf(FLAGS_concurrency, FLAGS_test_data_size, FLAGS_batch_size, &perf_index);
+    engine->perf(FLAGS_number_of_consumers, FLAGS_number_of_test_cases, FLAGS_batch_size, &perf_index);
     LOG(INFO) << "summary:\n" << perf_index.DebugString();
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
@@ -46,10 +38,10 @@ model_server::Engine *create_engine() {
     .version = "1.0.0",
     .input_nodes = {"dense", "onehot", "sparse_input_folded", "sparse_input_unfolded"},
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
-    .opt_level = FLAGS_opt_level,
-    .jit_level = FLAGS_jit_level,
-    .inter_op_parallelism_threads = FLAGS_inter_op_parallelism_threads,
-    .intra_op_parallelism_threads = FLAGS_intra_op_parallelism_threads
+    .opt_level = FLAGS_engine_opt_level,
+    .jit_level = FLAGS_engine_jit_level,
+    .inter_op_parallelism_threads = FLAGS_engine_inter_op_parallelism_threads,
+    .intra_op_parallelism_threads = FLAGS_engine_intra_op_parallelism_threads
   };
 
   engine_conf.graph_file_loc = "data/models/model_2/1/graph.onnx";

@@ -109,11 +109,26 @@ cc_library(
     "@com_github_google_glog//:glog",
     "@protobuf//:protobuf",
     "@com_google_absl//:absl",
-
     ":util_os",
   ],
   strip_include_prefix = "util",
   include_prefix = "model_server/src/util",
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
+  name = "config",
+  hdrs = [
+    "config/gflags.h",
+  ],
+  srcs = [
+    "config/gflags.cpp",
+  ],
+  deps = [
+    "@com_github_gflags_gflags//:gflags",
+  ],
+  strip_include_prefix = "config",
+  include_prefix = "model_server/src/config",
   visibility = ["//visibility:public"],
 )
 
@@ -253,11 +268,11 @@ cc_binary(
   ],
   deps = [
     ":util",
+    ":config",
     ":sample",
     ":tf_engine",
     ":population_data",
     "@com_github_google_glog//:glog",
-    "@com_github_gflags_gflags//:gflags",
   ],
   malloc = select({
     ":use_tcmalloc": "@tcmalloc//:tcmalloc",
@@ -273,11 +288,11 @@ cc_binary(
   ],
   deps = [
     ":util",
+    ":config",
     ":sample",
     ":onnx_engine",
     ":population_data",
     "@com_github_google_glog//:glog",
-    "@com_github_gflags_gflags//:gflags",
   ],
   malloc = select({
     ":use_tcmalloc": "@tcmalloc//:tcmalloc",
@@ -296,7 +311,6 @@ cc_test(
     ":tf_engine",
     "@com_google_googletest//:gtest",
     "@com_github_google_glog//:glog",
-    "@com_github_gflags_gflags//:gflags",
   ],
   data = [
     "@//data:model_1",
@@ -319,7 +333,6 @@ cc_test(
     ":onnx_engine",
     "@com_google_googletest//:gtest",
     "@com_github_google_glog//:glog",
-    "@com_github_gflags_gflags//:gflags",
   ],
   data = [
     "@//data:model_1",

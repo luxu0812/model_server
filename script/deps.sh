@@ -1,9 +1,6 @@
 DEFAULT_SETUP_DEPS=true
 DEFAULT_SETUP_PYTHON=false
 DEFAULT_SETUP_OS=false
-DEFAULT_SETUP_ONNX_MKL=false
-DEFAULT_SETUP_ONNX_DNNL=false
-DEFAULT_SETUP_ONNX_OPENVINO=false
 DEFAULT_SETUP_GPU=false
 
 function get_shell_config() {
@@ -495,8 +492,8 @@ function setup_onnx() {
 }
 
 function setup_onnx_mkl() {
-  if ! [[ ${SETUP_ONNX_MKL} = true || ${DEFAULT_SETUP_ONNX_MKL} = true ]]; then
-    echo "setup onnxruntime_mkl skipped, use SETUP_ONNX_MKL=true to enable"
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
     return
   fi
   if [[ -d ${HOME}/.local/lib/onnxruntime-mkl ]]; then
@@ -525,8 +522,8 @@ function setup_onnx_mkl() {
 }
 
 function setup_dnnl() {
-  if ! [[ ${SETUP_ONNX_DNNL} = true || ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
-    echo "setup dnnl skipped, use SETUP_ONNX_DNNL=true to enable"
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
     return
   fi
   if [[ -d ${HOME}/.local/lib/dnnl ]]; then
@@ -552,8 +549,8 @@ function setup_dnnl() {
 }
 
 function setup_onnx_dnnl() {
-  if ! [[ ${SETUP_ONNX_DNNL} = true || ${DEFAULT_SETUP_ONNX_DNNL} = true ]]; then
-    echo "setup onnxruntime_dnnl skipped, use SETUP_ONNX_DNNL=true to enable"
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
     return
   fi
   if [[ -d ${HOME}/.local/lib/onnxruntime_dnnl ]]; then
@@ -580,8 +577,8 @@ function setup_onnx_dnnl() {
 }
 
 function setup_onnx_openvino() {
-  if ! [[ ${SETUP_ONNX_OPENVINO} = true || ${DEFAULT_SETUP_ONNX_OPENVINO} = true ]]; then
-    echo "setup onnxruntime_openvino skipped, use SETUP_ONNX_OPENVINO=true to enable"
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
     return
   fi
   if [[ -d ${HOME}/.local/lib/onnxruntime_openvino ]]; then
@@ -601,6 +598,34 @@ function setup_onnx_openvino() {
     --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds"
   if [[ $? -ne 0 ]]; then
     echo "build onnxruntime_openvino failed"
+    exit 1
+  fi
+  pushd build/Linux/Release && make install && popd
+  popd
+  popd
+}
+
+function setup_onnx_tvm() {
+  uname=`uname`
+  if [[ "${uname}" == "Darwin" ]]; then
+    return
+  fi
+  if [[ -d ${HOME}/.local/lib/onnxruntime_tvm ]]; then
+    echo "onnxruntime_tvm already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  rm -rf onnxruntime
+  git clone https://github.com/microsoft/onnxruntime.git
+  pushd onnxruntime
+  # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+  git checkout tags/v1.16.3 -b v1.16.3
+  ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --skip_tests --skip_onnx_tests --use_tvm  \
+    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_tvm                                                    \
+    --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64
+  if [[ $? -ne 0 ]]; then
+    echo "build onnxruntime_dnnl failed"
     exit 1
   fi
   pushd build/Linux/Release && make install && popd
@@ -711,6 +736,7 @@ function setup_deps() {
   setup_onnx_mkl
   setup_onnx_dnnl
   setup_onnx_openvino
+  setup_onnx_tvm
   setup_skylib
   setup_rules_pkg
   setup_rules_foreign_cc
