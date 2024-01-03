@@ -1,9 +1,9 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
 
+#include "model_server/src/engine/onnx_tvm_engine.h"
 #include <vector>
 #include "glog/logging.h"
 #include "onnxruntime/dnnl_provider_options.h"
-#include "model_server/src/engine/onnx_dnnl_engine.h"
 
 namespace model_server {
 
