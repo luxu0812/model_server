@@ -496,8 +496,8 @@ function setup_onnx_mkl() {
   if [[ "${uname}" == "Darwin" ]]; then
     return
   fi
-  if [[ -d ${HOME}/.local/lib/onnxruntime-mkl ]]; then
-    echo "onnxruntime-mkl already installed"
+  if [[ -d ${HOME}/.local/lib/onnxruntime_mkl ]]; then
+    echo "onnxruntime_mkl already installed"
     return
   fi
 
@@ -508,11 +508,11 @@ function setup_onnx_mkl() {
   # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
   git checkout tags/v1.16.3 -b v1.16.3
   ./build.sh --config Release --build_shared_lib --parallel                                        \
-    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime-mkl                   \
+    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_mkl                   \
     --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=uninitialized -Wno-error=array-bounds -Wno-error=unused-variable -Wno-error=unknown-pragmas -Wno-error=unused-command-line-argument -DEIGEN_USE_MKL_ALL -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_sequential -lmkl_core -lstdc++ -lpthread -lm -lrt -ldl -lgomp" \
     --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=uninitialized -Wno-error=array-bounds -Wno-error=unused-variable -Wno-error=unknown-pragmas -Wno-error=unused-command-line-argument -DEIGEN_USE_MKL_ALL -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_sequential -lmkl_core -lstdc++ -lpthread -lm -lrt -ldl -lgomp"
   if [[ $? -ne 0 ]]; then
-    echo "build onnxruntime-mkl failed"
+    echo "build onnxruntime_mkl failed"
     exit 1
   fi
 
@@ -733,7 +733,6 @@ function setup_deps() {
   setup_tcmalloc
   setup_dnnl
   setup_onnx
-  setup_onnx_mkl
   setup_onnx_dnnl
   setup_onnx_openvino
   setup_onnx_tvm
