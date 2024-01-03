@@ -3,7 +3,6 @@
 #include "model_server/src/engine/onnx_tvm_engine.h"
 #include <vector>
 #include "glog/logging.h"
-#include "onnxruntime/dnnl_provider_options.h"
 
 namespace model_server {
 

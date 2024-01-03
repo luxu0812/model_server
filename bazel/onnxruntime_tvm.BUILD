@@ -7,7 +7,7 @@ cc_library(
     "include",
   ],
   srcs = [
-    "libonnxruntime_providers_shared.so",
+    "lib/libonnxruntime_providers_shared.so",
     "lib/libonnxruntime.so.1.16.3",
     "lib/libonnxruntime.so",
   ],
