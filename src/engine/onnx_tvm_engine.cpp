@@ -18,9 +18,7 @@ std::string ONNXTVMEngine::brand() noexcept {
 
 void ONNXTVMEngine::set_session_options() {
   ONNXEngine::set_session_options();
-  // convert Ort::SessionOptions to OrtSessionOptions
-  OrtSessionOptions *session_opts = session_opts_->get();
-  Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Tvm(session_opts, ""));
+  Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Tvm(session_opts_->GetUnowned(), ""));
 }
 
 }  // namespace model_server
