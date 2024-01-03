@@ -46,6 +46,7 @@ function setup_bazel_module() {
     cp -f bazel/bazel_module_linux ./MODULE.bazel
     cp -f bazel/bazel_rc ./.bazelrc
     sed -i "s|\${HOME}|${HOME}|g" MODULE.bazel
+    git checkout src/BUILD
     echo '
 cc_library(
   name = "onnx_dnnl_engine",
@@ -69,7 +70,6 @@ cc_library(
   include_prefix = "model_server/src/engine",
   visibility = ["//visibility:public"],
 )
-
 cc_library(
   name = "onnx_tvm_engine",
   hdrs = [
