@@ -38,6 +38,8 @@ struct EngineConf {
   int32_t inter_op_parallelism_threads  = 32;
   int32_t intra_op_parallelism_threads  = 1;
 
+  bool ort_parrallel_execution          = false;
+
   std::string detail() noexcept {
     return "name: " + name + ", version: " + version + ", graph_file_loc: " + graph_file_loc
       + ", input_nodes: " + std::to_string(input_nodes.size())

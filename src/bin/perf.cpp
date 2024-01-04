@@ -12,7 +12,7 @@
 #include "model_server/src/config/gflags.h"
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/engine.h"
-#include "model_server/src/engine/tf_engine.h"
+#include "select_engine.h"  // NOLINT
 
 model_server::Engine *create_engine();
 
@@ -45,5 +45,5 @@ model_server::Engine *create_engine() {
   };
 
   engine_conf.graph_file_loc = "data/models/model_2/1/graph.pb";
-  return new model_server::TFEngine(engine_conf);
+  return select_engine(engine_conf);
 }

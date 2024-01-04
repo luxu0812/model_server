@@ -264,7 +264,8 @@ cc_library(
 cc_binary(
   name = "perf_tf",
   srcs = [
-    "bin/perf_tf.cpp",
+    "bin/select_engine.h",
+    "bin/perf.cpp",
   ],
   deps = [
     ":util",
@@ -273,6 +274,9 @@ cc_binary(
     ":tf_engine",
     ":population_data",
     "@com_github_google_glog//:glog",
+  ],
+  copts = [
+    "-DUSE_TF_ENGINE",
   ],
   malloc = select({
     ":use_tcmalloc": "@tcmalloc//:tcmalloc",
@@ -284,7 +288,8 @@ cc_binary(
 cc_binary(
   name = "perf_onnx",
   srcs = [
-    "bin/perf_onnx.cpp",
+    "bin/select_engine.h",
+    "bin/perf.cpp",
   ],
   deps = [
     ":util",
@@ -299,6 +304,9 @@ cc_binary(
     ":use_jemalloc": "@jemalloc//:jemalloc",
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
+  copts = [
+    "-DUSE_ONNX_ENGINE",
+  ],
 )
 
 cc_test(
