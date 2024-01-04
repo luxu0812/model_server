@@ -20,5 +20,6 @@ cc_library(
     # "lib/libonnxruntime.so",
     # "lib/libdnnl.so.3",
   ]),
+  linkopts = ["-ldl"],
   visibility = ["//visibility:public"],
 )
