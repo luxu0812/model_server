@@ -478,9 +478,9 @@ function setup_onnx() {
       --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 &&                                   \
     pushd build/MacOS/Release && make install && popd
   else
-    ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error \
-      --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime              \
-      --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 &&                               \
+    ./build.sh --config Release --parallel --compile_no_warning_as_error       \
+      --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime \
+      --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 &&                  \
     pushd build/Linux/Release && make install && popd
   fi
   if [[ $? -ne 0 ]]; then

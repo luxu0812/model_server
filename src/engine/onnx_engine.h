@@ -7,7 +7,7 @@
 #include <string>
 #include <shared_mutex>
 #include "absl/container/flat_hash_map.h"
-#include "onnxruntime/onnxruntime_cxx_api.h"
+#include "onnxruntime/core/session/onnxruntime_cxx_api.h"
 #include "model_server/src/engine/engine.h"
 
 namespace model_server {
