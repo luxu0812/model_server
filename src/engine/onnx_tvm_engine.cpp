@@ -3,7 +3,7 @@
 #include "model_server/src/engine/onnx_tvm_engine.h"
 #include <vector>
 #include "glog/logging.h"
-#include "onnxruntime/core/session/tvm_provider_factory.h"
+#include "onnxruntime/tvm_provider_factory.h"
 
 namespace model_server {
 
