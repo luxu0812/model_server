@@ -1,7 +1,4 @@
 # Toolchain
-# build:darwin --action_env=CPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/
-# build:darwin --action_env=LIBRARY_PATH=/usr/lib
-
 # build --action_env=CC=/usr/bin/clang
 # build --action_env=CXX=/usr/bin/clang++
 # build --action_env=LD=/usr/bin/clang
