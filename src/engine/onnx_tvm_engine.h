@@ -4,7 +4,7 @@
 #define MODEL_SERVER_SRC_ENGINE_ONNX_TVM_ENGINE_H_
 
 #include <string>
-#include "onnxruntime/onnxruntime_cxx_api.h"
+#include "onnxruntime/core/session/onnxruntime_cxx_api.h"
 #include "model_server/src/engine/onnx_engine.h"
 
 namespace model_server {

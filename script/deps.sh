@@ -541,7 +541,7 @@ function setup_onnx_dnnl() {
     echo "build onnxruntime_dnnl failed"
     exit 1
   fi
-  pushd build/Linux/Release && make install && cp -r _deps ~/.local/lib/onnxruntime/lib  && popd
+  pushd build/Linux/Release && make install && cp -r _deps ~/.local/lib/onnxruntime_dnnl/lib  && popd
   popd
   popd
 }
@@ -598,7 +598,7 @@ function setup_onnx_tvm() {
     echo "build onnxruntime_dnnl failed"
     exit 1
   fi
-  pushd build/Linux/Release && make install && cp -r _deps ~/.local/lib/onnxruntime/lib && popd
+  pushd build/Linux/Release && make install && cp -r _deps ~/.local/lib/onnxruntime_tvm/lib && popd
   popd
   popd
 }
