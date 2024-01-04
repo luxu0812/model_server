@@ -6,7 +6,7 @@ cc_library(
   includes = [
     "include",
   ],
-  srcs = [
+  srcs = glob([
     # onnxruntime build without --build_shared_lib
     "lib/**/*.a",
 
@@ -14,6 +14,6 @@ cc_library(
     # "lib/libonnxruntime_providers_shared.so",
     # "lib/libonnxruntime.so.1.16.3",
     # "lib/libonnxruntime.so",
-  ],
+  ]),
   visibility = ["//visibility:public"],
 )

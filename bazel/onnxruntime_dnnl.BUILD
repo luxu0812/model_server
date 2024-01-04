@@ -9,7 +9,7 @@ cc_library(
   # deps = [
   #   "@dnnl//:dnnl"
   # ],
-  srcs = [
+  srcs = glob([
     # onnxruntime build without --build_shared_lib
     "lib/**/*.a",
 
@@ -19,6 +19,6 @@ cc_library(
     # "lib/libonnxruntime.so.1.16.3",
     # "lib/libonnxruntime.so",
     # "lib/libdnnl.so.3",
-  ],
+  ]),
   visibility = ["//visibility:public"],
 )
