@@ -14,8 +14,8 @@ ONNXEngine::ONNXEngine(const EngineConf& engine_conf) noexcept(false) :
   Engine(engine_conf),
   // engine_mtx_(),
   inited_(false),
-  env_(nullptr),
   session_opts_(nullptr),
+  env_(nullptr),
   session_(nullptr) {
   init();
   inited_ = true;
