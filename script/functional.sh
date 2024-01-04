@@ -94,7 +94,6 @@ function setup_bazel() {
 function setup_bazel_module() {
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
-    cp -f bazel/bazel_module_macos ./MODULE.bazel
     sed -i "" "s|\${HOME}|${HOME}|g" MODULE.bazel
   elif [[ "${uname}" == "Linux" ]]; then
     git checkout MODULE.bazel

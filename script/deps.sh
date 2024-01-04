@@ -473,9 +473,9 @@ function setup_onnx() {
 
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
-    ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --skip_submodule_sync \
-      --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime                                    \
-      --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 &&                                                      \
+    ./build.sh --config Release --parallel --compile_no_warning_as_error --skip_submodule_sync \
+      --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime                 \
+      --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 &&                                   \
     pushd build/MacOS/Release && make install && popd
   else
     ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error \
@@ -487,36 +487,6 @@ function setup_onnx() {
     echo "build onnxruntime failed"
     exit 1
   fi
-  popd
-  popd
-}
-
-function setup_onnx_mkl() {
-  uname=`uname`
-  if [[ "${uname}" == "Darwin" ]]; then
-    return
-  fi
-  if [[ -d ${HOME}/.local/lib/onnxruntime_mkl ]]; then
-    echo "onnxruntime_mkl already installed"
-    return
-  fi
-
-  pushd ${HOME}/.local/build
-  rm -rf onnxruntime
-  git clone https://github.com/microsoft/onnxruntime.git # or (https://github.com/intel/onnxruntime.git)
-  pushd onnxruntime
-  # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
-  git checkout tags/v1.16.3 -b v1.16.3
-  ./build.sh --config Release --build_shared_lib --parallel                                        \
-    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_mkl                   \
-    --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=uninitialized -Wno-error=array-bounds -Wno-error=unused-variable -Wno-error=unknown-pragmas -Wno-error=unused-command-line-argument -DEIGEN_USE_MKL_ALL -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_sequential -lmkl_core -lstdc++ -lpthread -lm -lrt -ldl -lgomp" \
-    --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=uninitialized -Wno-error=array-bounds -Wno-error=unused-variable -Wno-error=unknown-pragmas -Wno-error=unused-command-line-argument -DEIGEN_USE_MKL_ALL -lmkl_intel_lp64 -lmkl_gnu_thread -lmkl_sequential -lmkl_core -lstdc++ -lpthread -lm -lrt -ldl -lgomp"
-  if [[ $? -ne 0 ]]; then
-    echo "build onnxruntime_mkl failed"
-    exit 1
-  fi
-
-  pushd build/Linux/Release && make install && popd
   popd
   popd
 }
@@ -564,8 +534,8 @@ function setup_onnx_dnnl() {
   pushd onnxruntime
   # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
   git checkout tags/v1.16.3 -b v1.16.3
-  ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --use_dnnl \
-    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_dnnl                    \
+  ./build.sh --config Release --parallel --compile_no_warning_as_error --use_dnnl \
+    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_dnnl \
     --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64
   if [[ $? -ne 0 ]]; then
     echo "build onnxruntime_dnnl failed"
@@ -592,7 +562,7 @@ function setup_onnx_openvino() {
   # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
   pushd onnxruntime
   git checkout tags/v1.16.3 -b v1.16.3
-  ./build.sh --config Release --build_shared_lib --parallel --use_openvino CPU_FP32                \
+  ./build.sh --config Release --parallel --use_openvino CPU_FP32                                   \
     --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_openvino              \
     --cmake_extra_defines CMAKE_CXX_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds" \
     --cmake_extra_defines CMAKE_C_FLAGS="-Wno-error=maybe-uninitialized -Wno-error=array-bounds"
@@ -621,8 +591,8 @@ function setup_onnx_tvm() {
   pushd onnxruntime
   # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
   git checkout tags/v1.16.3 -b v1.16.3
-  ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --skip_tests --skip_onnx_tests --use_tvm  \
-    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_tvm                                                    \
+  ./build.sh --config Release --parallel --compile_no_warning_as_error --skip_tests --skip_onnx_tests --use_tvm  \
+    --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_tvm                                 \
     --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64
   if [[ $? -ne 0 ]]; then
     echo "build onnxruntime_dnnl failed"
