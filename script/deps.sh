@@ -571,7 +571,7 @@ function setup_onnx_dnnl() {
     echo "build onnxruntime_dnnl failed"
     exit 1
   fi
-  pushd build/Linux/Release && make install && cp libdnnl.so.3 ~/.local/lib/onnxruntime_dnnl/lib popd
+  pushd build/Linux/Release && make install && cp libdnnl.so.3 ~/.local/lib/onnxruntime_dnnl/lib && popd
   popd
   popd
 }
