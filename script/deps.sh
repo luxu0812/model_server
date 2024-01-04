@@ -481,7 +481,7 @@ function setup_onnx() {
     ./build.sh --config Release --parallel --compile_no_warning_as_error       \
       --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime \
       --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 &&                  \
-    pushd build/Linux/Release && make install && popd
+    pushd build/Linux/Release && make install && cp _deps/*-build/*.a ~/.local/lib/onnxruntime/lib && popd
   fi
   if [[ $? -ne 0 ]]; then
     echo "build onnxruntime failed"
