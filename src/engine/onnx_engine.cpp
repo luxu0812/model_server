@@ -12,11 +12,11 @@ namespace model_server {
 
 ONNXEngine::ONNXEngine(const EngineConf& engine_conf) noexcept(false) :
   Engine(engine_conf),
-  // engine_mtx_(),
-  inited_(false),
   session_opts_(nullptr),
   env_(nullptr),
-  session_(nullptr) {
+  session_(nullptr),
+  // engine_mtx_(),
+  inited_(false) {
   init();
   inited_ = true;
 }
