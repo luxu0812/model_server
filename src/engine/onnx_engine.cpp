@@ -168,7 +168,7 @@ void ONNXEngine::set_session_options() {
   // set session options
 
   session_opts_ = new Ort::SessionOptions();
-  session_opts_->DisablePerSessionThreads();
+  // session_opts_->DisablePerSessionThreads();
   session_opts_->SetIntraOpNumThreads(conf_.intra_op_parallelism_threads);
   session_opts_->SetInterOpNumThreads(conf_.inter_op_parallelism_threads);
   if (0 == conf_.opt_level) {

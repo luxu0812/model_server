@@ -476,12 +476,12 @@ function setup_onnx() {
     ./build.sh --config Release --parallel --compile_no_warning_as_error --skip_submodule_sync \
       --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime                 \
       --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=arm64 &&                                   \
-    pushd build/MacOS/Release && make install && popd
+    pushd build/MacOS/Release && make install && cp -r _deps ~/.local/lib/onnxruntime/lib && popd
   else
     ./build.sh --config Release --parallel --compile_no_warning_as_error       \
       --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime \
       --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64 &&                  \
-    pushd build/Linux/Release && make install && cp _deps/*-build ~/.local/lib/onnxruntime/lib && popd
+    pushd build/Linux/Release && make install && cp -r _deps ~/.local/lib/onnxruntime/lib && popd
   fi
   if [[ $? -ne 0 ]]; then
     echo "build onnxruntime failed"
@@ -541,7 +541,7 @@ function setup_onnx_dnnl() {
     echo "build onnxruntime_dnnl failed"
     exit 1
   fi
-  pushd build/Linux/Release && make install && cp libdnnl.so.3 ~/.local/lib/onnxruntime_dnnl/lib && popd
+  pushd build/Linux/Release && make install && cp -r _deps ~/.local/lib/onnxruntime/lib  && popd
   popd
   popd
 }
@@ -598,7 +598,7 @@ function setup_onnx_tvm() {
     echo "build onnxruntime_dnnl failed"
     exit 1
   fi
-  pushd build/Linux/Release && make install && popd
+  pushd build/Linux/Release && make install && cp -r _deps ~/.local/lib/onnxruntime/lib && popd
   popd
   popd
 }
