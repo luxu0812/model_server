@@ -4,8 +4,8 @@ module(
   compatibility_level = 0,
 )
 
-bazel_dep(name = "dnnl")
-local_path_override(
-    module_name = "dnnl",
-    path = "${HOME}/.local/lib/dnnl",
-)
+# bazel_dep(name = "dnnl")
+# local_path_override(
+#     module_name = "dnnl",
+#     path = "${HOME}/.local/lib/dnnl",
+# )

@@ -6,14 +6,15 @@ cc_library(
   includes = [
     "include",
   ],
-  deps = [
-    "@dnnl//:dnnl"
-  ],
+  # deps = [
+  #   "@dnnl//:dnnl"
+  # ],
   srcs = [
     "lib/libonnxruntime_providers_dnnl.so",
     "lib/libonnxruntime_providers_shared.so",
     "lib/libonnxruntime.so.1.16.3",
     "lib/libonnxruntime.so",
+    "lib/libdnnl.so.3",
   ],
   visibility = ["//visibility:public"],
 )

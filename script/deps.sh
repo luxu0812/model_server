@@ -564,14 +564,14 @@ function setup_onnx_dnnl() {
   pushd onnxruntime
   # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
   git checkout tags/v1.16.3 -b v1.16.3
-  ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --use_dnnl \
+  ./build.sh --config Release --build_shared_lib --parallel --compile_no_warning_as_error --use_dnnl --build_shared_lib=off \
     --cmake_extra_defines CMAKE_INSTALL_PREFIX:PATH=~/.local/lib/onnxruntime_dnnl                    \
     --cmake_extra_defines CMAKE_OSX_ARCHITECTURES=x86_64
   if [[ $? -ne 0 ]]; then
     echo "build onnxruntime_dnnl failed"
     exit 1
   fi
-  pushd build/Linux/Release && make install && popd
+  pushd build/Linux/Release && make install && cp libdnnl.so.3 ~/.local/lib/onnxruntime_dnnl/lib popd
   popd
   popd
 }
