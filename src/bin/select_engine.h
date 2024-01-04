@@ -32,6 +32,7 @@ model_server::Engine *select_engine(const model_server::EngineConf& engine_conf)
 #ifdef USE_ONNXRUNTIME_TVM_ENGINE
   return new model_server::ONNXTVMEngine(engine_conf);
 #endif
+  return nullptr;
 }
 
 #endif  // MODEL_SERVER_SRC_BIN_SELECT_ENGINE_H_
