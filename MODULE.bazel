@@ -8,89 +8,89 @@ module(
 bazel_dep(name = "com_github_gflags_gflags")
 local_path_override(
     module_name = "com_github_gflags_gflags",
-    path = "/Users/xu.lu/.local/lib/gflags",
+    path = "${HOME}/.local/lib/gflags",
 )
 
 #-------------------------------- glog --------------------------------#
 bazel_dep(name = "com_github_google_glog")
 local_path_override(
     module_name = "com_github_google_glog",
-    path = "/Users/xu.lu/.local/lib/glog",
+    path = "${HOME}/.local/lib/glog",
 )
 
 #----------------------------- googletest -----------------------------#
 bazel_dep(name = "com_google_googletest")
 local_path_override(
     module_name = "com_google_googletest",
-    path = "/Users/xu.lu/.local/lib/googletest",
+    path = "${HOME}/.local/lib/googletest",
 )
 
 #-------------------------- google-benchmark --------------------------#
 bazel_dep(name = "com_github_google_benchmark")
 local_path_override(
     module_name = "com_github_google_benchmark",
-    path = "/Users/xu.lu/.local/lib/benchmark",
+    path = "${HOME}/.local/lib/benchmark",
 )
 
 #------------------------------- abseil -------------------------------#
 bazel_dep(name = "com_google_absl")
 local_path_override(
     module_name = "com_google_absl",
-    path = "/Users/xu.lu/.local/lib/absl",
+    path = "${HOME}/.local/lib/absl",
 )
 
 #-------------------------------- zlib --------------------------------#
 bazel_dep(name = "com_github_madler_zlib")
 local_path_override(
     module_name = "com_github_madler_zlib",
-    path = "/Users/xu.lu/.local/lib/zlib",
+    path = "${HOME}/.local/lib/zlib",
 )
 
 #------------------------------ protobuf ------------------------------#
 bazel_dep(name = "protobuf")
 local_path_override(
     module_name = "protobuf",
-    path = "/Users/xu.lu/.local/lib/protobuf",
+    path = "${HOME}/.local/lib/protobuf",
 )
 
 #---------------------------- nlohmann_json ---------------------------#
 bazel_dep(name = "nlohmann_json")
 local_path_override(
     module_name = "nlohmann_json",
-    path = "/Users/xu.lu/.local/lib/nlohmann_json",
+    path = "${HOME}/.local/lib/nlohmann_json",
 )
 
 #---------------------------- bs_thread_pool --------------------------#
 bazel_dep(name = "bs_thread_pool")
 local_path_override(
     module_name = "bs_thread_pool",
-    path = "/Users/xu.lu/.local/lib/bs_thread_pool",
+    path = "${HOME}/.local/lib/bs_thread_pool",
 )
 
 #---------------------------- libtensorflow ---------------------------#
 bazel_dep(name = "tensorflow")
 local_path_override(
     module_name = "tensorflow",
-    path = "/Users/xu.lu/.local/lib/libtensorflow",
+    path = "${HOME}/.local/lib/libtensorflow",
 )
 
 #----------------------------- onnxruntime ----------------------------#
 bazel_dep(name = "onnxruntime")
 local_path_override(
     module_name = "onnxruntime",
-    path = "/Users/xu.lu/.local/lib/onnxruntime",
+    path = "${HOME}/.local/lib/onnxruntime",
 )
 
 #------------------------------ tcmalloc ------------------------------#
 # bazel_dep(name = "tcmalloc")
 # local_path_override(
 #     module_name = "tcmalloc",
-#     path = "/Users/xu.lu/.local/lib/tcmalloc",
+#     path = "${HOME}/.local/lib/tcmalloc",
 # )
 
 #------------------------------ jemalloc ------------------------------#
 bazel_dep(name = "jemalloc")
 local_path_override(
     module_name = "jemalloc",
-    path = "/Users/xu.lu/.local/lib/jemalloc",
+    path = "${HOME}/.local/lib/jemalloc",
 )
