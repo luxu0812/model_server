@@ -184,7 +184,7 @@ void ONNXEngine::set_session_options() {
   }
   // session_opts_->EnableOrtCustomOps();
 
-  LOG(INFO) << "[" << conf_.brief() << "] Session options set";
+  LOG(INFO) << "[" << conf_.detail() << "] Session options set";
 }
 
 void ONNXEngine::create_session() {
