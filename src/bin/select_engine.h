@@ -45,7 +45,9 @@ model_server::Engine *create_demo_engine() {
     .opt_level = FLAGS_engine_opt_level,
     .jit_level = FLAGS_engine_jit_level,
     .inter_op_parallelism_threads = FLAGS_engine_inter_op_parallelism_threads,
-    .intra_op_parallelism_threads = FLAGS_engine_intra_op_parallelism_threads
+    .intra_op_parallelism_threads = FLAGS_engine_intra_op_parallelism_threads,
+    .use_global_thread_pool = false,
+    .ort_parrallel_execution = false
   };
 
 #ifdef USE_TF_ENGINE

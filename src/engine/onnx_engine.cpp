@@ -168,10 +168,10 @@ void ONNXEngine::set_session_options() {
   // set session options
 
   session_opts_ = new Ort::SessionOptions();
-  session_opts_->DisablePerSessionThreads();
-  session_opts_->SetIntraOpNumThreads(conf_.intra_op_parallelism_threads);
   session_opts_->SetInterOpNumThreads(conf_.inter_op_parallelism_threads);
+  session_opts_->SetIntraOpNumThreads(conf_.intra_op_parallelism_threads);
   session_opts_->EnableCpuMemArena();
+  // session_opts_->EnableOrtCustomOps();
   if (0 == conf_.opt_level) {
     session_opts_->SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_DISABLE_ALL);
   } else {
@@ -182,19 +182,24 @@ void ONNXEngine::set_session_options() {
   } else {
     session_opts_->SetExecutionMode(ExecutionMode::ORT_SEQUENTIAL);
   }
-  // session_opts_->EnableOrtCustomOps();
+  if (conf_.use_global_thread_pool) {
+    session_opts_->DisablePerSessionThreads();
+  }
 
   LOG(INFO) << "[" << conf_.detail() << "] Session options set";
 }
 
 void ONNXEngine::create_session() {
   // create session
-  Ort::ThreadingOptions threading_opts;
-  threading_opts.SetGlobalInterOpNumThreads(conf_.intra_op_parallelism_threads);
-  threading_opts.SetGlobalIntraOpNumThreads(conf_.inter_op_parallelism_threads);
-  threading_opts.SetGlobalSpinControl(1);
-
-  env_ = new Ort::Env(&(*threading_opts), OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, conf_.name.c_str());
+  if (conf_.use_global_thread_pool) {
+    Ort::ThreadingOptions threading_opts;
+    threading_opts.SetGlobalInterOpNumThreads(conf_.inter_op_parallelism_threads);
+    threading_opts.SetGlobalIntraOpNumThreads(conf_.intra_op_parallelism_threads);
+    threading_opts.SetGlobalSpinControl(1);
+    env_ = new Ort::Env(&(*threading_opts), OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, conf_.name.c_str());
+  } else {
+    env_ = new Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, conf_.name.c_str());
+  }
   session_ = new Ort::Session(*env_, conf_.graph_file_loc.c_str(), *session_opts_);
   LOG(INFO) << "[" << conf_.brief() << "] Session created";
 }

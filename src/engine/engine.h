@@ -38,6 +38,7 @@ struct EngineConf {
   int32_t inter_op_parallelism_threads  = 32;
   int32_t intra_op_parallelism_threads  = 1;
 
+  bool use_global_thread_pool           = true;
   bool ort_parrallel_execution          = false;
 
   std::string detail() noexcept {
@@ -46,7 +47,9 @@ struct EngineConf {
       + ", output_nodes: " + std::to_string(output_nodes.size())
       + ", opt_level: " + std::to_string(opt_level) + ", jit_level: " + std::to_string(jit_level)
       + ", inter_op_parallelism_threads: " + std::to_string(inter_op_parallelism_threads)
-      + ", intra_op_parallelism_threads: " + std::to_string(intra_op_parallelism_threads);
+      + ", intra_op_parallelism_threads: " + std::to_string(intra_op_parallelism_threads)
+      + ", use_global_thread_pool: " + std::to_string(use_global_thread_pool)
+      + ", ort_parrallel_execution: " + std::to_string(ort_parrallel_execution);
   }
 
   std::string brief() noexcept {
@@ -82,7 +85,9 @@ class Engine {
     absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
   ) noexcept(false) = 0;  // NOLINT
 
-  void perf(int32_t concurrency, int32_t sample_count, int32_t batch_size, PerfIndex *perf_index) noexcept(false) {
+  void perf(
+    int32_t concurrency, int32_t sample_count, int32_t batch_size, PerfIndex *perf_index, bool fill_input = false
+  ) noexcept(false) {  // NOLINT
     auto infer_with_timer = [](Engine *engine, Sample *sample, double *cost_ms) {
       Timer timer;
       ScopeExitTask scope_exit_task([&]() {
@@ -92,7 +97,7 @@ class Engine {
     };
 
     std::vector<Sample> samples;
-    random_sample_gen(&samples, sample_count, batch_size);
+    random_sample_gen(&samples, sample_count, batch_size, fill_input);
 
     std::vector<double> cost_ms(samples.size());
     for (int32_t i = 0; i < samples.size(); ++i) {
@@ -122,7 +127,9 @@ class Engine {
     perf_index->set_throughput(static_cast<double>(samples.size()) / total_cost_sec);
   }
 
-  void random_sample_gen(std::vector<Sample> *samples, int32_t sample_count, int32_t batch_size) noexcept(false) {
+  void random_sample_gen(
+    std::vector<Sample> *samples, int32_t sample_count, int32_t batch_size, bool fill_input = false
+  ) noexcept(false) {  // NOLINT
     absl::flat_hash_map<std::string, std::vector<int64_t>> input_shapes;
     get_input_name_and_shape(&input_shapes);
     absl::flat_hash_map<std::string, std::vector<int64_t>> output_shapes;
@@ -149,8 +156,10 @@ class Engine {
           feature.data.resize(data_size);
 
           // fill random data
-          for (auto& data : feature.data) {
-            data = std::uniform_real_distribution<float>(0.0, 1.0)(gen);
+          if (fill_input) {
+            for (auto& data : feature.data) {
+              data = std::uniform_real_distribution<float>(0.0, 1.0)(gen);
+            }
           }
         }
 

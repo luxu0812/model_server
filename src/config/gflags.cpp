@@ -17,4 +17,5 @@ DEFINE_int32(engine_opt_level, 1, "Optimization level");
 DEFINE_int32(engine_jit_level, 0, "JIT level");
 DEFINE_int32(engine_inter_op_parallelism_threads, 16, "Inter op parallelism threads");
 DEFINE_int32(engine_intra_op_parallelism_threads, 16, "Intra op parallelism threads");
+DEFINE_bool(engin_use_global_thread_pool, true, "Use global thread pool");
 DEFINE_bool(engine_ort_parrallel_execution, false, "ORT parallel execution");

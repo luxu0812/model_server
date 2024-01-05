@@ -337,16 +337,20 @@ void TFEngine::set_session_options() {
   (*tf_session_conf.mutable_device_count())["GPU"] = 0;
   tf_session_conf.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
   tf_session_conf.mutable_experimental()->set_disable_thread_spinning(true);
-  tf_session_conf.set_use_per_session_threads(false);
   tf_session_conf.set_intra_op_parallelism_threads(conf_.intra_op_parallelism_threads);
   tf_session_conf.set_inter_op_parallelism_threads(conf_.inter_op_parallelism_threads);
-  LOG(INFO) << "[" << conf_.detail() << "] Session config:\n" << tf_session_conf.DebugString();
 
-  tensorflow::ThreadPoolOptionProto *thread_pool_opt = tf_session_conf.mutable_session_inter_op_thread_pool()->Add();
-  thread_pool_opt->set_num_threads(conf_.inter_op_parallelism_threads);
-  thread_pool_opt->set_global_name(
-    std::string(kGlobalInterOpThreadPool) + "_" + std::to_string(conf_.inter_op_parallelism_threads)
-  );  // NOLINT
+  if (conf_.use_global_thread_pool) {
+    tf_session_conf.set_use_per_session_threads(false);
+    tensorflow::ThreadPoolOptionProto *thread_pool_opt = tf_session_conf.mutable_session_inter_op_thread_pool()->Add();
+    thread_pool_opt->set_num_threads(conf_.inter_op_parallelism_threads);
+    thread_pool_opt->set_global_name(
+      std::string(kGlobalInterOpThreadPool) + "_" + std::to_string(conf_.inter_op_parallelism_threads)
+    );  // NOLINT
+  } else {
+    tf_session_conf.set_use_per_session_threads(true);
+  }
+  LOG(INFO) << "[" << conf_.detail() << "] Session config:\n" << tf_session_conf.DebugString();
 
   std::string tf_session_conf_str;
   tf_session_conf.SerializeToString(&tf_session_conf_str);
@@ -359,13 +363,15 @@ void TFEngine::set_session_options() {
     throw std::runtime_error(err_msg);
   }
 
-  tensorflow::RunOptions default_run_opt;
-  default_run_opt.set_inter_op_thread_pool(0);
-  std::string default_run_opt_str;
-  default_run_opt.SerializeToString(&default_run_opt_str);
-  _default_run_option_buf = TF_NewBufferFromString(
-    static_cast<void*>(default_run_opt_str.data()), default_run_opt_str.size()
-  );  // NOLINT
+  if (conf_.use_global_thread_pool) {
+    tensorflow::RunOptions default_run_opt;
+    default_run_opt.set_inter_op_thread_pool(0);
+    std::string default_run_opt_str;
+    default_run_opt.SerializeToString(&default_run_opt_str);
+    _default_run_option_buf = TF_NewBufferFromString(
+      static_cast<void*>(default_run_opt_str.data()), default_run_opt_str.size()
+    );  // NOLINT
+  }
 
   LOG(INFO) << "[" << conf_.brief() << "] Session options set";
 }
