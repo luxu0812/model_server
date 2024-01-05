@@ -305,7 +305,7 @@ cc_binary(
     "//conditions:default": "@bazel_tools//tools/cpp:malloc",
   }),
   copts = [
-    "-DUSE_ONNX_ENGINE",
+    "-DUSE_ONNXRUNTIME_ENGINE",
   ],
 )
 

@@ -19,31 +19,21 @@ model_server::Engine *create_engine();
 int main(int argc, char **argv) {
   model_server::init(argc, argv);
   try {
-    std::unique_ptr<model_server::Engine> engine(create_engine());
+    std::unique_ptr<model_server::Engine> engine(create_demo_engine());
+    if (nullptr == engine.get()) {
+      LOG(ERROR) << "Failed to create engine";
+      return -1;
+    }
+
     model_server::PerfIndex perf_index;
     engine->perf(FLAGS_number_of_consumers, FLAGS_number_of_test_cases, FLAGS_batch_size, &perf_index);
-    LOG(INFO) << "summary:\n" << perf_index.DebugString();
+    LOG(INFO) << "Summary:\n" << perf_index.DebugString();
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
   } catch (...) {
     LOG(ERROR) << "Unknown exception";
   }
+  LOG(INFO) << "Done";
 
   return 0;
-}
-
-model_server::Engine *create_engine() {
-  model_server::EngineConf engine_conf {
-    .name = "model_2",
-    .version = "1.0.0",
-    .input_nodes = {"dense", "onehot", "sparse_input_folded", "sparse_input_unfolded"},
-    .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
-    .opt_level = FLAGS_engine_opt_level,
-    .jit_level = FLAGS_engine_jit_level,
-    .inter_op_parallelism_threads = FLAGS_engine_inter_op_parallelism_threads,
-    .intra_op_parallelism_threads = FLAGS_engine_intra_op_parallelism_threads
-  };
-
-  engine_conf.graph_file_loc = "data/models/model_2/1/graph.pb";
-  return select_engine(engine_conf);
 }

@@ -5,6 +5,7 @@
 
 #include <string>
 #include "model_server/src/engine/engine.h"
+#include "model_server/src/config/gflags.h"
 
 #ifdef USE_TF_ENGINE
 #include "model_server/src/engine/tf_engine.h"
@@ -33,6 +34,34 @@ model_server::Engine *select_engine(const model_server::EngineConf& engine_conf)
   return new model_server::ONNXTVMEngine(engine_conf);
 #endif
   return nullptr;
+}
+
+model_server::Engine *create_demo_engine() {
+  model_server::EngineConf engine_conf {
+    .name = "model_2",
+    .version = "1.0.0",
+    .input_nodes = {"dense", "onehot", "sparse_input_folded", "sparse_input_unfolded"},
+    .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
+    .opt_level = FLAGS_engine_opt_level,
+    .jit_level = FLAGS_engine_jit_level,
+    .inter_op_parallelism_threads = FLAGS_engine_inter_op_parallelism_threads,
+    .intra_op_parallelism_threads = FLAGS_engine_intra_op_parallelism_threads
+  };
+
+#ifdef USE_TF_ENGINE
+  engine_conf.graph_file_loc = "data/models/model_2/1/graph.pb";
+#endif
+#ifdef USE_ONNXRUNTIME_ENGINE
+  engine_conf.graph_file_loc = "data/models/model_2/1/graph.onnx";
+#endif
+#ifdef USE_ONNXRUNTIME_DNNL_ENGINE
+  engine_conf.graph_file_loc = "data/models/model_2/1/graph.onnx";
+#endif
+#ifdef USE_ONNXRUNTIME_TVM_ENGINE
+  engine_conf.graph_file_loc = "data/models/model_2/1/graph.onnx";
+#endif
+
+  return select_engine(engine_conf);
 }
 
 #endif  // MODEL_SERVER_SRC_BIN_SELECT_ENGINE_H_
