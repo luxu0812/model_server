@@ -4,6 +4,7 @@
 #define MODEL_SERVER_SRC_BIN_SELECT_ENGINE_H_
 
 #include <string>
+#include <thread>  // NOLINT
 #include "model_server/src/engine/engine.h"
 #include "model_server/src/config/gflags.h"
 
@@ -37,6 +38,10 @@ model_server::Engine *select_engine(const model_server::EngineConf& engine_conf)
 }
 
 model_server::Engine *create_demo_engine() {
+  int32_t cpu_core_num = static_cast<int32_t>(std::thread::hardware_concurrency() >> 1);
+  if (0 == cpu_core_num) {
+    cpu_core_num = 1;
+  }
   model_server::EngineConf engine_conf {
     .name = "model_2",
     .version = "1.0.0",
@@ -44,8 +49,8 @@ model_server::Engine *create_demo_engine() {
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
     .opt_level = FLAGS_engine_opt_level,
     .jit_level = FLAGS_engine_jit_level,
-    .inter_op_parallelism_threads = FLAGS_engine_inter_op_parallelism_threads,
-    .intra_op_parallelism_threads = FLAGS_engine_intra_op_parallelism_threads,
+    .inter_op_parallelism_threads = cpu_core_num,
+    .intra_op_parallelism_threads = cpu_core_num,
     .use_global_thread_pool = false,
     .ort_parrallel_execution = false
   };

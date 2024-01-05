@@ -351,23 +351,19 @@ function perf_demo_graph() {
     if [[ "${uname}" == "Darwin" ]]; then
       for engine_brand in ${engine_brands[@]}; do
         ${SCRIPT_DIR}/bazel-bin/src/perf_${engine_brand} \
-          --number_of_test_cases=1000                    \
+          --number_of_test_cases=100                     \
           --number_of_consumers=1                        \
           --engine_opt_level=1                           \
-          --engine_jit_level=2                           \
-          --engine_inter_op_parallelism_threads=6        \
-          --engine_intra_op_parallelism_threads=6
+          --engine_jit_level=2
       done
     else
       for engine_brand in ${engine_brands[@]}; do
         numactl --cpunodebind=0 --membind=0                \
           ${SCRIPT_DIR}/bazel-bin/src/perf_${engine_brand} \
-          --number_of_test_cases=1000                      \
+          --number_of_test_cases=100                       \
           --number_of_consumers=1                          \
           --engine_opt_level=1                             \
-          --engine_jit_level=2                             \
-          --engine_inter_op_parallelism_threads=32         \
-          --engine_intra_op_parallelism_threads=20
+          --engine_jit_level=2
       done
     fi
   else
