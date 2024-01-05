@@ -5,10 +5,12 @@ cc_library(
   ]),
   includes = [
     "include",
+    "include/onnxruntime/core/session",
   ],
   srcs = glob([
     # onnxruntime build without --build_shared_lib
     "lib/**/*.a",
+    "lib/**/*.so",
 
     # onnxruntime build with --build_shared_lib
     # "lib/libonnxruntime_providers_shared.so",

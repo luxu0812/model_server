@@ -19,6 +19,7 @@ std::string ONNXTVMEngine::brand() noexcept {
 void ONNXTVMEngine::set_session_options() {
   ONNXEngine::set_session_options();
   Ort::ThrowOnError(OrtSessionOptionsAppendExecutionProvider_Tvm(session_opts_->GetUnowned(), ""));
+  LOG(INFO) << "Set TVM as execution provider";
 }
 
 }  // namespace model_server
