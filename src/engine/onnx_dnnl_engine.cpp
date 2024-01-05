@@ -25,6 +25,7 @@ void ONNXDNNLEngine::set_session_options() {
     .threadpool_args = nullptr
   };
   session_opts_->AppendExecutionProvider_Dnnl(dnnl_options);
+  LOG(INFO) << "Set DNNL as execution provider";
 }
 
 }  // namespace model_server
