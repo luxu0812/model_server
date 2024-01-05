@@ -8,7 +8,7 @@
 
 namespace model_server {
 
-std::string pb_to_json(const google::protobuf::Message& pb_msg, std::string *json_msg);
+std::string pb_to_json(const google::protobuf::Message& pb_msg);
 void json_to_pb(const std::string& json_msg, google::protobuf::Message *pb_msg);
 
 }
