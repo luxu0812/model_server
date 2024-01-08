@@ -469,7 +469,8 @@ function setup_onnx() {
   rm -rf onnxruntime
   git clone https://github.com/microsoft/onnxruntime.git # or (https://github.com/intel/onnxruntime.git)
   pushd onnxruntime
-  git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+  # git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
+  git checkout tags/v1.16.3 -b v1.16.3
 
   uname=`uname`
   if [[ "${uname}" == "Darwin" ]]; then
