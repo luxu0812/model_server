@@ -1,0 +1,16 @@
+# Toolchain
+# build --action_env=CC=/usr/lib/llvm-16/bin/clang
+# build --action_env=CXX=/usr/lib/llvm-16/bin/clang++
+# build --action_env=LD=/usr/lib/llvm-16/bin/ld.lld
+# build --action_env=AR=/usr/lib/llvm-16/bin/llvm-ar
+# build --action_env=NM=/usr/lib/llvm-16/bin/llvm-nm
+# build --action_env=STRIP=/usr/lib/llvm-16/bin/llvm-strip
+
+# Enable Bzlmod for every Bazel command
+# common --enable_bzlmod
+
+# build --copt=-ffast-math
+build --copt=-flto
+build --copt=-march-native
+build --copt=-fprofile-generate
+build --copt=-fprofile-use

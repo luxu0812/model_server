@@ -1,0 +1,96 @@
+module(
+  name = "luxu_model_server",
+  version = "",
+  compatibility_level = 0
+)
+
+#------------------------------- gflags -------------------------------#
+bazel_dep(name = "com_github_gflags_gflags")
+local_path_override(
+    module_name = "com_github_gflags_gflags",
+    path = "${HOME}/.local/lib/gflags",
+)
+
+#-------------------------------- glog --------------------------------#
+bazel_dep(name = "com_github_google_glog")
+local_path_override(
+    module_name = "com_github_google_glog",
+    path = "${HOME}/.local/lib/glog",
+)
+
+#----------------------------- googletest -----------------------------#
+bazel_dep(name = "com_google_googletest")
+local_path_override(
+    module_name = "com_google_googletest",
+    path = "${HOME}/.local/lib/googletest",
+)
+
+#-------------------------- google-benchmark --------------------------#
+bazel_dep(name = "com_github_google_benchmark")
+local_path_override(
+    module_name = "com_github_google_benchmark",
+    path = "${HOME}/.local/lib/benchmark",
+)
+
+#------------------------------- abseil -------------------------------#
+bazel_dep(name = "com_google_absl")
+local_path_override(
+    module_name = "com_google_absl",
+    path = "${HOME}/.local/lib/absl",
+)
+
+#-------------------------------- zlib --------------------------------#
+bazel_dep(name = "com_github_madler_zlib")
+local_path_override(
+    module_name = "com_github_madler_zlib",
+    path = "${HOME}/.local/lib/zlib",
+)
+
+#------------------------------ protobuf ------------------------------#
+bazel_dep(name = "protobuf")
+local_path_override(
+    module_name = "protobuf",
+    path = "${HOME}/.local/lib/protobuf",
+)
+
+#---------------------------- nlohmann_json ---------------------------#
+bazel_dep(name = "nlohmann_json")
+local_path_override(
+    module_name = "nlohmann_json",
+    path = "${HOME}/.local/lib/nlohmann_json",
+)
+
+#---------------------------- bs_thread_pool --------------------------#
+bazel_dep(name = "bs_thread_pool")
+local_path_override(
+    module_name = "bs_thread_pool",
+    path = "${HOME}/.local/lib/bs_thread_pool",
+)
+
+#---------------------------- libtensorflow ---------------------------#
+bazel_dep(name = "tensorflow")
+local_path_override(
+    module_name = "tensorflow",
+    path = "${HOME}/.local/lib/libtensorflow",
+)
+
+#----------------------------- onnxruntime ----------------------------#
+bazel_dep(name = "onnxruntime")
+local_path_override(
+    module_name = "onnxruntime",
+    path = "${HOME}/.local/lib/onnxruntime",
+)
+
+#------------------------------ tcmalloc ------------------------------#
+# bazel_dep(name = "tcmalloc")
+# local_path_override(
+#     module_name = "tcmalloc",
+#     path = "${HOME}/.local/lib/tcmalloc",
+# )
+
+#------------------------------ jemalloc ------------------------------#
+bazel_dep(name = "jemalloc")
+local_path_override(
+    module_name = "jemalloc",
+    path = "${HOME}/.local/lib/jemalloc",
+)

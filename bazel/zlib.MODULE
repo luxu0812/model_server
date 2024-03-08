@@ -1,0 +1,5 @@
+module(
+  name = "com_github_madler_zlib",
+  version = "1.2.13",
+  compatibility_level = 0,
+)
