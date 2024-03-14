@@ -9,8 +9,8 @@
 #include <functional>
 #include <vector>
 
-#include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "absl/flags/parse.h"
+#include "absl/log/log.h"
 #include "absl/debugging/symbolize.h"
 #include "absl/debugging/failure_signal_handler.h"
 
@@ -28,8 +28,9 @@ void default_handler(int32_t signal) {
 void init(
   int32_t argc, char **argv, void (*signal_handler)(int32_t) = &default_handler
 ) {
-  google::AllowCommandLineReparsing();
-  google::ParseCommandLineFlags(&argc, &argv, true);
+  // google::AllowCommandLineReparsing();
+  // google::ParseCommandLineFlags(&argc, &argv, true);
+  absl::ParseCommandLine(argc, argv);
 
   // where the "nvvm/libdevice" directory located
   setenv("XLA_FLAGS", "--xla_gpu_cuda_data_dir=/usr/local/cuda-11.8", 1);
@@ -41,11 +42,11 @@ void init(
   // setenv("TF_DISABLE_MKL", "1", 1);
 
 
-  FLAGS_logbufsecs = 0;
-  FLAGS_max_log_size = 1024;
-  FLAGS_minloglevel = google::INFO;
-  FLAGS_logtostdout = true;
-  google::InitGoogleLogging(argv[0]);
+  // FLAGS_logbufsecs = 0;
+  // FLAGS_max_log_size = 1024;
+  // FLAGS_minloglevel = google::INFO;
+  // FLAGS_logtostdout = true;
+  // google::InitGoogleLogging(argv[0]);
 
   for (auto& sig : kExitSignals) {
     signal(sig, signal_handler);
