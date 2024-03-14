@@ -2,7 +2,7 @@
 
 #include <string>
 #include "gtest/gtest.h"
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "absl/time/clock.h"
 #include "model_server/src/util/os/thread_cpu.h"
 #include "model_server/src/util/os/vpopen.h"
