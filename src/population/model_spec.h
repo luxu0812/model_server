@@ -9,7 +9,6 @@
 #include <string>
 #include "absl/container/flat_hash_map.h"
 #include "nlohmann/json.hpp"
-#include "model_server/src/util/functional/scope_exit_task.h"
 
 namespace model_server {
 
