@@ -9,7 +9,7 @@
 #include <string>
 #include <algorithm>
 #include "absl/cleanup/cleanup.h"
-#include "absl/random/distributions.h"
+#include "absl/random/random.h"
 #include "absl/container/flat_hash_map.h"
 #include "BShoshany/BS_thread_pool.hpp"
 #include "model_server/src/util/functional/timer.h"
