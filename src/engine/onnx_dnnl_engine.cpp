@@ -2,7 +2,7 @@
 
 #include "model_server/src/engine/onnx_dnnl_engine.h"
 #include <vector>
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "onnxruntime/dnnl_provider_options.h"
 
 namespace model_server {
