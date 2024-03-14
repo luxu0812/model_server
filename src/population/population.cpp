@@ -1,7 +1,7 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
 
 #include "model_server/src/population/population.h"
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "BShoshany/BS_thread_pool.hpp"
 
 namespace model_server {
