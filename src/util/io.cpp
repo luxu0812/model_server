@@ -6,7 +6,7 @@
 #include <string.h>
 #include <string>
 #include <string_view>
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "model_server/src/util/comm.h"
 
 using std::string;
