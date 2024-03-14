@@ -52,8 +52,8 @@ model_server::Engine *create_demo_engine_2() {
     .version = "1.0.0",
     .input_nodes = {"dense", "onehot", "sparse_input_folded", "sparse_input_unfolded"},
     .output_nodes = {"predict_node", "p0_click", "p0_atc", "p0_order"},
-    .opt_level = FLAGS_engine_opt_level,
-    .jit_level = FLAGS_engine_jit_level,
+    .opt_level = absl::GetFlag(FLAGS_engine_opt_level),
+    .jit_level = absl::GetFlag(FLAGS_engine_jit_level),
     .inter_op_parallelism_threads = cpu_core_num,
     .intra_op_parallelism_threads = cpu_core_num,
     .use_global_thread_pool = false,
@@ -95,8 +95,8 @@ model_server::Engine *create_demo_engine_3() {
       "pdp_atc_click",
       "buynow_click"
     }, // NOLINT
-    .opt_level = FLAGS_engine_opt_level,
-    .jit_level = FLAGS_engine_jit_level,
+    .opt_level = absl::GetFlag(FLAGS_engine_opt_level),
+    .jit_level = absl::GetFlag(FLAGS_engine_jit_level),
     .inter_op_parallelism_threads = cpu_core_num,
     .intra_op_parallelism_threads = cpu_core_num,
     .use_global_thread_pool = false,
