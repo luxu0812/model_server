@@ -1,7 +1,7 @@
 // Copyright (C) 2021 zh.luxu1986@gmail.com
 
 #include <vector>
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "benchmark/benchmark.h"
 #include "model_server/src/engine/sample.h"
 #include "model_server/src/engine/tf_engine.h"
