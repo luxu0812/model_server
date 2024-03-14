@@ -18,18 +18,18 @@
 workspace(name = "ModelServer")
 
 #------------------------------- gflags -------------------------------#
-new_local_repository(
-  name = "com_github_gflags_gflags",
-  path = "${HOME}/.local/lib/gflags",
-  build_file = "bazel/gflags.BUILD",
-)
+# new_local_repository(
+#   name = "com_github_gflags_gflags",
+#   path = "${HOME}/.local/lib/gflags",
+#   build_file = "bazel/gflags.BUILD",
+# )
 
 #-------------------------------- glog --------------------------------#
-new_local_repository(
-  name = "com_github_google_glog",
-  path = "${HOME}/.local/lib/glog",
-  build_file = "bazel/glog.BUILD",
-)
+# new_local_repository(
+#   name = "com_github_google_glog",
+#   path = "${HOME}/.local/lib/glog",
+#   build_file = "bazel/glog.BUILD",
+# )
 
 #----------------------------- googletest -----------------------------#
 new_local_repository(
