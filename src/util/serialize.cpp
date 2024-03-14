@@ -2,7 +2,7 @@
 
 #include "model_server/src/util/serialize.h"
 
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "google/protobuf/message.h"
 #include "google/protobuf/util/json_util.h"
 
