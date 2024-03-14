@@ -4,7 +4,7 @@
 #include <exception>
 #include <vector>
 
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "BShoshany/BS_thread_pool.hpp"
 
 #include "model_server/src/util/process/process_initiator.h"
@@ -26,7 +26,11 @@ int main(int argc, char **argv) {
     }
 
     model_server::PerfIndex perf_index;
-    engine->perf(FLAGS_number_of_consumers, FLAGS_number_of_test_cases, FLAGS_batch_size, &perf_index);
+    engine->perf(
+      absl::GetFlag(FLAGS_number_of_consumers),
+      absl::GetFlag(FLAGS_number_of_test_cases),
+      absl::GetFlag(FLAGS_batch_size), &perf_index
+    );  //  NOLINT
     LOG(INFO) << "Summary:\n" << perf_index.DebugString();
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
