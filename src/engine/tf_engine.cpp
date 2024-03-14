@@ -435,6 +435,7 @@ void TFEngine::set_session_options() {
 
   default_run_opt.set_inter_op_thread_pool(0);
   default_run_opt.SerializeToString(&default_run_opt_str);
+  default_run_opt.mutable_experimental()->set_use_run_handler_pool(false);
   warmup_run_option_buf_ = TF_NewBufferFromString(
     static_cast<void*>(default_run_opt_str.data()), default_run_opt_str.size()
   );  // NOLINT
