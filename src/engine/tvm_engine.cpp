@@ -6,9 +6,9 @@
 #include <memory>
 #include <vector>
 #include "glog/logging.h"
+#include "absl/cleanup/cleanup.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
-#include "model_server/src/util/functional/scope_exit_task.h"
 #include "model_server/src/engine/onnx_engine.h"
 
 namespace model_server {
@@ -140,11 +140,11 @@ void TVMEngine::load() {
   tvm::runtime::Module mod_dylib = tvm::runtime::Module::LoadFromFile(so_file);
 
   std::ifstream json_in(json_file, std::ios::in);
-  ScopeExitTask json_in_close([&json_in]() { json_in.close(); });
+  auto json_in_cleanup = absl::MakeCleanup([&json_in]() { json_in.close(); });
   std::string json_data((std::istreambuf_iterator<char>(json_in)), std::istreambuf_iterator<char>());
 
   std::ifstream params_in(params_file, std::ios::binary);
-  ScopeExitTask params_in_close([&params_in]() { params_in.close(); });
+  auto json_out_cleanup = absl::MakeCleanup([&params_in]() { params_in.close(); });
   std::string params_data((std::istreambuf_iterator<char>(params_in)), std::istreambuf_iterator<char>());
 
   module_ = (*tvm::runtime::Registry::Get("tvm.graph_executor.create"))(json_data, mod_dylib, device_type_, device_id_);
