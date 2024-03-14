@@ -24,7 +24,6 @@ const char kBrandTFGPU[]    = "TensorFlow-GPU";
 const char kBrandONNX[]     = "ONNX";
 const char kBrandONNXDNNL[] = "ONNX-DNNL";
 const char kBrandTVM[]      = "TVM";
-const char kBrandTRT[]      = "TensorRT";
 
 struct EngineConf {
   std::string name                      = "";
@@ -70,6 +69,11 @@ class Engine {
   // Get brand of engine
   virtual std::string brand() noexcept = 0;
 
+  // Warmup
+  virtual void warmup(Instance *instance, Score *score) noexcept(false) {
+    infer(instance, score);
+  }
+
   // Perform inference
   virtual void infer(Instance *instance, Score *score) noexcept(false) = 0;
 
@@ -101,19 +105,20 @@ class Engine {
     random_sample_gen(&samples, sample_count, batch_size, fill_input);
 
     // warmup
-    std::vector<double> cost_ms(samples.size());
-    BS::thread_pool works(concurrency);
-    for (int32_t i = 0; i < samples.size(); ++i) {
-      works.push_task(infer_with_timer, this, &(samples.at(i)), &(cost_ms[i]));
+    for (int32_t j = 0; j < 16; ++j) {
+      for (int32_t i = 0; i < static_cast<int32_t>(samples.size()); ++i) {
+        this->warmup(&(samples[i].instance), &(samples[i].score));
+      }
     }
-    works.wait_for_tasks();
 
     // trace
-    for (int32_t i = 0; i < samples.size(); ++i) {
+    std::vector<double> cost_ms(samples.size());
+    BS::thread_pool works(concurrency);
+    for (int32_t i = 0; i < static_cast<int32_t>(samples.size()); ++i) {
       works.push_task(infer_with_timer, this, &(samples.at(i)), &(cost_ms[i]));
-    }
-    if (samples.size() > 0) {
-      this->trace(&(samples[0].instance), &(samples[0].score));
+      if (static_cast<int32_t>(samples.size()) / 2 == i) {
+        this->trace(&(samples[0].instance), &(samples[0].score));
+      }
     }
     works.wait_for_tasks();
 
