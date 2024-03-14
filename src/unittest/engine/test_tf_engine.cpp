@@ -1,6 +1,6 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
 
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "gtest/gtest.h"
 #include "model_server/src/util/process/process_initiator.h"
 #include "model_server/src/engine/tf_engine.h"
