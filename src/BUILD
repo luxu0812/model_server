@@ -91,9 +91,6 @@ cc_library(
     "util/io.h",
     "util/serialize.h",
     "util/algorithm/search.h",
-    "util/functional/return_status.h",
-    "util/functional/scope_exit_task.h",
-    "util/functional/random.h",
     "util/functional/timer.h",
     "util/process/process_initiator.h",
     "util/process/process_status.h",
@@ -102,7 +99,6 @@ cc_library(
     "util/comm.cpp",
     "util/io.cpp",
     "util/serialize.cpp",
-    "util/functional/return_status.cpp",
     "util/process/process_status.cpp",
   ],
   deps = [
