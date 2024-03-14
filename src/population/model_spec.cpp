@@ -1,6 +1,7 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
 
 #include "model_server/src/population/model_spec.h"
+#include "absl/cleanup/cleanup.h"
 
 namespace model_server {
 
@@ -9,7 +10,7 @@ void ModelMeta::load(const std::string& meta_file) noexcept(false) {
   if (!file.is_open()) {
     throw std::runtime_error("Failed to open meta file: " + meta_file);
   }
-  ScopeExitTask file_guard([&file](){ file.close(); });
+  auto file_cleanup = absl::MakeCleanup([&file](){ file.close(); });
 
   conf = nlohmann::json::parse(file);
   check_format();
