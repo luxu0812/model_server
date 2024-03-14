@@ -9,8 +9,6 @@
 #include "tensorflow/c/c_api.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
-#include "model_server/src/util/functional/scope_exit_task.h"
-
 namespace model_server {
 
 TFGPUEngine::TFGPUEngine(const EngineConf& engine_conf) noexcept(false) :
