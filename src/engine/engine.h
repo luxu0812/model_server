@@ -105,10 +105,8 @@ class Engine {
     random_sample_gen(&samples, sample_count, batch_size, fill_input);
 
     // warmup
-    for (int32_t j = 0; j < 16; ++j) {
-      for (int32_t i = 0; i < static_cast<int32_t>(samples.size()); ++i) {
-        this->warmup(&(samples[i].instance), &(samples[i].score));
-      }
+    if (samples.size() > 0) {
+      this->warmup(&(samples[0].instance), &(samples[0].score));
     }
 
     // trace
