@@ -405,6 +405,7 @@ void TFEngine::set_session_options() {
   // tf_session_conf.mutable_experimental()->set_disable_thread_spinning(true);
   // tf_session_conf.mutable_experimental()->set_optimize_for_static_graph(true);
   // tf_session_conf.mutable_experimental()->set_use_tfrt(true);
+  // tf_session_conf.mutable_experimental()->set_xla_fusion_autotuner_thresh(256);
   LOG(INFO) << "[" << conf_.detail() << "] Session config:\n" << tf_session_conf.DebugString();
 
   std::string tf_session_conf_str;
