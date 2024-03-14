@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <mutex>  // NOLINT
 #include <string>
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "absl/strings/str_format.h"
 #include "model_server/src/util/os/vpopen.h"
 #include "model_server/src/util/io.h"
