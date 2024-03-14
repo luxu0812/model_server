@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "absl/cleanup/cleanup.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
