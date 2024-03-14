@@ -4,7 +4,7 @@
 #include <fstream>
 
 #include "gflags/gflags.h"
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
 #include "model_server/src/util/process/process_initiator.h"
