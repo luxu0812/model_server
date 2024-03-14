@@ -7,11 +7,11 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include <random>
 #include <algorithm>
+#include "absl/cleanup/cleanup.h"
+#include "absl/random/distributions.h"
 #include "absl/container/flat_hash_map.h"
 #include "BShoshany/BS_thread_pool.hpp"
-#include "model_server/src/util/functional/scope_exit_task.h"
 #include "model_server/src/util/functional/timer.h"
 #include "model_server/src/util/os/resource_used.h"
 #include "model_server/src/engine/sample.h"
@@ -95,7 +95,7 @@ class Engine {
   ) noexcept(false) {  // NOLINT
     auto infer_with_timer = [](Engine *engine, Sample *sample, double *cost_ms) {
       Timer timer;
-      ScopeExitTask scope_exit_task([&]() {
+      auto timer_cleanup = absl::MakeCleanup([&]() {
         *cost_ms = timer.f64_elapsed_ms();
       });
       engine->infer(&(sample->instance), &(sample->score));
@@ -153,7 +153,7 @@ class Engine {
 
     samples->resize(sample_count);
     std::random_device rd;
-    std::mt19937 gen(rd());
+    absl::BitGen bitgen;
     BS::thread_pool works(16);
     for (auto& sample : *samples) {
       works.push_task([&]() {
@@ -172,7 +172,7 @@ class Engine {
           // fill random data
           if (fill_input) {
             for (auto& data : feature.data) {
-              data = std::uniform_real_distribution<float>(0.0, 1.0)(gen);
+              data = absl::Uniform(absl::IntervalClosedClosed, bitgen, 0.0f, 1.0f);;
             }
           }
         }
