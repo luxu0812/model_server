@@ -55,6 +55,9 @@ class TFEngine : public Engine {
   // Get brand of engine
   std::string brand() noexcept override;
 
+  // Perform warmup using TF runtime
+  void warmup(Instance *instance, Score *score) noexcept(false) override;
+
   // Perform inference using the TF runtime
   void infer(Instance *instance, Score *score) noexcept(false) override;
 
@@ -133,6 +136,7 @@ class TFEngine : public Engine {
   TF_SessionOptions *session_opts_;
   TF_Session        *session_;
   TF_Buffer         *default_run_option_buf_;
+  TF_Buffer         *warmup_run_option_buf_;
 };
 
 class TFEngineFactory : public EngineFactory {
