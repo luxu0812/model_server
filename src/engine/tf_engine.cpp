@@ -149,6 +149,40 @@ void TFEngine::score_from_tensor(
   }
 }
 
+void TFEngine::warmup(Instance *instance, Score *score) noexcept(false) {
+  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
+  if (!inited_) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Engine not initialized";
+    throw std::runtime_error(err_msg);
+  }
+
+  // Convert BatchInstance to TF_Output and TF_Tensor
+  std::vector<TF_Tensor*> input_tensors;
+  input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
+  ScopeExitTask delete_input_tensors([&input_tensors]() {
+    for (auto& input_tensor : input_tensors) {
+      if (nullptr != input_tensor) {
+        TF_DeleteTensor(input_tensor);
+      }
+    }
+  });
+
+  std::vector<TF_Tensor*> output_tensors;
+  output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
+  ScopeExitTask delete_output_tensors([&output_tensors]() {
+    for (auto& output_tensor : output_tensors) {
+      if (nullptr != output_tensor) {
+        TF_DeleteTensor(output_tensor);
+      }
+    }
+  });
+
+  instance_to_tensor(instance, &input_tensors);
+  run_session(&input_tensors, &output_tensors, warmup_run_option_buf_);
+  score_from_tensor(output_tensors, score);
+}
+
 void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
   // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
   if (!inited_) {
@@ -343,6 +377,13 @@ void TFEngine::set_session_options() {
   tf_session_conf.set_inter_op_parallelism_threads(conf_.inter_op_parallelism_threads);
   set_gpu(&tf_session_conf);
 
+  {
+    tensorflow::ThreadPoolOptionProto *thread_pool_opt =
+      tf_session_conf.mutable_session_inter_op_thread_pool()->Add();
+    thread_pool_opt->set_num_threads(1);
+    thread_pool_opt->set_global_name(std::string(kGlobalInterOpThreadPool) + "_warmup");
+  }
+
   if (conf_.use_global_thread_pool) {
     tf_session_conf.set_use_per_session_threads(false);
     tensorflow::ThreadPoolOptionProto *thread_pool_opt =
@@ -378,7 +419,7 @@ void TFEngine::set_session_options() {
   default_run_opt.mutable_experimental()->set_use_run_handler_pool(true);
   default_run_opt.mutable_experimental()->mutable_run_handler_pool_options()->set_priority(1);
   if (conf_.use_global_thread_pool) {
-    default_run_opt.set_inter_op_thread_pool(0);
+    default_run_opt.set_inter_op_thread_pool(1);
   }
   std::string default_run_opt_str;
   default_run_opt.SerializeToString(&default_run_opt_str);
@@ -387,6 +428,12 @@ void TFEngine::set_session_options() {
   );  // NOLINT
 
   LOG(INFO) << "[" << conf_.brief() << "] Session options set";
+
+  default_run_opt.set_inter_op_thread_pool(0);
+  default_run_opt.SerializeToString(&default_run_opt_str);
+  warmup_run_option_buf_ = TF_NewBufferFromString(
+    static_cast<void*>(default_run_opt_str.data()), default_run_opt_str.size()
+  );  // NOLINT
 }
 
 void TFEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
