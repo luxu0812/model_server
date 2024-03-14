@@ -10,7 +10,8 @@
 # common --enable_bzlmod
 
 # build --copt=-ffast-math
-build --copt=-flto
-build --copt=-march=native
-build --copt=-fprofile-generate
-build --copt=-fprofile-use
+# build --copt=-flto
+# build --copt=-march=native
+# build --copt=-fprofile-generate
+# build --copt=-fprofile-use
+build --linkopt=-lpthread
