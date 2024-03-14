@@ -116,7 +116,7 @@ class Engine {
     BS::thread_pool works(concurrency);
     for (int32_t i = 0; i < static_cast<int32_t>(samples.size()); ++i) {
       works.push_task(infer_with_timer, this, &(samples.at(i)), &(cost_ms[i]));
-      if (static_cast<int32_t>(samples.size()) / 2 == i) {
+      if (static_cast<int32_t>(samples.size()) >> 1 == i) {
         this->trace(&(samples[0].instance), &(samples[0].score));
       }
     }
