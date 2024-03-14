@@ -137,7 +137,9 @@ void TRTEngine::load() {
     ScopeExitTask model_in_close([&params_in]() { model_in.close(); });
     std::string model_data((std::istreambuf_iterator<char>(model_in)), std::istreambuf_iterator<char>());
 
-    engine_ = TRTEngineFactory::instance()->runtime()->deserializeCudaEngine(model_data.data(), model_data.size(), nullptr);
+    engine_ = TRTEngineFactory::instance()->runtime()->deserializeCudaEngine(
+      model_data.data(), model_data.size(), nullptr
+    );  // NOLINT
   }
 
   context_ = engine_->createExecutionContext();
