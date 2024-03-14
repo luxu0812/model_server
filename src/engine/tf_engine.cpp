@@ -6,12 +6,11 @@
 #include <string>
 
 #include "glog/logging.h"
+#include "absl/cleanup/cleanup.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_join.h"
 #include "tensorflow/c/c_api.h"
 #include "tensorflow/core/protobuf/config.pb.h"
-
-#include "model_server/src/util/functional/scope_exit_task.h"
 
 namespace model_server {
 
@@ -33,7 +32,7 @@ TFEngine::~TFEngine() {
 
     if (nullptr != session_) {
       TF_Status *tf_status = TF_NewStatus();
-      ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
+      auto tf_status_cleanup = absl::MakeCleanup([&tf_status]() { TF_DeleteStatus(tf_status); });
 
       TF_CloseSession(session_, tf_status);
       if (TF_GetCode(tf_status) != TF_OK) {
@@ -166,7 +165,7 @@ void TFEngine::warmup(Instance *instance, Score *score) noexcept(false) {
   // Convert BatchInstance to TF_Output and TF_Tensor
   std::vector<TF_Tensor*> input_tensors;
   input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
-  ScopeExitTask delete_input_tensors([&input_tensors]() {
+  auto input_tensors_cleanup = absl::MakeCleanup([&input_tensors]() {
     for (auto& input_tensor : input_tensors) {
       if (nullptr != input_tensor) {
         TF_DeleteTensor(input_tensor);
@@ -176,7 +175,7 @@ void TFEngine::warmup(Instance *instance, Score *score) noexcept(false) {
 
   std::vector<TF_Tensor*> output_tensors;
   output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
-  ScopeExitTask delete_output_tensors([&output_tensors]() {
+  auto output_tensor_cleanup = absl::MakeCleanup([&output_tensors]() {
     for (auto& output_tensor : output_tensors) {
       if (nullptr != output_tensor) {
         TF_DeleteTensor(output_tensor);
@@ -200,7 +199,7 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
   // Convert BatchInstance to TF_Output and TF_Tensor
   std::vector<TF_Tensor*> input_tensors;
   input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
-  ScopeExitTask delete_input_tensors([&input_tensors]() {
+  auto input_tensors_cleanup = absl::MakeCleanup([&input_tensors]() {
     for (auto& input_tensor : input_tensors) {
       if (nullptr != input_tensor) {
         TF_DeleteTensor(input_tensor);
@@ -210,7 +209,7 @@ void TFEngine::infer(Instance *instance, Score *score) noexcept(false) {
 
   std::vector<TF_Tensor*> output_tensors;
   output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
-  ScopeExitTask delete_output_tensors([&output_tensors]() {
+  auto output_tensor_cleanup = absl::MakeCleanup([&output_tensors]() {
     for (auto& output_tensor : output_tensors) {
       if (nullptr != output_tensor) {
         TF_DeleteTensor(output_tensor);
@@ -238,14 +237,14 @@ void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
   TF_Buffer *tf_run_opts_data = TF_NewBufferFromString(
     reinterpret_cast<void*>(tf_run_opts_str.data()), tf_run_opts_str.size()
   );  // NOLINT
-  ScopeExitTask delete_tf_run_opts_data([&tf_run_opts_data]() { TF_DeleteBuffer(tf_run_opts_data); });
+  auto tf_run_opts_data_cleanup = absl::MakeCleanup([&tf_run_opts_data]() { TF_DeleteBuffer(tf_run_opts_data); });
 
   TF_Buffer *tf_metadata = TF_NewBuffer();
-  ScopeExitTask delete_tf_metadata([&tf_metadata]() { TF_DeleteBuffer(tf_metadata); });
+  auto tf_metadata_cleanup = absl::MakeCleanup([&tf_metadata]() { TF_DeleteBuffer(tf_metadata); });
 
   std::vector<TF_Tensor*> input_tensors;
   input_tensors.resize(tf_model_meta_.input_specs.size(), nullptr);
-  ScopeExitTask delete_input_tensors([&input_tensors]() {
+  auto input_tensors_cleanup = absl::MakeCleanup([&input_tensors]() {
     for (auto& input_tensor : input_tensors) {
       if (nullptr != input_tensor) {
         TF_DeleteTensor(input_tensor);
@@ -255,7 +254,7 @@ void TFEngine::trace(Instance *instance, Score *score) noexcept(false) {
 
   std::vector<TF_Tensor*> output_tensors;
   output_tensors.resize(tf_model_meta_.output_specs.size(), nullptr);
-  ScopeExitTask delete_output_tensors([&output_tensors]() {
+  auto output_tensors_cleanup = absl::MakeCleanup([&output_tensors]() {
     for (auto& output_tensor : output_tensors) {
       if (nullptr != output_tensor) {
         TF_DeleteTensor(output_tensor);
@@ -284,7 +283,7 @@ void TFEngine::run_session(
   TF_Buffer *tf_metadata
 ) {
   TF_Status *tf_status = TF_NewStatus();
-  ScopeExitTask delete_tf_status([&tf_status]() { TF_DeleteStatus(tf_status); });
+  auto tf_status_cleanup = absl::MakeCleanup([&tf_status]() { TF_DeleteStatus(tf_status); });
 
   TF_SessionRun(
     session_, tf_run_opts,
@@ -308,7 +307,7 @@ void TFEngine::load() {
       + conf_.brief() + "] " + "Failed to open graph file: " + graph_file;
     throw std::runtime_error(err_msg);
   }
-  ScopeExitTask close_file([&file]() { file.close(); });
+  auto file_cleanup = absl::MakeCleanup([&file]() { file.close(); });
 
   std::streamsize size = file.tellg();
   file.seekg(0, std::ios::beg);
@@ -335,9 +334,9 @@ void TFEngine::load() {
 void TFEngine::build() {
   TF_Status *tf_status = TF_NewStatus();
   TF_ImportGraphDefOptions *tf_import_graph_def_opts = TF_NewImportGraphDefOptions();
-  ScopeExitTask delete_tf_status([&tf_status, &tf_import_graph_def_opts]() {
-     TF_DeleteStatus(tf_status);
-     TF_DeleteImportGraphDefOptions(tf_import_graph_def_opts);
+  auto tf_status_cleanup = absl::MakeCleanup([&tf_status, &tf_import_graph_def_opts]() {
+    TF_DeleteStatus(tf_status);
+    TF_DeleteImportGraphDefOptions(tf_import_graph_def_opts);
   });
 
   graph_ = TF_NewGraph();
@@ -354,9 +353,7 @@ void TFEngine::build() {
 void TFEngine::set_session_options() {
   // refer to: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/protobuf/config.proto
   TF_Status *tf_status = TF_NewStatus();
-  ScopeExitTask delete_tf_status([&tf_status] {
-     TF_DeleteStatus(tf_status);
-  });
+  auto tf_status_cleanup = absl::MakeCleanup([&tf_status]() { TF_DeleteStatus(tf_status); });
 
   tensorflow::OptimizerOptions tf_optimizer_opts;
   tf_optimizer_opts.set_do_constant_folding(true);
@@ -455,9 +452,7 @@ void TFEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false)
 
 void TFEngine::create_session() {
   TF_Status *tf_status = TF_NewStatus();
-  ScopeExitTask delete_tf_status([&tf_status] {
-     TF_DeleteStatus(tf_status);
-  });
+  auto tf_status_cleanup = absl::MakeCleanup([&tf_status]() { TF_DeleteStatus(tf_status); });
 
   session_ = TF_NewSession(graph_, session_opts_, tf_status);
   if (TF_GetCode(tf_status) != TF_OK) {
@@ -471,9 +466,7 @@ void TFEngine::create_session() {
 
 void TFEngine::sub_init() {
   TF_Status *tf_status = TF_NewStatus();
-  ScopeExitTask delete_tf_status([&tf_status] {
-     TF_DeleteStatus(tf_status);
-  });
+  auto tf_status_cleanup = absl::MakeCleanup([&tf_status]() { TF_DeleteStatus(tf_status); });
 
   int32_t input_index = 0;
   for (const auto& tensor_name : conf_.input_nodes) {
@@ -513,9 +506,7 @@ void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
   int32_t *index
 ) {
   TF_Status *tf_status = TF_NewStatus();
-  ScopeExitTask delete_tf_status([&tf_status] {
-     TF_DeleteStatus(tf_status);
-  });
+  auto tf_status_cleanup = absl::MakeCleanup([&tf_status]() { TF_DeleteStatus(tf_status); });
 
   TF_Operation *tf_operation = TF_GraphOperationByName(graph_, tf_operation_name.c_str());
   if (nullptr == tf_operation) {
@@ -546,9 +537,7 @@ void TFEngine::get_tf_tensor_meta_by_tf_operation_name(
 // Convert TF_Output to TFTensorMeta
 void TFEngine::convert_tf_output_to_tf_tensor_meta(const TF_Output& tf_output, TFTensorMeta *tf_tensor_meta) {
   TF_Status *tf_status = TF_NewStatus();
-  ScopeExitTask delete_tf_status([&tf_status] {
-     TF_DeleteStatus(tf_status);
-  });
+  auto tf_status_cleanup = absl::MakeCleanup([&tf_status]() { TF_DeleteStatus(tf_status); });
 
   tf_tensor_meta->output = new TF_Output(tf_output);
   tf_tensor_meta->operation_name = TF_OperationName(tf_output.oper);
