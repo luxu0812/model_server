@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 
-#include "glog/logging.h"
+#include "absl/log/log.h"
 #include "tensorflow/c/c_api.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
