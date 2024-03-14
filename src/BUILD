@@ -102,7 +102,6 @@ cc_library(
     "util/process/process_status.cpp",
   ],
   deps = [
-    "@com_github_google_glog//:glog",
     "@protobuf//:protobuf",
     "@com_google_absl//:absl",
     ":util_os",
@@ -121,7 +120,7 @@ cc_library(
     "config/gflags.cpp",
   ],
   deps = [
-    "@com_github_gflags_gflags//:gflags",
+    "@com_google_absl//:absl",
   ],
   strip_include_prefix = "config",
   include_prefix = "model_server/src/config",
@@ -168,7 +167,6 @@ cc_library(
     ":util",
     ":sample",
     ":engine_base",
-    "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@tensorflow//:tensorflow",
   ],
@@ -191,7 +189,6 @@ cc_library(
     ":util",
     ":sample",
     ":engine_base",
-    "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@tensorflow//:tensorflow",
   ],
@@ -212,7 +209,6 @@ cc_library(
     ":util",
     ":sample",
     ":engine_base",
-    "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@onnxruntime//:onnxruntime",
   ],
@@ -270,7 +266,6 @@ cc_library(
     ":tf_engine",
     ":onnx_engine",
     ":population_data",
-    "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     "@bs_thread_pool//:bs_thread_pool",
     "@nlohmann_json//:nlohmann_json",
@@ -292,7 +287,7 @@ cc_binary(
     ":sample",
     ":tf_engine",
     ":population_data",
-    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
   ],
   copts = [
     "-DUSE_TF_ENGINE",
@@ -316,7 +311,7 @@ cc_binary(
     ":sample",
     ":tf_gpu_engine",
     ":population_data",
-    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
   ],
   copts = [
     "-DUSE_TF_GPU_ENGINE",
@@ -340,7 +335,7 @@ cc_binary(
     ":sample",
     ":onnx_engine",
     ":population_data",
-    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
   ],
   malloc = select({
     ":use_tcmalloc": "@tcmalloc//:tcmalloc",
@@ -361,7 +356,7 @@ cc_test(
     ":engine_base",
     ":tf_engine",
     "@com_google_googletest//:gtest",
-    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
   ],
   data = [
     "@//data:model_1",
@@ -383,7 +378,7 @@ cc_test(
     ":engine_base",
     ":onnx_engine",
     "@com_google_googletest//:gtest",
-    "@com_github_google_glog//:glog",
+    "@com_google_absl//:absl",
   ],
   data = [
     "@//data:model_1",
@@ -401,7 +396,6 @@ cc_test(
   srcs = ["unittest/util/test.cpp"],
   deps = [
     "@com_google_googletest//:gtest",
-    "@com_github_google_glog//:glog",
     "@com_google_absl//:absl",
     ":util_os",
     ":util",
@@ -444,7 +438,6 @@ cc_test(
     ":sample",
     ":tf_engine",
     ":population",
-    "@com_github_google_glog//:glog",
     "@bs_thread_pool//:bs_thread_pool",
     "@com_github_google_benchmark//:benchmark",
     "@com_google_absl//:absl",
@@ -470,7 +463,6 @@ cc_test(
     ":sample",
     ":onnx_engine",
     ":population",
-    "@com_github_google_glog//:glog",
     "@bs_thread_pool//:bs_thread_pool",
     "@com_github_google_benchmark//:benchmark",
     "@com_google_absl//:absl",
@@ -494,8 +486,7 @@ cc_binary(
   deps = [
     ":util",
     "@tensorflow//:tensorflow",
-    "@com_github_google_glog//:glog",
-    "@com_github_gflags_gflags//:gflags",
+    "@com_google_absl//:absl",
   ],
   malloc = select({
     ":use_tcmalloc": "@tcmalloc//:tcmalloc",
