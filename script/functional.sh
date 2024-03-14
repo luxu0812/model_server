@@ -49,7 +49,6 @@ linux_only_target='\ncc_library(\n
     ":util",\n
     ":sample",\n
     ":engine_base",\n
-    "@com_github_google_glog//:glog",\n
     "@com_google_absl//:absl",\n
     "@onnxruntime_dnnl//:onnxruntime",\n
   ],\n
@@ -68,7 +67,6 @@ linux_only_target='\ncc_library(\n
     ":sample",\n
     ":engine_base",\n
     ":onnx_engine",\n
-    "@com_github_google_glog//:glog",\n
     "@com_google_absl//:absl",\n
     "@apache_tvm//:tvm",\n
   ],\n
