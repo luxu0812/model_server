@@ -1,4 +1,5 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
+// TODO(zh.luxu1986@gmail.com): replace this with absl::Cleanup
 
 #ifndef MODEL_SERVER_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_
 #define MODEL_SERVER_SRC_UTIL_FUNCTIONAL_SCOPE_EXIT_TASK_H_
