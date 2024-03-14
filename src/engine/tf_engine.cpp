@@ -22,7 +22,8 @@ TFEngine::TFEngine(const EngineConf& engine_conf) noexcept(false) :
   graph_(nullptr),
   session_opts_(nullptr),
   session_(nullptr),
-  default_run_option_buf_(nullptr) {
+  default_run_option_buf_(nullptr),
+  warmup_run_option_buf_(nullptr) {
 }
 
 TFEngine::~TFEngine() {
@@ -73,6 +74,11 @@ TFEngine::~TFEngine() {
     if (nullptr != default_run_option_buf_) {
       TF_DeleteBuffer(default_run_option_buf_);
       default_run_option_buf_ = nullptr;
+      LOG(INFO) << "[" << conf_.brief() << "] Default run option buffer deleted";
+    }
+    if (nullptr != warmup_run_option_buf_) {
+      TF_DeleteBuffer(warmup_run_option_buf_);
+      warmup_run_option_buf_ = nullptr;
       LOG(INFO) << "[" << conf_.brief() << "] Default run option buffer deleted";
     }
   } catch (const std::exception& e) {
