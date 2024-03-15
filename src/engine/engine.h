@@ -107,6 +107,10 @@ class Engine {
 
     // warmup
     if (samples.size() > 0) {
+      Timer timer;
+      auto timer_cleanup = absl::MakeCleanup([&]() {
+        LOG(INFO) << "warmup cost: " << timer.f64_elapsed_ms() << " ms";
+      });
       this->warmup(&(samples[0].instance), &(samples[0].score));
     }
 
