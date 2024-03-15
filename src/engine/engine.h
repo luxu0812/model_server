@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include "absl/log/log.h"
 #include "absl/cleanup/cleanup.h"
 #include "absl/random/random.h"
 #include "absl/container/flat_hash_map.h"
