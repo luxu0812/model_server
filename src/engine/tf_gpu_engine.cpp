@@ -28,10 +28,12 @@ void TFGPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(fal
     throw std::runtime_error(err_msg);
   }
 
-  // (*tf_session_conf.mutable_device_count())["GPU"] = 1;
+  (*tf_session_conf->mutable_device_count())["GPU"] = 1;
   tensorflow::GPUOptions gpu;
   gpu.set_per_process_gpu_memory_fraction(0.0);
   gpu.set_allow_growth(true);
+  gpu.set_force_gpu_compatible(true);
+  gpu.set_visible_device_list("0");
   tf_session_conf->mutable_gpu_options()->CopyFrom(gpu);
 }
 
