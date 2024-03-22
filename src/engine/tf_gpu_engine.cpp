@@ -32,9 +32,12 @@ void TFGPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(fal
   tensorflow::GPUOptions gpu;
   gpu.set_per_process_gpu_memory_fraction(0.0);
   gpu.set_allow_growth(true);
+  gpu.set_allocator_type("BFC");
   gpu.set_force_gpu_compatible(true);
   gpu.set_visible_device_list("0");
   tf_session_conf->mutable_gpu_options()->CopyFrom(gpu);
+  tf_session_conf->set_allow_soft_placement(false);
+  tf_session_conf->log_device_placement(true);
 }
 
 std::unique_ptr<TFGPUEngineFactory> TFGPUEngineFactory::instance_ = nullptr;
