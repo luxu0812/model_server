@@ -37,7 +37,7 @@ void TFGPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(fal
   gpu.set_visible_device_list("0");
   tf_session_conf->mutable_gpu_options()->CopyFrom(gpu);
   tf_session_conf->set_allow_soft_placement(false);
-  tf_session_conf->log_device_placement(true);
+  tf_session_conf->log_device_placement();
 }
 
 std::unique_ptr<TFGPUEngineFactory> TFGPUEngineFactory::instance_ = nullptr;
