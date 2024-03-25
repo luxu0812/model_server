@@ -480,8 +480,10 @@ function setup_eigen() {
     return
   fi
 
-  pushd ${HOME}/.local/build
-  cp -r tensorflow/third_party/eigen3 ~/.local/lib
+  pushd ${HOME}/.local/lib
+  wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+  tar zxvf eigen-3.4.0.tar.gz
+  mv eigen-3.4.0 eigen
   popd
 }
 
@@ -754,6 +756,7 @@ function setup_deps() {
   setup_googletest
   setup_google_benchmark
   setup_tensorflow
+  setup_eigen
   setup_zlib
   setup_protobuf
   setup_abseil
