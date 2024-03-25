@@ -23,8 +23,8 @@ cc_library(
       "lib/libtensorflow_cc.so.2",
     ]),
   }),
-  deps = [
-    "@local_eigen//:eigen",
-  ],
+  # deps = [
+  #   "@local_eigen//:eigen",
+  # ],
   visibility = ["//visibility:public"],
 )
