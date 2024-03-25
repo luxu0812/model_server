@@ -198,6 +198,26 @@ cc_library(
 )
 
 cc_library(
+  name = "tf2_engine",
+  hdrs = [
+    "engine/tf2_engine.h",
+  ],
+  srcs = [
+    "engine/tf2_engine.cpp",
+  ],
+  deps = [
+    ":util",
+    ":sample",
+    ":engine_base",
+    "@com_google_absl//:absl",
+    "@tensorflow//:tensorflow",
+  ],
+  strip_include_prefix = "engine",
+  include_prefix = "model_server/src/engine",
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
   name = "onnx_engine",
   hdrs = [
     "engine/onnx_engine.h",
