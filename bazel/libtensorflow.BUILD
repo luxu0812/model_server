@@ -24,7 +24,7 @@ cc_library(
     ]),
   }),
   deps = [
-    "@eigen//:eigen",
+    "@local_eigen//:eigen",
   ],
   visibility = ["//visibility:public"],
 )
