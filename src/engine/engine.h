@@ -22,6 +22,8 @@ namespace model_server {
 
 const char kBrandTF[]       = "TensorFlow";
 const char kBrandTFGPU[]    = "TensorFlow-GPU";
+const char kBrandTF2[]      = "TensorFlow2";
+const char kBrandTF2GPU[]   = "TensorFlow2-GPU";
 const char kBrandONNX[]     = "ONNX";
 const char kBrandONNXDNNL[] = "ONNX-DNNL";
 const char kBrandTVM[]      = "TVM";
