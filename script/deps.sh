@@ -470,8 +470,18 @@ function setup_tensorflow() {
   find tsl -name \*.h -exec cp --parents \{\} ~/.local/lib/libtensorflow/include \;
   popd
   cp -r bazel-bin/external/local_tsl/tsl/protobuf ~/.local/lib/libtensorflow/include/tsl
-  cp -r third_party/xla/third_party/tsl/third_party/eigen3/Eigen ~/.local/lib/libtensorflow/include
   popd
+  popd
+}
+
+function setup_eigen() {
+  if [[ -d ${HOME}/.local/lib/eigen ]]; then
+    echo "eigen already installed"
+    return
+  fi
+
+  pushd ${HOME}/.local/build
+  cp -r tensorflow/third_party/eigen3 ~/.local/lib
   popd
 }
 
