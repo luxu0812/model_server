@@ -2,7 +2,6 @@ cc_library(
   name = "tensorflow",
   hdrs = glob([
     "include/**/*.h",
-    "include/Eigen/**/*",
   ]),
   includes = [
     "include",
@@ -24,5 +23,8 @@ cc_library(
       "lib/libtensorflow_cc.so.2",
     ]),
   }),
+  deps = [
+    "@eigen3//:eigen3",
+  ],
   visibility = ["//visibility:public"],
 )
