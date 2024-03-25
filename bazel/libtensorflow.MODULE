@@ -3,10 +3,3 @@ module(
   version = "v2.13.0",
   compatibility_level = 0,
 )
-
-#------------------------------- eigen --------------------------------#
-# bazel_dep(name = "local_eigen")
-# local_path_override(
-#     module_name = "local_eigen",
-#     path = "${HOME}/.local/lib/eigen",
-# )
