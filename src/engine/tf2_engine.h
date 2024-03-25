@@ -1,108 +1,106 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
 
-#include "model_server/src/engine/tf2_engine.h"
+#ifndef MODEL_SERVER_SRC_ENGINE_TF2_ENGINE_H_
+#define MODEL_SERVER_SRC_ENGINE_TF2_ENGINE_H_
 
-#include <fstream>
+#include <stdint.h>
+#include <memory>
+#include <vector>
 #include <string>
-
-#include "absl/log/log.h"
-#include "absl/cleanup/cleanup.h"
-#include "absl/strings/str_format.h"
-#include "absl/strings/str_join.h"
-#include "tensorflow/c/c_api.h"
+#include <functional>
+#include <shared_mutex>
+#include <unordered_set>
+#include "absl/container/flat_hash_map.h"
 #include "tensorflow/core/protobuf/config.pb.h"
+#include "tensorflow/cc/saved_model/loader.h"
+#include "tensorflow/cc/saved_model/tag_constants.h"
+#include "model_server/src/engine/engine.h"
 
 namespace model_server {
 
-TF2Engine::TF2Engine(const EngineConf& engine_conf) noexcept(false) :
-  Engine(engine_conf),
-  // engine_mtx_(),
-  tags_(),
-  session_opts_(),
-  run_opts_(),
-  model_bundle_() {
-}
+class TF2Engine : public Engine {
+ public:
+  explicit TF2Engine(const EngineConf& engine_conf) noexcept(false);
+  virtual ~TF2Engine();
 
-TF2Engine::~TF2Engine() {
-  try {
-    // std::unique_lock<std::shared_mutex> engine_lock(engine_mtx_);
-    inited_ = false;
-  } catch (const std::exception& e) {
-    LOG(ERROR) << e.what();
-  } catch (...) {
-    LOG(ERROR) << "Unknown exception";
+  TF2Engine() = delete;
+  TF2Engine& operator=(const TF2Engine&) = delete;
+  TF2Engine(const TF2Engine&) = delete;
+
+  // Get brand of engine
+  std::string brand() noexcept override;
+
+  // Perform warmup using TF runtime
+  void warmup(Instance *instance, Score *score) noexcept(false) override;
+
+  // Perform inference using the TF runtime
+  void infer(Instance *instance, Score *score) noexcept(false) override;
+
+  // Perform inference with trace using the TF runtime
+  void trace(Instance *instance, Score *score) noexcept(false) override;
+
+  // Get input name and shape
+  void get_input_name_and_shape(
+    absl::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
+  ) noexcept(false) override;  // NOLINT
+
+  // Get output name and shape
+  void get_output_name_and_shape(
+    absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
+  ) noexcept(false) override;  // NOLINT
+
+ protected:
+  // Load the TensorFlow graph from the .pb file
+  void load() override;
+
+  // Build engine
+  void build() override;
+
+  // Set session options
+  void set_session_options() override;
+  virtual void set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false);
+
+  // Create session
+  void create_session() override;
+
+  // Sub initialization
+  void sub_init() override;
+
+ protected:
+  // Preventing from distructing during inference, should be gurranteed by caller
+  // std::shared_mutex engine_mtx_;
+
+  std::unordered_set<std::string> tags_;
+  tensorflow::SessionOptions      session_opts_;
+  tensorflow::RunOptions          run_opts_;
+  tensorflow::SavedModelBundle    model_bundle_;
+};
+
+class TF2EngineFactory : public EngineFactory {
+ private:
+  static std::unique_ptr<TF2EngineFactory> instance_;
+
+ protected:
+  TF2EngineFactory() = default;
+
+ public:
+  TF2EngineFactory(const TF2EngineFactory&) = delete;
+  TF2EngineFactory& operator=(const TF2EngineFactory&) = delete;
+
+  TF2EngineFactory(TF2EngineFactory&&) = delete;
+  TF2EngineFactory& operator=(TF2EngineFactory&&) = delete;
+
+  virtual ~TF2EngineFactory() {}
+
+  static EngineFactory *instance();
+
+  virtual Engine *create(const EngineConf& engine_conf) noexcept(false) {
+    Engine *engine = new TF2Engine(engine_conf);
+    engine->init();
+    return engine;
   }
-}
-
-std::string TF2Engine::brand() noexcept {
-  return kBrandTF2;
-}
-
-void TF2Engine::warmup(Instance *instance, Score *score) noexcept(false) {
-  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  if (!inited_) {
-    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + conf_.brief() + "] " + "Engine not initialized";
-    throw std::runtime_error(err_msg);
-  }
-}
-
-void TF2Engine::infer(Instance *instance, Score *score) noexcept(false) {
-  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  if (!inited_) {
-    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + conf_.brief() + "] " + "Engine not initialized";
-    throw std::runtime_error(err_msg);
-  }
-}
-
-void TF2Engine::trace(Instance *instance, Score *score) noexcept(false) {
-  // std::shared_lock<std::shared_mutex> engine_lock(engine_mtx_);
-  if (!inited_) {
-    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
-      + conf_.brief() + "] " + "Engine not initialized";
-    throw std::runtime_error(err_msg);
-  }
-}
-
-void TF2Engine::load() {
-}
-
-void TF2Engine::build() {
-}
-
-void TF2Engine::set_session_options() {
-  tags_.insert(tensorflow::kSavedModelTagServe);
-}
-
-void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
-  if (nullptr == tf_session_conf) {
-    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "] "
-      + "Session config is nullptr";
-    throw std::runtime_error(err_msg);
-  }
-
-  (*(tf_session_conf->mutable_device_count()))["GPU"] = 0;
-  // (*(tf_session_conf->mutable_device_count()))["CPU"] = 1;
-
-  tags_.insert(tensorflow::kSavedModelTagGpu);
-}
-
-void TF2Engine::create_session() {
-  tensorflow::Status status = tensorflow::LoadSavedModel(
-    session_opts_, run_opts_, conf_.graph_file_loc, tags_, &model_bundle_
-  );  // NOLINT
-}
-
-void TF2Engine::sub_init() {
-}
-
-std::unique_ptr<TF2EngineFactory> TF2EngineFactory::instance_ = nullptr;
-EngineFactory *TF2EngineFactory::instance() {
-  if (nullptr == instance_) {
-    instance_.reset(new TF2EngineFactory());
-  }
-  return instance_.get();
-}
+};
 
 }  // namespace model_server
+
+#endif  // MODEL_SERVER_SRC_ENGINE_TF2_ENGINE_H_
