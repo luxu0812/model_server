@@ -196,6 +196,16 @@ function setup_bazel_module() {
       sed -i "s|\${HOME}|${HOME}|g" ${HOME}/.local/lib/libtensorflow_gpu/MODULE.bazel
     fi
   fi
+  if [[ -d "${HOME}/.local/lib/eigen" ]]; then
+    cp -f bazel/eigen.WORKSPACE ${HOME}/.local/lib/eigen/WORKSPACE
+    cp -f bazel/eigen.BUILD ${HOME}/.local/lib/eigen/BUILD
+    cp -f bazel/eigen.MODULE ${HOME}/.local/lib/eigen/MODULE.bazel
+    if [[ "${uname}" == "Darwin" ]]; then
+      sed -i "" "s|\${HOME}|${HOME}|g" ${HOME}/.local/lib/eigen/MODULE.bazel
+    elif [[ "${uname}" == "Linux" ]]; then
+      sed -i "s|\${HOME}|${HOME}|g" ${HOME}/.local/lib/eigen/MODULE.bazel
+    fi
+  fi
   if [[ -d "${HOME}/.local/lib/nlohmann_json" ]]; then
     cp -f bazel/nlohmann_json.WORKSPACE ${HOME}/.local/lib/nlohmann_json/WORKSPACE
     cp -f bazel/nlohmann_json.BUILD ${HOME}/.local/lib/nlohmann_json/BUILD
