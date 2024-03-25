@@ -480,10 +480,14 @@ function setup_eigen() {
     return
   fi
 
-  pushd ${HOME}/.local/lib
+  pushd ${HOME}/.local/build
   wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
   tar zxvf eigen-3.4.0.tar.gz
-  mv eigen-3.4.0 eigen
+  pushd eigen-3.4.0
+  cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/eigen -DCMAKE_BUILD_TYPE=Release -S . -B build
+  cmake --build build -j10
+  cmake --build build --target install
+  popd
   popd
 }
 
