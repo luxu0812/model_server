@@ -454,7 +454,7 @@ function setup_tensorflow() {
     fi
     compile_flags="${compile_flags} --config=release_linux_base --config=mkl"
   fi
-  bazelisk build ${compile_flags} tensorflow/tools/lib_package:libtensorflow //tensorflow:libtensorflow_cc.so
+  bazelisk build ${compile_flags} tensorflow/tools/lib_package:libtensorflow //tensorflow:libtensorflow_cc.so //tensorflow:install_headers
   if [[ $? -ne 0 ]]; then
     echo "build tensorflow failed"
     exit 1
@@ -470,6 +470,11 @@ function setup_tensorflow() {
   find tsl -name \*.h -exec cp --parents \{\} ~/.local/lib/libtensorflow/include \;
   popd
   cp -r bazel-bin/external/local_tsl/tsl/protobuf ~/.local/lib/libtensorflow/include/tsl
+  cp -r bazel-bin/tensorflow/include/_virtual_includes/float8/ml_dtypes ~/.local/lib/libtensorflow/include
+  cp -r bazel-bin/tensorflow/include/_virtual_includes/int4/ml_dtypes ~/.local/lib/libtensorflow/include
+  cp -r bazel-bin/tensorflow/include/Eigen ~/.local/lib/libtensorflow/include
+  cp -r bazel-bin/tensorflow/include/unsupported ~/.local/lib/libtensorflow/include
+
   popd
   popd
 }
@@ -481,6 +486,7 @@ function setup_eigen() {
   fi
 
   pushd ${HOME}/.local/build
+  rem -rf eigen-3.4.0
   wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
   tar zxvf eigen-3.4.0.tar.gz
   pushd eigen-3.4.0
