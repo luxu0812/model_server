@@ -107,3 +107,10 @@ new_local_repository(
   path = "${HOME}/.local/lib/jemalloc",
   build_file = "bazel/jemalloc.BUILD",
 )
+
+#------------------------------ jemalloc ------------------------------#
+new_local_repository(
+  name = "eigen3",
+  path = "${HOME}/.local/lib/eigen3",
+  build_file = "bazel/BUILD",
+)
