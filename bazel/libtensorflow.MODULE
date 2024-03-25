@@ -5,8 +5,8 @@ module(
 )
 
 #------------------------------- eigen --------------------------------#
-bazel_dep(name = "local_eigen")
-local_path_override(
-    module_name = "local_eigen",
-    path = "${HOME}/.local/lib/eigen",
-)
+# bazel_dep(name = "local_eigen")
+# local_path_override(
+#     module_name = "local_eigen",
+#     path = "${HOME}/.local/lib/eigen",
+# )
