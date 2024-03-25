@@ -108,9 +108,9 @@ new_local_repository(
   build_file = "bazel/jemalloc.BUILD",
 )
 
-#------------------------------ jemalloc ------------------------------#
+#------------------------------- eigen --------------------------------#
 new_local_repository(
-  name = "eigen3",
-  path = "${HOME}/.local/lib/eigen3",
+  name = "eigen",
+  path = "${HOME}/.local/lib/eigen",
   build_file = "bazel/BUILD",
 )
