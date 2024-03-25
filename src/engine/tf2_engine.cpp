@@ -20,7 +20,7 @@ TF2Engine::TF2Engine(const EngineConf& engine_conf) noexcept(false) :
   tags_(),
   session_opts_(),
   run_opts_(),
-  bundle_() {
+  model_bundle_() {
 }
 
 TF2Engine::~TF2Engine() {
@@ -72,7 +72,7 @@ void TF2Engine::build() {
 }
 
 void TF2Engine::set_session_options() {
-  tags_.add(tensorflow::kSavedModelTagServe);
+  tags_.insert(tensorflow::kSavedModelTagServe);
 }
 
 void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
@@ -85,12 +85,12 @@ void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false
   (*(tf_session_conf->mutable_device_count()))["GPU"] = 0;
   // (*(tf_session_conf->mutable_device_count()))["CPU"] = 1;
 
-  tags.add(tensorflow::kSavedModelTagGpu);
+  tags_.insert(tensorflow::kSavedModelTagGpu);
 }
 
 void TF2Engine::create_session() {
-  Status status = tensorflow::LoadSavedModel(
-    session_options_, run_options_, conf_.graph_file_loc, tags_, &model_bundle_
+  tensorflow::Status status = tensorflow::LoadSavedModel(
+    session_opts_, run_opts_, conf_.graph_file_loc, tags_, &model_bundle_
   );  // NOLINT
 }
 
