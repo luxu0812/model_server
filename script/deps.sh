@@ -479,24 +479,6 @@ function setup_tensorflow() {
   popd
 }
 
-function setup_eigen() {
-  if [[ -d ${HOME}/.local/lib/eigen ]]; then
-    echo "eigen already installed"
-    return
-  fi
-
-  pushd ${HOME}/.local/build
-  rem -rf eigen-3.4.0
-  wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
-  tar zxvf eigen-3.4.0.tar.gz
-  pushd eigen-3.4.0
-  cmake -DCMAKE_INSTALL_PREFIX=~/.local/lib/eigen -DCMAKE_BUILD_TYPE=Release -S . -B build
-  cmake --build build -j10
-  cmake --build build --target install
-  popd
-  popd
-}
-
 function setup_zlib() {
   if [[ -d ${HOME}/.local/lib/zlib ]]; then
     echo "zlib already installed"
@@ -766,7 +748,6 @@ function setup_deps() {
   setup_googletest
   setup_google_benchmark
   setup_tensorflow
-  setup_eigen
   setup_zlib
   setup_protobuf
   setup_abseil
