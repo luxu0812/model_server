@@ -66,40 +66,6 @@ class TF2Engine : public Engine {
   // Sub initialization
   void sub_init() override;
 
-  // Run session
-  void run_session(
-    std::vector<TF_Tensor*> *input_tensors, std::vector<TF_Tensor*> *output_tensors,
-    TF_Buffer *tf_run_opts = nullptr, TF_Buffer *tf_metadata = nullptr
-  );  // NOLINT
-
-  // Iterate through the operations in the graph
-  void iterate_through_operations(std::function<void(TF_Operation*)> do_something_with_operation);
-
-  // Get TFTensorMeta by TF_Operation name
-  void get_tf_tensor_meta_by_tf_operation_name(
-    const std::string& tf_operation_name,
-    absl::flat_hash_map<std::string, TFTensorMeta> *tf_tensor_meta,
-    int32_t *index = nullptr
-  );  // NOLINT
-
-  // Convert TF_Output to TFTensorMeta
-  void convert_tf_output_to_tf_tensor_meta(
-    const TF_Output& tf_output, TFTensorMeta *tf_tensor_meta
-  );  // NOLINT
-
-  // Get input and output ops
-  // void get_input_output_ops();
-
-  // Print graph information
-  // void print_graph_info();
-
-  void instance_to_tensor(
-    Instance *instance, std::vector<TF_Tensor*> *input_tensors
-  ) noexcept(false);  // NOLINT
-  void score_from_tensor(
-    const std::vector<TF_Tensor*>& output_tensors, Score *score
-  ) noexcept(false);  // NOLINT
-
  protected:
   // Preventing from distructing during inference, should be gurranteed by caller
   // std::shared_mutex engine_mtx_;
