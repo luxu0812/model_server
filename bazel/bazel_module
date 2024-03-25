@@ -67,13 +67,6 @@ local_path_override(
     path = "${HOME}/.local/lib/bs_thread_pool",
 )
 
-#------------------------------- eigen --------------------------------#
-bazel_dep(name = "local_eigen")
-local_path_override(
-    module_name = "local_eigen",
-    path = "${HOME}/.local/lib/eigen",
-)
-
 #---------------------------- libtensorflow ---------------------------#
 bazel_dep(name = "tensorflow")
 local_path_override(
