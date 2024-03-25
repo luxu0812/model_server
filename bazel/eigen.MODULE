@@ -1,5 +1,0 @@
-module(
-  name = "local_eigen",
-  version = "3.4",
-  compatibility_level = 0,
-)
