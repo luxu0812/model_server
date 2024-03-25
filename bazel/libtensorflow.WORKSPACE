@@ -4,7 +4,7 @@ workspace(name = "tensorflow")
 
 #------------------------------- eigen --------------------------------#
 new_local_repository(
-  name = "eigen",
+  name = "local_eigen",
   path = "${HOME}/.local/lib/eigen",
   build_file = "bazel/BUILD",
 )
