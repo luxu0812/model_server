@@ -454,17 +454,23 @@ function setup_tensorflow() {
     fi
     compile_flags="${compile_flags} --config=release_linux_base --config=mkl"
   fi
-  bazelisk build ${compile_flags} tensorflow/tools/lib_package:libtensorflow
+  bazelisk build ${compile_flags} tensorflow/tools/lib_package:libtensorflow //tensorflow:libtensorflow_cc.so
   if [[ $? -ne 0 ]]; then
     echo "build tensorflow failed"
     exit 1
   fi
   mkdir -p ~/.local/lib/libtensorflow
   tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
+  cp bazel-bin/tensorflow/libtensorflow_cc.so.2 ~/.local/lib/libtensorflow/lib
   cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
   cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow/include/tensorflow/core
-  cp -r bazel-bin/tensorflow/tsl ~/.local/lib/libtensorflow/include/tensorflow
+  # cp -r bazel-bin/external/local_tsl/tsl ~/.local/lib/libtensorflow/include
+  find tensorflow/cc tensorflow/core -name \*.h -exec cp --parents \{\} ~/.local/lib/libtensorflow/include \;
+  pushd third_party/xla/third_party/tsl
+  find tsl -name \*.h -exec cp --parents \{\} ~/.local/lib/libtensorflow/include \;
+  popd
   cp -r bazel-bin/external/local_tsl/tsl/protobuf ~/.local/lib/libtensorflow/include/tsl
+  cp -r third_party/xla/third_party/tsl/third_party/eigen3/Eigen ~/.local/lib/libtensorflow/include
   popd
   popd
 }
