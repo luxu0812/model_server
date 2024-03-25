@@ -1,7 +1,7 @@
 cc_library(
   name = "tensorflow",
   hdrs = glob([
-    "include/**/*.h",
+    "include/**/*",
   ]),
   includes = [
     "include",
