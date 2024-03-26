@@ -24,7 +24,7 @@ cc_library(
 )
 
 # cc_library(
-#   name = "tensorflow2",
+#   name = "tensorflow_cc",
 #   hdrs = glob([
 #     "include/**/*",
 #   ]),
