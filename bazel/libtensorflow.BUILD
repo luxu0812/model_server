@@ -23,8 +23,5 @@ cc_library(
       "lib/libtensorflow_cc.so.2",
     ]),
   }),
-  deps = [
-    "@protobuf//:protobuf"
-  ],
   visibility = ["//visibility:public"],
 )
