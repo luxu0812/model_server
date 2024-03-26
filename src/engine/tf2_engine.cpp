@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <string>
+#include <utility>
 
 #include "absl/log/log.h"
 #include "absl/cleanup/cleanup.h"
@@ -54,6 +55,19 @@ void TF2Engine::infer(Instance *instance, Score *score) noexcept(false) {
       + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
+
+  std::vector<std::pair<std::string, tensorflow::Tensor>> input_tensors;
+  instance_to_tensor(*instance, &input_tensors);
+
+  std::vector<tensorflow::Tensor> outputs;
+  tensorflow::Status status = model_bundle_.GetSession()->Run(input_tensors, conf_.output_nodes, {}, &outputs);
+  if (!status.ok()) {
+    const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Failed to run session: " + status.ToString();
+    throw std::runtime_error(err_msg);
+  }
+
+  score_from_tensor(outputs, score);
 }
 
 void TF2Engine::trace(Instance *instance, Score *score) noexcept(false) {
@@ -157,15 +171,6 @@ void TF2Engine::sub_init() {
     get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_metas);
   }
 
-  // tf_model_meta_.input_specs.resize(tf_model_meta_.input_metas.size());
-  // for (const auto& tensor_info : tf_model_meta_.input_metas) {
-  //   tf_model_meta_.input_specs[tensor_info.second.index] = (*(tensor_info.second.output));
-  // }
-  // tf_model_meta_.output_specs.resize(tf_model_meta_.output_metas.size());
-  // for (const auto& tensor_info : tf_model_meta_.output_metas) {
-  //   tf_model_meta_.output_specs[tensor_info.second.index] = (*(tensor_info.second.output));
-  // }
-
   LOG(INFO) << tf_model_meta_.to_string();
 
   const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
@@ -217,6 +222,63 @@ void TF2Engine::get_tf_tensor_meta_by_tf_operation_name(
     return;
   }
   return;
+}
+
+void TF2Engine::instance_to_tensor(
+  const Instance& instance, std::vector<std::pair<std::string, tensorflow::Tensor>> *input_tensors
+) {
+  absl::flat_hash_map<std::string, std::vector<int64_t>> input_shapes;
+  get_input_name_and_shape(&input_shapes);
+
+  for (const auto& feature_tensor : instance.features) {
+    // Find the shape for this feature tensor based on its name
+    auto it = input_shapes.find(feature_tensor.name);
+    if (it == input_shapes.end()) {
+      const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "] "
+        + "Shape for input tensor " + feature_tensor.name + " not found";
+      throw std::runtime_error(err_msg);
+    }
+    std::vector<int64_t>& tensor_shape = it->second;
+    tensor_shape[0] = feature_tensor.batch_size;
+
+    // Create a TensorFlow tensor with the correct shape
+    tensorflow::TensorShape tf_tensor_shape(tensor_shape);
+    tensorflow::Tensor input_tensor(tensorflow::DT_FLOAT, tf_tensor_shape);
+
+    // Directly copy data into the tensor using Eigen::TensorMap for zero-copy assignment
+    auto eigen_tensor = input_tensor.flat<float>();
+    Eigen::TensorMap<Eigen::Tensor<float, 1, Eigen::RowMajor>> eigen_tensor_map(
+      eigen_tensor.data(), eigen_tensor.size()
+    );  // NOLINT
+    eigen_tensor_map = Eigen::TensorMap<Eigen::Tensor<const float, 1, Eigen::RowMajor>>(
+      feature_tensor.data.data(), feature_tensor.data.size()
+    );  // NOLINT
+
+    input_tensors->emplace_back(feature_tensor.name, input_tensor);
+  }
+}
+
+void TF2Engine::score_from_tensor(
+  const std::vector<tensorflow::Tensor>& output_tensors, Score *score
+) {
+  absl::flat_hash_map<std::string, std::vector<int64_t>> output_shapes;
+  get_output_name_and_shape(&output_shapes);
+
+  score->targets.clear();
+  int32_t i = 0;
+  for (const auto& output_tensor : output_tensors) {
+    const std::string& tensor_name = conf_.output_nodes[i++];
+
+    Tensor target;
+    target.name = tensor_name;
+    target.batch_size = output_tensor.dim_size(0);  // Assuming the first dimension is batch size.
+
+    // Directly assign data to target.data
+    auto flat_tensor = output_tensor.flat<float>();
+    target.data.assign(flat_tensor.data(), flat_tensor.data() + flat_tensor.size());
+
+    score->targets.push_back(target);
+  }
 }
 
 std::string TF2TensorMeta::to_string() {
