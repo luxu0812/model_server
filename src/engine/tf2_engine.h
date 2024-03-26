@@ -18,6 +18,23 @@
 
 namespace model_server {
 
+struct TF2TensorMeta {
+  std::string          operation_name;
+  std::string          operation_type;
+  std::string          device;
+  int32_t              num_dims;
+  std::vector<int64_t> shape;
+
+  std::string to_string();
+};
+
+struct TF2ModelMeta {
+  absl::flat_hash_map<std::string, TF2TensorMeta> input_metas;
+  absl::flat_hash_map<std::string, TF2TensorMeta> output_metas;
+
+  std::string to_string();
+};
+
 class TF2Engine : public Engine {
  public:
   explicit TF2Engine(const EngineConf& engine_conf) noexcept(false);
@@ -66,6 +83,11 @@ class TF2Engine : public Engine {
   // Sub initialization
   void sub_init() override;
 
+  void get_tf_tensor_meta_by_tf_operation_name(
+    const std::string& tf_operation_name,
+    absl::flat_hash_map<std::string, TF2TensorMeta> *tf_tensor_meta
+  );  // NOLINT
+
  protected:
   // Preventing from distructing during inference, should be gurranteed by caller
   // std::shared_mutex engine_mtx_;
@@ -74,6 +96,8 @@ class TF2Engine : public Engine {
   tensorflow::SessionOptions      session_opts_;
   tensorflow::RunOptions          run_opts_;
   tensorflow::SavedModelBundle    model_bundle_;
+
+  TF2ModelMeta tf_model_meta_;
 };
 
 class TF2EngineFactory : public EngineFactory {
