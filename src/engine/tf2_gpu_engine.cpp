@@ -1,6 +1,6 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
 
-#include "model_server/src/engine/tf2_gpu_engine.h"
+#include "model_server/src/engine/tf_gpu_engine.h"
 
 #include <fstream>
 #include <string>
@@ -12,7 +12,7 @@
 namespace model_server {
 
 TF2GPUEngine::TF2GPUEngine(const EngineConf& engine_conf) noexcept(false) :
-  TF2Engine(engine_conf) {
+  TFEngine(engine_conf) {
 }
 
 TF2GPUEngine::~TF2GPUEngine() {}
@@ -32,12 +32,11 @@ void TF2GPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(fa
   tensorflow::GPUOptions gpu;
   gpu.set_per_process_gpu_memory_fraction(0.0);
   gpu.set_allow_growth(true);
-  gpu.set_allocator_type("BFC");
+  // gpu.set_allocator_type("BFC");
   gpu.set_force_gpu_compatible(true);
   gpu.set_visible_device_list("0");
   tf_session_conf->mutable_gpu_options()->CopyFrom(gpu);
   tf_session_conf->set_allow_soft_placement(false);
-  tf_session_conf->log_device_placement();
 
   tags_.insert(tensorflow::kSavedModelTagGpu);
 }
