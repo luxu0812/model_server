@@ -101,7 +101,7 @@ void TF2Engine::build() {
 
 void TF2Engine::set_session_options() {
   tags_.insert(tensorflow::kSavedModelTagServe);
-  // session_opts_.target = ;
+  session_opts_.target = "local";
   // session_opts_.config.set_intra_op_parallelism_threads();
   // session_opts_.config.set_inter_op_parallelism_threads();
 }
@@ -147,11 +147,11 @@ void TF2Engine::sub_init() {
 
   LOG(INFO) << tf_model_meta_.to_string();
 
-  const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
-  for (int32_t i = 0; i < static_cast<int32_t>(graph_def.node_size()); ++i) {
-    const tensorflow::NodeDef& node = graph_def.node(i);
-    LOG(INFO) << "node: " << node.name() << " [op: " << node.op() << "] is performed on device: " << node.device();
-  }
+  // const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
+  // for (int32_t i = 0; i < static_cast<int32_t>(graph_def.node_size()); ++i) {
+  //   const tensorflow::NodeDef& node = graph_def.node(i);
+  //   LOG(INFO) << "node: " << node.name() << " [op: " << node.op() << "] is performed on device: " << node.device();
+  // }
 }
 
 // Get TFTensorMeta by TF_Operation name
@@ -170,11 +170,26 @@ void TF2Engine::get_tf_tensor_meta_by_tf_operation_name(
     tensor_meta.operation_type = node.op();
     tensor_meta.device         = node.device();
 
-    const tensorflow::AttrValue& shape_attr = node.attr().at("shape");
-    tensor_meta.num_dims = shape_attr.shape().dim_size();
-    tensor_meta.shape.clear();
-    for (int32_t j = 0; j < static_cast<int32_t>(shape_attr.shape().dim_size()); ++j) {
-      tensor_meta.shape.push_back(shape_attr.shape().dim(j).size());
+    // print all keys in node.attr()
+    for (const auto& entry : node.attr()) {
+      LOG(INFO) << "name: " << node.name() << ", key: " << entry.first << ", value: " << entry.second.DebugString();
+    }
+
+    if (node.attr().find("shape") != node.attr().end()) {
+      const tensorflow::AttrValue& shape_attr = node.attr().at("shape");
+      tensor_meta.num_dims = shape_attr.shape().dim_size();
+      tensor_meta.shape.clear();
+      for (int32_t j = 0; j < static_cast<int32_t>(shape_attr.shape().dim_size()); ++j) {
+        tensor_meta.shape.push_back(shape_attr.shape().dim(j).size());
+      }
+    } else if (node.attr().find("_output_shapes") != node.attr().end()
+      && node.attr().at("_output_shapes").list().shape_size() > 0) {
+      const tensorflow::AttrValue& shape_attr = node.attr().at("_output_shapes");
+      tensor_meta.num_dims = shape_attr.list().shape(0).dim_size();
+      tensor_meta.shape.clear();
+      for (int32_t j = 0; j < static_cast<int32_t>(shape_attr.list().shape(0).dim_size()); ++j) {
+        tensor_meta.shape.push_back(shape_attr.list().shape(0).dim(j).size());
+      }
     }
 
     (*tf_tensor_meta)[tf_operation_name] = tensor_meta;
