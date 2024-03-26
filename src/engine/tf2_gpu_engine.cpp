@@ -11,17 +11,17 @@
 
 namespace model_server {
 
-TFGPUEngine::TFGPUEngine(const EngineConf& engine_conf) noexcept(false) :
+TF2GPUEngine::TF2GPUEngine(const EngineConf& engine_conf) noexcept(false) :
   TFEngine(engine_conf) {
 }
 
-TFGPUEngine::~TFGPUEngine() {}
+TF2GPUEngine::~TF2GPUEngine() {}
 
-std::string TFGPUEngine::brand() noexcept {
+std::string TF2GPUEngine::brand() noexcept {
   return kBrandTFGPU;
 }
 
-void TFGPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
+void TF2GPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
   if (nullptr == tf_session_conf) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "] "
       + "Session config is nullptr";
@@ -42,10 +42,10 @@ void TFGPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(fal
   tags_.insert(tensorflow::kSavedModelTagGpu);
 }
 
-std::unique_ptr<TFGPUEngineFactory> TFGPUEngineFactory::instance_ = nullptr;
-EngineFactory *TFGPUEngineFactory::instance() {
+std::unique_ptr<TF2GPUEngineFactory> TF2GPUEngineFactory::instance_ = nullptr;
+EngineFactory *TF2GPUEngineFactory::instance() {
   if (nullptr == instance_) {
-    instance_.reset(new TFGPUEngineFactory());
+    instance_.reset(new TF2GPUEngineFactory());
   }
   return instance_.get();
 }
