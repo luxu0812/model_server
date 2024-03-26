@@ -210,7 +210,7 @@ cc_library(
     ":sample",
     ":engine_base",
     "@com_google_absl//:absl",
-    "@tensorflow//:tensorflow",
+    "@tensorflow//:tensorflow2",
   ],
   strip_include_prefix = "engine",
   include_prefix = "model_server/src/engine",
