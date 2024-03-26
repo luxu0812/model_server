@@ -152,8 +152,6 @@ void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false
   }
 
   (*(tf_session_conf->mutable_device_count()))["GPU"] = 0;
-
-  // tags_.insert(tensorflow::kSavedModelTagGpu);
 }
 
 void TF2Engine::create_session() {
