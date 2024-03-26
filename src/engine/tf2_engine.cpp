@@ -101,9 +101,31 @@ void TF2Engine::build() {
 
 void TF2Engine::set_session_options() {
   tags_.insert(tensorflow::kSavedModelTagServe);
-  session_opts_.target = "local";
-  // session_opts_.config.set_intra_op_parallelism_threads();
-  // session_opts_.config.set_inter_op_parallelism_threads();
+  // session_opts_.target = "local";
+
+  tensorflow::OptimizerOptions tf_optimizer_opts;
+  tf_optimizer_opts.set_do_constant_folding(true);
+  tf_optimizer_opts.set_do_function_inlining(true);
+  if (0 == conf_.opt_level) {
+    tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L0);
+  } else {
+    tf_optimizer_opts.set_opt_level(tensorflow::OptimizerOptions_Level_L1);
+  }
+  if (0 == conf_.jit_level) {
+    tf_optimizer_opts.set_cpu_global_jit(false);
+    tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_OFF);
+  } else if (1 == conf_.jit_level) {
+    tf_optimizer_opts.set_cpu_global_jit(true);
+    tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_1);
+  } else {
+    tf_optimizer_opts.set_cpu_global_jit(true);
+    tf_optimizer_opts.set_global_jit_level(tensorflow::OptimizerOptions_GlobalJitLevel_ON_2);
+  }
+
+  session_opts_.config.mutable_graph_options()->mutable_optimizer_options()->CopyFrom(tf_optimizer_opts);
+  session_opts_.config.set_intra_op_parallelism_threads(conf_.intra_op_parallelism_threads);
+  session_opts_.config.set_inter_op_parallelism_threads(conf_.inter_op_parallelism_threads);
+  set_gpu(&(session_opts_.config));
 }
 
 void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
@@ -114,9 +136,8 @@ void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false
   }
 
   (*(tf_session_conf->mutable_device_count()))["GPU"] = 0;
-  // (*(tf_session_conf->mutable_device_count()))["CPU"] = 1;
 
-  tags_.insert(tensorflow::kSavedModelTagGpu);
+  // tags_.insert(tensorflow::kSavedModelTagGpu);
 }
 
 void TF2Engine::create_session() {
@@ -147,11 +168,11 @@ void TF2Engine::sub_init() {
 
   LOG(INFO) << tf_model_meta_.to_string();
 
-  // const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
-  // for (int32_t i = 0; i < static_cast<int32_t>(graph_def.node_size()); ++i) {
-  //   const tensorflow::NodeDef& node = graph_def.node(i);
-  //   LOG(INFO) << "node: " << node.name() << " [op: " << node.op() << "] is performed on device: " << node.device();
-  // }
+  const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
+  for (int32_t i = 0; i < static_cast<int32_t>(graph_def.node_size()); ++i) {
+    const tensorflow::NodeDef& node = graph_def.node(i);
+    DLOG(INFO) << "node: " << node.name() << " [op: " << node.op() << "] is performed on device: " << node.device();
+  }
 }
 
 // Get TFTensorMeta by TF_Operation name
@@ -172,7 +193,7 @@ void TF2Engine::get_tf_tensor_meta_by_tf_operation_name(
 
     // print all keys in node.attr()
     for (const auto& entry : node.attr()) {
-      LOG(INFO) << "name: " << node.name() << ", key: " << entry.first << ", value: " << entry.second.DebugString();
+      DLOG(INFO) << "name: " << node.name() << ", key: " << entry.first << ", value: " << entry.second.DebugString();
     }
 
     if (node.attr().find("shape") != node.attr().end()) {
