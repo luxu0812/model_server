@@ -12,7 +12,7 @@
 namespace model_server {
 
 TF2GPUEngine::TF2GPUEngine(const EngineConf& engine_conf) noexcept(false) :
-  TFEngine(engine_conf) {
+  TF2Engine(engine_conf) {
 }
 
 TF2GPUEngine::~TF2GPUEngine() {}
