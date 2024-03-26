@@ -454,14 +454,14 @@ function setup_tensorflow() {
     fi
     compile_flags="${compile_flags} --config=release_linux_base --config=mkl"
   fi
-  bazelisk build ${compile_flags} tensorflow/tools/lib_package:libtensorflow //tensorflow:libtensorflow_cc.so //tensorflow:install_headers
+  bazelisk build ${compile_flags} tensorflow/tools/lib_package:libtensorflow //tensorflow:install_headers # //tensorflow:libtensorflow_cc.so
   if [[ $? -ne 0 ]]; then
     echo "build tensorflow failed"
     exit 1
   fi
   mkdir -p ~/.local/lib/libtensorflow
   tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
-  cp bazel-bin/tensorflow/libtensorflow_cc.so.2 ~/.local/lib/libtensorflow/lib
+  # cp bazel-bin/tensorflow/libtensorflow_cc.so.2 ~/.local/lib/libtensorflow/lib
   cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
   cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow/include/tensorflow/core
   # cp -r bazel-bin/external/local_tsl/tsl ~/.local/lib/libtensorflow/include
