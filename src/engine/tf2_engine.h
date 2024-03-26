@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <utility>
 #include <functional>
 #include <shared_mutex>
 #include <unordered_set>
@@ -88,6 +89,14 @@ class TF2Engine : public Engine {
   void get_tf_tensor_meta_by_tf_operation_name(
     const std::string& tf_operation_name,
     absl::flat_hash_map<std::string, TF2TensorMeta> *tf_tensor_meta
+  );  // NOLINT
+
+  void instance_to_tensor(
+    const Instance& instance, std::vector<std::pair<std::string, tensorflow::Tensor>> *input_tensors
+  );  // NOLINT
+
+  void score_from_tensor(
+    const std::vector<tensorflow::Tensor>& output_tensors, Score *score
   );  // NOLINT
 
  protected:
