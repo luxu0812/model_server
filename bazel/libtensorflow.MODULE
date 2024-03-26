@@ -3,10 +3,3 @@ module(
   version = "v2.13.0",
   compatibility_level = 0,
 )
-
-#------------------------------ protobuf ------------------------------#
-bazel_dep(name = "protobuf")
-local_path_override(
-    module_name = "protobuf",
-    path = "/data/xu.lu/.local/lib/protobuf",
-)
