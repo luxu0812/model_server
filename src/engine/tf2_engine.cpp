@@ -65,6 +65,34 @@ void TF2Engine::trace(Instance *instance, Score *score) noexcept(false) {
   }
 }
 
+void TF2Engine::get_input_name_and_shape(
+  absl::flat_hash_map<std::string, std::vector<int64_t>> *input_shapes
+) {
+  if (nullptr == input_shapes) {
+    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Input shapes is nullptr";
+    throw std::runtime_error(err_msg);
+  }
+
+  for (const auto& tensor_info : tf_model_meta_.input_metas) {
+    (*input_shapes)[tensor_info.first] = tensor_info.second.shape;
+  }
+}
+
+void TF2Engine::get_output_name_and_shape(
+  absl::flat_hash_map<std::string, std::vector<int64_t>> *output_shapes
+) {
+  if (nullptr == output_shapes) {
+    std::string err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "]["
+      + conf_.brief() + "] " + "Output shapes is nullptr";
+    throw std::runtime_error(err_msg);
+  }
+
+  for (const auto& tensor_info : tf_model_meta_.output_metas) {
+    (*output_shapes)[tensor_info.first] = tensor_info.second.shape;
+  }
+}
+
 void TF2Engine::load() {
 }
 
@@ -89,12 +117,94 @@ void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false
 }
 
 void TF2Engine::create_session() {
+  LOG(INFO) << "Loading saved model from: " << conf_.graph_file_loc;
   tensorflow::Status status = tensorflow::LoadSavedModel(
     session_opts_, run_opts_, conf_.graph_file_loc, tags_, &model_bundle_
   );  // NOLINT
+  LOG(INFO) << "LoadSavedModel status: " << status.ToString();
 }
 
 void TF2Engine::sub_init() {
+  for (const auto& tensor_name : conf_.input_nodes) {
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.input_metas);
+  }
+
+  for (const auto& tensor_name : conf_.output_nodes) {
+    get_tf_tensor_meta_by_tf_operation_name(tensor_name, &tf_model_meta_.output_metas);
+  }
+
+  // tf_model_meta_.input_specs.resize(tf_model_meta_.input_metas.size());
+  // for (const auto& tensor_info : tf_model_meta_.input_metas) {
+  //   tf_model_meta_.input_specs[tensor_info.second.index] = (*(tensor_info.second.output));
+  // }
+  // tf_model_meta_.output_specs.resize(tf_model_meta_.output_metas.size());
+  // for (const auto& tensor_info : tf_model_meta_.output_metas) {
+  //   tf_model_meta_.output_specs[tensor_info.second.index] = (*(tensor_info.second.output));
+  // }
+
+  LOG(INFO) << tf_model_meta_.to_string();
+
+  const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
+  for (int32_t i = 0; i < static_cast<int32_t>(graph_def.node_size()); ++i) {
+    const tensorflow::NodeDef& node = graph_def.node(i);
+    LOG(INFO) << "node: " << node.name() << " [op: " << node.op() << "] is performed on device: " << node.device();
+  }
+}
+
+// Get TFTensorMeta by TF_Operation name
+void TF2Engine::get_tf_tensor_meta_by_tf_operation_name(
+  const std::string& tf_operation_name,
+  absl::flat_hash_map<std::string, TF2TensorMeta> *tf_tensor_meta
+) {
+  const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
+  for (int32_t i = 0; i < static_cast<int32_t>(graph_def.node_size()); ++i) {
+    const tensorflow::NodeDef& node = graph_def.node(i);
+    if (node.name() != tf_operation_name) {
+      continue;
+    }
+    TF2TensorMeta tensor_meta;
+    tensor_meta.operation_name = node.name();
+    tensor_meta.operation_type = node.op();
+    tensor_meta.device         = node.device();
+
+    const tensorflow::AttrValue& shape_attr = node.attr().at("shape");
+    tensor_meta.num_dims = shape_attr.shape().dim_size();
+    tensor_meta.shape.clear();
+    for (int32_t j = 0; j < static_cast<int32_t>(shape_attr.shape().dim_size()); ++j) {
+      tensor_meta.shape.push_back(shape_attr.shape().dim(j).size());
+    }
+
+    (*tf_tensor_meta)[tf_operation_name] = tensor_meta;
+    return;
+  }
+  return;
+}
+
+std::string TF2TensorMeta::to_string() {
+  std::string message;
+  absl::StrAppendFormat(&message,
+    "  operation_name: %s\n  operation_type: %s\n  device: %s\n  num_dims: %d\n  shape: %s\n",
+    operation_name.c_str(), operation_type.c_str(), device.c_str(), num_dims, absl::StrJoin(shape, ", ").c_str()
+  );  // NOLINT
+
+  return message;
+}
+
+std::string TF2ModelMeta::to_string() {
+  std::string message;
+  absl::StrAppendFormat(&message, "\ninput_metas: ");
+  for (auto& entry : input_metas) {
+    absl::StrAppendFormat(&message, "\n %s:", entry.first.c_str());
+    absl::StrAppendFormat(&message, "\n%s", entry.second.to_string().c_str());
+  }
+
+  absl::StrAppendFormat(&message, "\noutput_metas:");
+  for (auto& entry : output_metas) {
+    absl::StrAppendFormat(&message, "\n %s:", entry.first.c_str());
+    absl::StrAppendFormat(&message, "\n%s", entry.second.to_string().c_str());
+  }
+
+  return message;
 }
 
 std::unique_ptr<TF2EngineFactory> TF2EngineFactory::instance_ = nullptr;
