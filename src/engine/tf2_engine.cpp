@@ -101,6 +101,9 @@ void TF2Engine::build() {
 
 void TF2Engine::set_session_options() {
   tags_.insert(tensorflow::kSavedModelTagServe);
+  session_opts_.target = "local";
+  // session_opts_.config.set_intra_op_parallelism_threads();
+  // session_opts_.config.set_inter_op_parallelism_threads();
 }
 
 void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
@@ -118,7 +121,6 @@ void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false
 
 void TF2Engine::create_session() {
   LOG(INFO) << "Loading saved model from: " << conf_.graph_file_loc;
-  session_opts_.target = "local";
   tensorflow::Status status = tensorflow::LoadSavedModel(
     session_opts_, run_opts_, conf_.graph_file_loc, tags_, &model_bundle_
   );  // NOLINT
