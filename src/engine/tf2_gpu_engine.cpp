@@ -1,26 +1,27 @@
 // Copyright (C) 2023 zh.luxu1986@gmail.com
 
-#include "model_server/src/engine/tf2_gpu_engine.h"
+#include "model_server/src/engine/tf_gpu_engine.h"
 
 #include <fstream>
 #include <string>
 
 #include "absl/log/log.h"
+#include "tensorflow/c/c_api.h"
 #include "tensorflow/core/protobuf/config.pb.h"
 
 namespace model_server {
 
-TF2GPUEngine::TF2GPUEngine(const EngineConf& engine_conf) noexcept(false) :
+TFGPUEngine::TFGPUEngine(const EngineConf& engine_conf) noexcept(false) :
   TFEngine(engine_conf) {
 }
 
-TF2GPUEngine::~TF2GPUEngine() {}
+TFGPUEngine::~TFGPUEngine() {}
 
-std::string TF2GPUEngine::brand() noexcept {
+std::string TFGPUEngine::brand() noexcept {
   return kBrandTFGPU;
 }
 
-void TF2GPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
+void TFGPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false) {
   if (nullptr == tf_session_conf) {
     const std::string& err_msg = "[" + std::string(__FILE__) + ":" + std::to_string(__LINE__) + "] "
       + "Session config is nullptr";
@@ -37,12 +38,14 @@ void TF2GPUEngine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(fa
   tf_session_conf->mutable_gpu_options()->CopyFrom(gpu);
   tf_session_conf->set_allow_soft_placement(false);
   tf_session_conf->log_device_placement();
+
+  tags_.insert(tensorflow::kSavedModelTagGpu);
 }
 
-std::unique_ptr<TF2GPUEngineFactory> TF2GPUEngineFactory::instance_ = nullptr;
-EngineFactory *TF2GPUEngineFactory::instance() {
+std::unique_ptr<TFGPUEngineFactory> TFGPUEngineFactory::instance_ = nullptr;
+EngineFactory *TFGPUEngineFactory::instance() {
   if (nullptr == instance_) {
-    instance_.reset(new TF2GPUEngineFactory());
+    instance_.reset(new TFGPUEngineFactory());
   }
   return instance_.get();
 }
