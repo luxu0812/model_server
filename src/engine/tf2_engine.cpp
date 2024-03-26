@@ -46,6 +46,7 @@ void TF2Engine::warmup(Instance *instance, Score *score) noexcept(false) {
       + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
+  infer(instance, score);
 }
 
 void TF2Engine::infer(Instance *instance, Score *score) noexcept(false) {
@@ -77,6 +78,7 @@ void TF2Engine::trace(Instance *instance, Score *score) noexcept(false) {
       + conf_.brief() + "] " + "Engine not initialized";
     throw std::runtime_error(err_msg);
   }
+  infer(instance, score);
 }
 
 void TF2Engine::get_input_name_and_shape(
