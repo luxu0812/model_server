@@ -9,7 +9,7 @@
 
 namespace model_server {
 
-class TF2GPUEngine : public TFEngine {
+class TF2GPUEngine : public TF2Engine {
  public:
   explicit TF2GPUEngine(const EngineConf& engine_conf) noexcept(false);
   virtual ~TF2GPUEngine();
