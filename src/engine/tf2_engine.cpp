@@ -101,7 +101,7 @@ void TF2Engine::build() {
 
 void TF2Engine::set_session_options() {
   tags_.insert(tensorflow::kSavedModelTagServe);
-  session_opts_.target = "local";
+  // session_opts_.target = ;
   // session_opts_.config.set_intra_op_parallelism_threads();
   // session_opts_.config.set_inter_op_parallelism_threads();
 }
