@@ -461,7 +461,7 @@ function setup_tensorflow() {
   fi
   mkdir -p ~/.local/lib/libtensorflow
   tar zxvf bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz -C ~/.local/lib/libtensorflow
-  # cp bazel-bin/tensorflow/libtensorflow_cc.so.2 ~/.local/lib/libtensorflow/lib
+  cp bazel-bin/tensorflow/libtensorflow_cc.so.2 ~/.local/lib/libtensorflow/lib
   cp -r bazel-bin/tensorflow/core/protobuf ~/.local/lib/libtensorflow/include/tensorflow/core
   cp -r bazel-bin/tensorflow/core/framework ~/.local/lib/libtensorflow/include/tensorflow/core
   # cp -r bazel-bin/external/local_tsl/tsl ~/.local/lib/libtensorflow/include
