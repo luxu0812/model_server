@@ -36,10 +36,10 @@ cc_library(
       "libcc/libtensorflow_framework.so.2",
       "libcc/libtensorflow_cc.so.2",
     ],
-    "@bazel_tools//src/conditions:darwin": glob([
-      "libcc/libtensorflow_cc.2.dylib",
+    "@bazel_tools//src/conditions:darwin": [
       "libcc/libtensorflow_framework.2.dylib",
-    ]),
+      "libcc/libtensorflow_cc.2.dylib",
+    ],
     "//conditions:default": [
       "libcc/libtensorflow_framework.so.2",
       "libcc/libtensorflow_cc.so.2",
