@@ -34,7 +34,7 @@ cc_library(
   srcs = select({
     "@bazel_tools//src/conditions:darwin_x86_64": glob([
       "libcc/libtensorflow_cc.so.2",
-      "libcc/libtensorflow_framework.so.2.15.0",
+      "libcc/libtensorflow_framework.so.2",
     ]),
     "@bazel_tools//src/conditions:darwin": glob([
       "libcc/libtensorflow_cc.2.dylib",
@@ -42,7 +42,7 @@ cc_library(
     ]),
     "//conditions:default": glob([
       "libcc/libtensorflow_cc.so.2",
-      "libcc/libtensorflow_framework.so.2.15.0",
+      "libcc/libtensorflow_framework.so.2",
     ]),
   }),
   visibility = ["//visibility:public"],
