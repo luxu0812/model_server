@@ -12,8 +12,10 @@
 #include <unordered_set>
 #include "absl/container/flat_hash_map.h"
 #include "tensorflow/core/protobuf/config.pb.h"
+#include "tensorflow/cc/client/client_session.h"
 #include "tensorflow/cc/saved_model/loader.h"
 #include "tensorflow/cc/saved_model/tag_constants.h"
+
 #include "model_server/src/engine/engine.h"
 
 namespace model_server {
