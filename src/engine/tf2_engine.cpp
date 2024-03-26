@@ -118,6 +118,7 @@ void TF2Engine::set_gpu(tensorflow::ConfigProto *tf_session_conf) noexcept(false
 
 void TF2Engine::create_session() {
   LOG(INFO) << "Loading saved model from: " << conf_.graph_file_loc;
+  session_opts_.target = "local";
   tensorflow::Status status = tensorflow::LoadSavedModel(
     session_opts_, run_opts_, conf_.graph_file_loc, tags_, &model_bundle_
   );  // NOLINT
