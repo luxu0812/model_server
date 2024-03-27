@@ -768,4 +768,6 @@ function setup_deps() {
   setup_rules_python
   setup_rules_apple
   setup_rules_fuzzing
+
+  find /tmp -user ${USER} -type d -delete
 }
