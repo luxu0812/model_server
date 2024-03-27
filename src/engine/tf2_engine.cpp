@@ -176,7 +176,7 @@ void TF2Engine::sub_init() {
   const tensorflow::GraphDef& graph_def = model_bundle_.meta_graph_def.graph_def();
   for (int32_t i = 0; i < static_cast<int32_t>(graph_def.node_size()); ++i) {
     const tensorflow::NodeDef& node = graph_def.node(i);
-    DLOG(INFO) << "node: " << node.name() << " [op: " << node.op() << "] is performed on device: " << node.device();
+    DLOG(INFO) << "node: " << node.name() << " [op: " << node.op() << "] is placed on device: " << node.device();
   }
 }
 
