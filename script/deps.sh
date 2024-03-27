@@ -421,6 +421,7 @@ function setup_tensorflow() {
     echo "tensorflow already installed"
     return
   fi
+  # pip install "tensorflow[and-cuda]==2.15"
 
   if [[ -d "/usr/local/cuda" ]]; then
     export CUDA_TOOLKIT_PATH="/usr/local/cuda-12.2"
